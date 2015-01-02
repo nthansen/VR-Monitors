@@ -10,12 +10,15 @@ public class monitor : MonoBehaviour {
     Rectangle screenSize;
     Bitmap target;
     System.IO.MemoryStream ms;
+    Vector3 scale;
 
 	// Use this for initialization
 	void Start () {
-		tex = new Texture2D (200, 300, TextureFormat.RGB24, false);
 		screenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+        tex = new Texture2D(screenSize.Width, screenSize.Height, TextureFormat.RGB24, false);
 		target = new Bitmap (screenSize.Width, screenSize.Height);
+        scale = new Vector3(screenSize.Width, screenSize.Height, 0);
+        transform.localScale += scale;
 		using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target)) {
 			g.CopyFromScreen (0, 0, 0, 0, new Size (screenSize.Width, screenSize.Height));
 		}
@@ -31,7 +34,6 @@ public class monitor : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        screenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
         using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target))
         {
             g.CopyFromScreen(0, 0, 0, 0, new Size(screenSize.Width, screenSize.Height));
