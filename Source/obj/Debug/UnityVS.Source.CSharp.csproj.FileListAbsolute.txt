@@ -1,0 +1,11 @@
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\UnityEditor.dll
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\UnityEngine.dll
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\UnityEngine.UI.dll
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\UnityEngine.xml
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\UnityEditor.xml
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\Temp\UnityVS_bin\Debug\UnityEngine.UI.xml
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\obj\Debug\UnityVS.Source.CSharp.csprojResolveAssemblyReference.cache
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\obj\Debug\Assembly-CSharp.dll
+D:\Dropbox\UWB\Capstone\VR-Monitors\Source\obj\Debug\Assembly-CSharp.pdb
