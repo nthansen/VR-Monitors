@@ -2,34 +2,34 @@ Initialize engine version: 4.6.1f1 (d1db7a1b5196)
 GfxDevice: creating device client; threaded=1
 Direct3D:
     Version:  Direct3D 11.0 [level 11.0]
-    Renderer: NVIDIA GeForce GTX 980 (ID=0x13c0)
-    Vendor:   NVIDIA
-    VRAM:     3072 MB
+    Renderer: AMD Radeon(TM) R5 Graphics (ID=0x9851)
+    Vendor:   ATI
+    VRAM:     497 MB
 Begin MonoManager ReloadAssembly
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.dll (this message is harmless)
-Loading D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.dll into Unity Child Domain
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\Assembly-CSharp.dll (this message is harmless)
-Loading D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.UI.dll (this message is harmless)
-Loading D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Drawing.dll (this message is harmless)
-Loading D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Drawing.dll into Unity Child Domain
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Windows.Forms.dll (this message is harmless)
-Loading D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Windows.Forms.dll into Unity Child Domain
-- Completed reload, in  0.113 seconds
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Drawing.dll (this message is harmless)
+Loading C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Drawing.dll into Unity Child Domain
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Windows.Forms.dll (this message is harmless)
+Loading C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Windows.Forms.dll into Unity Child Domain
+- Completed reload, in  0.643 seconds
 <RI> Initializing input.
 <RI> Input initialized.
-desktop: 1920x1080 59Hz; virtual: 1920x1080 at 0,0
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Core.dll (this message is harmless)
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\Mono.Posix.dll (this message is harmless)
-Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.dll (this message is harmless)
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\libc
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\libc
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/lib/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\lib/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
-Fallback handler could not load library D:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/lib/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
+desktop: 1366x768 60Hz; virtual: 1366x768 at 0,0
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\Mono.Posix.dll (this message is harmless)
+Platform assembly: C:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors_Data\Managed\System.dll (this message is harmless)
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\libc
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\libc
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/libc
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/lib/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/.\lib/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
+Fallback handler could not load library C:/Dropbox/UWB/Capstone/VR-Monitors/VR-Monitors_Data/Mono/lib/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon
