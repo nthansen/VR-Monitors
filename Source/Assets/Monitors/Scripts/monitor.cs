@@ -9,6 +9,30 @@ using System.IO;
 
 public class monitor : MonoBehaviour {
 
+    // streaming way once we figure out how to do it
+
+    /*
+    public WWW wwwData;
+    public string url = "http://localhost:8080/";
+    private MovieTexture m;
+    void Start()
+    {
+        wwwData = new WWW(url);
+        m = wwwData.movie;
+    }
+    void Update()
+    {
+        renderer.material.mainTexture = m as MovieTexture;
+        // audio.clip = m.audioClip;
+        if (!m.isPlaying)
+        {
+            m.Play();
+            audio.Play();
+        }
+    }
+     */
+
+
     Texture2D tex;
     Rectangle screenSize;
     Bitmap target;
@@ -16,14 +40,14 @@ public class monitor : MonoBehaviour {
     Vector3 scale;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		screenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
         tex = new Texture2D(screenSize.Width, screenSize.Height, TextureFormat.RGB24, false);
         target = new Bitmap(screenSize.Width, screenSize.Height, PixelFormat.Format24bppRgb);
         scale = new Vector3(screenSize.Width, screenSize.Height, 0);
         transform.localScale += scale;
-        target = Capture(0, 0, screenSize.Width, screenSize.Height, target);
-		ms = new System.IO.MemoryStream();
+        target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
+		ms = new System.IO.MemoryStream(1024);
 		target.Save (ms, ImageFormat.Png);
 		ms.Seek (0, SeekOrigin.Begin);
 		
@@ -31,20 +55,21 @@ public class monitor : MonoBehaviour {
 		tex.LoadImage (ms.ToArray ());
 		
 		renderer.material.mainTexture = tex;
-       
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        target = Capture(0, 0, screenSize.Width, screenSize.Height, target);
+        target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
+        using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target))
         target.Save(ms, ImageFormat.Png);
         ms.Seek(0, SeekOrigin.Begin);
         tex.LoadImage(ms.ToArray());
 
         renderer.material.mainTexture = tex;
+
 	}
 
-    public static Bitmap Capture(int x, int y, int width, int height, Bitmap target)
+    Bitmap Capture(int x, int y, int width, int height, Bitmap target)
     {
         using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target))
         {
@@ -69,6 +94,10 @@ public class monitor : MonoBehaviour {
                         iconX = cursorInfo.ptScreenPos.x - ((int)iconInfo.xHotspot);
                         iconY = cursorInfo.ptScreenPos.y - ((int)iconInfo.yHotspot);
 
+                        // calculate offset of primary monitor
+                        iconX -= x;
+                        iconY -= y;
+
                         // draw the cursor icon on top of the captured screen image
                         User32.DrawIcon(g.GetHdc(), iconX, iconY, cursorInfo.hCursor);
 
@@ -80,5 +109,4 @@ public class monitor : MonoBehaviour {
         }
         return target;
     }
-
 }

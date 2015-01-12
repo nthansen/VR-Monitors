@@ -228,7 +228,7 @@ public class OVRManager : MonoBehaviour
 	/// Values below 1 permit sub-sampling for improved performance.
 	/// Values above 1 permit super-sampling for improved sharpness.
 	/// </summary>
-	public float nativeTextureScale = 5.0f;
+	public float nativeTextureScale = 1.0f;
 	
 	/// <summary>
 	/// Controls the size of the rendering viewport.
