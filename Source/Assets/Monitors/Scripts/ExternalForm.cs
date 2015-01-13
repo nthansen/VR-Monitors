@@ -29,23 +29,31 @@ public class ExternalForm : MonoBehaviour {
 
     void setUpForm()
     {
-        Button button1 = new Button();
+        current.ControlBox = false;
 
-        button1.Text = "This is a test";
+        Button quit = new Button();
+
+        quit.Text = "Exit VR-Monitors";
+
+        quit.Width = 100;
+
+        quit.Location = new Point(5, 200);
+
+        quit.Click += quit_Click;
 
         Label viewSliderLabel = new Label();
 
         viewSliderLabel.Text = "Camera distance";
 
-        viewSliderLabel.Location = new Point(5, 130);
+        viewSliderLabel.Location = new Point(5, 10);
 
         viewSliderValue = new TextBox();
 
-        viewSliderValue.Location = new Point(5, 200);
+        viewSliderValue.Location = new Point(5, 80);
 
         viewSlider = new TrackBar();
 
-        viewSlider.Location = new Point(5, 150);
+        viewSlider.Location = new Point(5, 30);
 
         viewSlider.Scroll += new System.EventHandler(this.viewSlider_Scroll);
 
@@ -66,7 +74,7 @@ public class ExternalForm : MonoBehaviour {
         // if the keyboard arrows are used to move the slider.
         viewSlider.SmallChange = 2;
 
-        current.Controls.Add(button1);
+        current.Controls.Add(quit);
 
         current.Controls.Add(viewSlider);
 
@@ -91,5 +99,18 @@ public class ExternalForm : MonoBehaviour {
         Vector3 cameraPosition = new Vector3(theCamera.transform.position.x, theCamera.transform.position.y, viewSlider.Value * 5);
 
         theCamera.transform.position = cameraPosition;
+    }
+
+    void quit_Click(object sender, System.EventArgs e)
+    {
+        current.Close();
+        if (UnityEditor.EditorApplication.isPlaying)
+        {
+            UnityEditor.EditorApplication.isPlaying = false;
+        }
+        else
+        {
+            UnityEngine.Application.Quit();
+        }
     }
 }
