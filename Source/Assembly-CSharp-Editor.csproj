@@ -62,10 +62,10 @@
  <HintPath>F:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/Editor/UnityEditor.UI.dll</HintPath>
  </Reference>
  <Reference Include="System.Drawing">
- <HintPath>D:/Dropbox/UWB/Capstone/VR-Monitors/Source/Assets/Plugins/System.Drawing.dll</HintPath>
+ <HintPath>D:/Dropbox/UWB/Capstone/VR-Monitors/Source/Assets/Plugins/x86_64/System.Drawing.dll</HintPath>
  </Reference>
  <Reference Include="System.Windows.Forms">
- <HintPath>D:/Dropbox/UWB/Capstone/VR-Monitors/Source/Assets/Plugins/System.Windows.Forms.dll</HintPath>
+ <HintPath>D:/Dropbox/UWB/Capstone/VR-Monitors/Source/Assets/Plugins/x86_64/System.Windows.Forms.dll</HintPath>
  </Reference>
  <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
  <HintPath>D:/Dropbox/UWB/Capstone/VR-Monitors/Source/Assets/UnityVS/Editor/SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>

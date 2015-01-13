@@ -104,13 +104,10 @@ public class ExternalForm : MonoBehaviour {
     void quit_Click(object sender, System.EventArgs e)
     {
         current.Close();
-        if (UnityEditor.EditorApplication.isPlaying)
-        {
+        #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-        }
-        else
-        {
+        #else 
             UnityEngine.Application.Quit();
-        }
+        #endif
     }
 }

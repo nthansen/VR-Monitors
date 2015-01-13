@@ -58,11 +58,20 @@
     <Reference Include="System.Windows.Forms">
       <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing">
+      <HintPath>Assets\Plugins\x86\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>Assets\Plugins\x86\System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <HintPath>Assets\Plugins\x86_64\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>Assets\Plugins\x86_64\System.Windows.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Monitors\Scripts\ExternalForm.cs" />
-    <Compile Include="Assets\Monitors\Scripts\User32.cs" />
-    <Compile Include="Assets\Monitors\Scripts\monitor.cs" />
     <Compile Include="Assets\OVR\Scripts\OVRCameraRig.cs" />
     <Compile Include="Assets\OVR\Scripts\OVRCommon.cs" />
     <Compile Include="Assets\OVR\Scripts\OVRDisplay.cs" />
@@ -79,6 +88,9 @@
     <Compile Include="Assets\OVR\Scripts\Util\OVRScreenFade.cs" />
     <Compile Include="Assets\OVR\Scripts\Util\OVRUGUI.cs" />
     <Compile Include="Assets\OVR\Scripts\Util\OVRVisionGuide.cs" />
+    <Compile Include="Assets\Scripts\ExternalForm.cs" />
+    <Compile Include="Assets\Scripts\User32.cs" />
+    <Compile Include="Assets\Scripts\monitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\OVR\Shaders\OVRGUIShader.shader" />
