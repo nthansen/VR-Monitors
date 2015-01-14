@@ -29,7 +29,8 @@ public class ExternalForm : MonoBehaviour {
 
     void setUpForm()
     {
-        current.ControlBox = false;
+        // removes minimize, exit, and full screen for form
+        //current.ControlBox = false;
 
         Button quit = new Button();
 

@@ -16,10 +16,10 @@ Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors-WithOculus_Da
 Loading D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors-WithOculus_Data\Managed\System.Drawing.dll into Unity Child Domain
 Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors-WithOculus_Data\Managed\System.Windows.Forms.dll (this message is harmless)
 Loading D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors-WithOculus_Data\Managed\System.Windows.Forms.dll into Unity Child Domain
-- Completed reload, in  0.041 seconds
+- Completed reload, in  0.040 seconds
 <RI> Initializing input.
 <RI> Input initialized.
-desktop: 1920x1080 59Hz; virtual: 3000x1920 at 0,0
+desktop: 1920x1080 59Hz; virtual: 1920x1080 at 0,0
 Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors-WithOculus_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors-WithOculus_Data\Managed\System.dll (this message is harmless)
 Platform assembly: D:\Dropbox\UWB\Capstone\VR-Monitors\VR-Monitors-WithOculus_Data\Managed\Accessibility.dll (this message is harmless)
