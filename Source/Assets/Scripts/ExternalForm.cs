@@ -7,12 +7,12 @@ public class ExternalForm : MonoBehaviour {
 
     Form current;
     TextBox viewSliderValue;
-    TextBox primaryMonitorSliderValue;
+    //TextBox primaryMonitorSliderValue;
     TrackBar viewSlider;
     TrackBar primaryMonitorSlider;
     GameObject theCamera;
     GameObject primaryMonitor;
-    Vector3 primaryMonitorSize;
+    //Vector3 primaryMonitorSize;
 
 	// Use this for initialization
 	void Start () {
@@ -21,9 +21,10 @@ public class ExternalForm : MonoBehaviour {
         // get ahold of the camera to modify in the form
         theCamera = Camera.main.gameObject;
 
+        // get the primary monitor in use
         primaryMonitor = GameObject.FindGameObjectWithTag("Primary Monitor");
 
-        primaryMonitorSize = primaryMonitor.transform.localScale;
+      // primaryMonitorSize = primaryMonitor.transform.localScale;
 
         setUpForm();
 
@@ -84,6 +85,8 @@ public class ExternalForm : MonoBehaviour {
         viewSlider.SmallChange = 2;
 
 
+        // Used to create a slider for resizing the primary monitor, not neccessary for now
+        /*
         Label primaryMonitorSliderLabel = new Label();
 
         primaryMonitorSliderLabel.Text = "Size of Primary Monitor";
@@ -116,14 +119,15 @@ public class ExternalForm : MonoBehaviour {
         // The SmallChange property sets how many positions to move 
         // if the keyboard arrows are used to move the slider.
         primaryMonitorSlider.SmallChange = 2;
-        
+        */
+
         current.Controls.Add(quit);
 
-        current.Controls.Add(primaryMonitorSlider);
+        //current.Controls.Add(primaryMonitorSlider);
 
-        current.Controls.Add(primaryMonitorSliderValue);
+        //current.Controls.Add(primaryMonitorSliderValue);
 
-        current.Controls.Add(primaryMonitorSliderLabel);
+        //current.Controls.Add(primaryMonitorSliderLabel);
 
         current.Controls.Add(viewSlider);
 
@@ -133,7 +137,7 @@ public class ExternalForm : MonoBehaviour {
 
         viewSliderValue.Text = "" + viewSlider.Value;
 
-        primaryMonitorSliderValue.Text = "" + primaryMonitorSlider.Value;
+        //primaryMonitorSliderValue.Text = "" + primaryMonitorSlider.Value;
 
         current.Text = "I am testing";
 
@@ -152,6 +156,7 @@ public class ExternalForm : MonoBehaviour {
         theCamera.transform.position = cameraPosition;
     }
 
+    /*
     void primaryMonitorSlider_Scroll(object sender, System.EventArgs e)
     {
         primaryMonitorSliderValue.Text = "" + primaryMonitorSlider.Value;
@@ -162,8 +167,9 @@ public class ExternalForm : MonoBehaviour {
         // we need to move it back and forth so only change the z value
         primaryMonitor.transform.localScale = primaryMonitorNewSize;
     }
+    */
 
-
+      
     // for when a person clicks on the quit vr-monitors button on the form
     void quit_Click(object sender, System.EventArgs e)
     {
