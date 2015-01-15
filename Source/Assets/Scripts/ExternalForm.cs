@@ -7,11 +7,14 @@ public class ExternalForm : MonoBehaviour {
 
     Form current;
     TextBox viewSliderValue;
+    CheckBox viewCrosshair;
+    CheckBox moveMonitor;
     //TextBox primaryMonitorSliderValue;
     TrackBar viewSlider;
     TrackBar primaryMonitorSlider;
     GameObject theCamera;
     GameObject primaryMonitor;
+    GameObject crosshair;
     //Vector3 primaryMonitorSize;
 
 	// Use this for initialization
@@ -24,7 +27,9 @@ public class ExternalForm : MonoBehaviour {
         // get the primary monitor in use
         primaryMonitor = GameObject.FindGameObjectWithTag("Primary Monitor");
 
-      // primaryMonitorSize = primaryMonitor.transform.localScale;
+        // primaryMonitorSize = primaryMonitor.transform.localScale;
+
+        crosshair = GameObject.FindGameObjectWithTag("Crosshair");
 
         setUpForm();
 
@@ -84,6 +89,23 @@ public class ExternalForm : MonoBehaviour {
         // if the keyboard arrows are used to move the slider.
         viewSlider.SmallChange = 2;
 
+        viewCrosshair = new CheckBox();
+
+        viewCrosshair.Text = "View Crosshair";
+
+        viewCrosshair.Click += new System.EventHandler(this.viewCrosshair_Click);
+
+        viewCrosshair.Location = new Point(5, 120);
+
+        moveMonitor = new CheckBox();
+
+        moveMonitor.Appearance = Appearance.Button;
+
+        moveMonitor.Text = "Move Monitor";
+
+        moveMonitor.Click += new System.EventHandler(this.moveMonitor_Click);
+        
+        moveMonitor.Location = new Point(5, 150);
 
         // Used to create a slider for resizing the primary monitor, not neccessary for now
         /*
@@ -123,6 +145,10 @@ public class ExternalForm : MonoBehaviour {
 
         current.Controls.Add(quit);
 
+        current.Controls.Add(viewCrosshair);
+
+        current.Controls.Add(moveMonitor);
+
         //current.Controls.Add(primaryMonitorSlider);
 
         //current.Controls.Add(primaryMonitorSliderValue);
@@ -151,9 +177,36 @@ public class ExternalForm : MonoBehaviour {
         viewSliderValue.Text = "" + viewSlider.Value;
 
         // we need to move it back and forth so only change the z value
-        Vector3 cameraPosition = new Vector3(theCamera.transform.position.x, theCamera.transform.position.y, viewSlider.Value);
+        Vector3 cameraPosition = new Vector3(theCamera.transform.position.x, theCamera.transform.position.y, viewSlider.Value * 5);
 
         theCamera.transform.position = cameraPosition;
+    }
+
+    void viewCrosshair_Click(object sender, System.EventArgs e)
+    {
+        if (viewCrosshair.Checked)
+        {
+            crosshair.renderer.enabled = true;
+        }
+        else
+        {
+            crosshair.renderer.enabled = false;
+        }
+    }
+
+    void moveMonitor_Click(object sender, System.EventArgs e)
+    {
+        if (moveMonitor.Checked)
+        {
+            moveMonitor.Text = "Place Monitor";
+            Reticle.instance.moveTheMonitor = true;
+        }
+        else
+        {
+            moveMonitor.Text = "Move Monitor";
+            Reticle.instance.moveTheMonitor = false;
+        }
+
     }
 
     /*
