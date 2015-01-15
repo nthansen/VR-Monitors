@@ -12,6 +12,7 @@ public class ExternalForm : MonoBehaviour {
     TrackBar primaryMonitorSlider;
     GameObject theCamera;
     GameObject primaryMonitor;
+    Vector3 primaryMonitorSize;
 
 	// Use this for initialization
 	void Start () {
@@ -21,6 +22,8 @@ public class ExternalForm : MonoBehaviour {
         theCamera = Camera.main.gameObject;
 
         primaryMonitor = GameObject.FindGameObjectWithTag("Primary Monitor");
+
+        primaryMonitorSize = primaryMonitor.transform.localScale;
 
         setUpForm();
 
@@ -153,12 +156,15 @@ public class ExternalForm : MonoBehaviour {
     {
         primaryMonitorSliderValue.Text = "" + primaryMonitorSlider.Value;
 
-        Vector3 primaryMonitorSize = new Vector3(primaryMonitor.transform.localScale.x + primaryMonitorSlider.Value, primaryMonitor.transform.localScale.y + primaryMonitorSlider.Value);
+        Vector3 primaryMonitorNewSize = new Vector3(primaryMonitorSize.x + primaryMonitorSlider.Value * 8, primaryMonitorSize.y + primaryMonitorSlider.Value * 5);
+
 
         // we need to move it back and forth so only change the z value
-        primaryMonitor.transform.localScale = primaryMonitorSize;
+        primaryMonitor.transform.localScale = primaryMonitorNewSize;
     }
 
+
+    // for when a person clicks on the quit vr-monitors button on the form
     void quit_Click(object sender, System.EventArgs e)
     {
         current.Close();
@@ -167,5 +173,12 @@ public class ExternalForm : MonoBehaviour {
         #else 
             UnityEngine.Application.Quit();
         #endif
+    }
+
+
+    // make sure the form is closed with the application is closing
+    void OnApplicationQuit()
+    {
+        current.Close();
     }
 }
