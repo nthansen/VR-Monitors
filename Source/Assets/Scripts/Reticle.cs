@@ -51,6 +51,7 @@ public class Reticle : MonoBehaviour {
             selectedMonitor = hit.transform.gameObject;
         }
         else
+            selectedMonitor = null;
             print("I'm looking at nothing!");
     }
 
@@ -58,7 +59,10 @@ public class Reticle : MonoBehaviour {
     // Moves the monitor relative to where the camera is facing
     void moveMonitor()
     {
-        Ray ray = CameraFacing.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        selectedMonitor.transform.position = new Vector3(ray.direction.x * 1000, ray.direction.y * 1000, selectedMonitor.transform.position.z);
+        if (selectedMonitor != null)
+        {
+            Ray ray = CameraFacing.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+            selectedMonitor.transform.position = new Vector3(ray.direction.x * 1000, ray.direction.y * 1000, selectedMonitor.transform.position.z);
+        }
     }
 }

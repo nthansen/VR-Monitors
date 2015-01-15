@@ -198,8 +198,15 @@ public class ExternalForm : MonoBehaviour {
     {
         if (moveMonitor.Checked)
         {
-            moveMonitor.Text = "Place Monitor";
-            Reticle.instance.moveTheMonitor = true;
+            if (Reticle.instance.selectedMonitor != null)
+            {
+                moveMonitor.Text = "Place Monitor";
+                Reticle.instance.moveTheMonitor = true;
+            }
+            else
+            {
+                moveMonitor.Checked = false;
+            }
         }
         else
         {
