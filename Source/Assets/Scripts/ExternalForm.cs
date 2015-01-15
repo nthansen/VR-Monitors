@@ -151,7 +151,7 @@ public class ExternalForm : MonoBehaviour {
         viewSliderValue.Text = "" + viewSlider.Value;
 
         // we need to move it back and forth so only change the z value
-        Vector3 cameraPosition = new Vector3(theCamera.transform.position.x, theCamera.transform.position.y, viewSlider.Value * 5);
+        Vector3 cameraPosition = new Vector3(theCamera.transform.position.x, theCamera.transform.position.y, viewSlider.Value);
 
         theCamera.transform.position = cameraPosition;
     }

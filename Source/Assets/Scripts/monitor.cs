@@ -52,12 +52,17 @@ public class monitor : MonoBehaviour {
         target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
 		ms = new System.IO.MemoryStream(1024);
 		target.Save (ms, ImageFormat.Png);
+
+        // to test the quality of the screen grab. 
+        //target.Save("f:\\desktopTest.png", ImageFormat.Png);
 		ms.Seek (0, SeekOrigin.Begin);
 		
 		
 		tex.LoadImage (ms.ToArray ());
 		
 		renderer.material.mainTexture = tex;
+
+        renderer.material.shader = Shader.Find("Unlit/Texture");
 	}
 	
 	// Update is called once per frame
