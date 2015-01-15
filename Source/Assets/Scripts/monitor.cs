@@ -41,8 +41,11 @@ public class monitor : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		screenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
-        tex = new Texture2D(screenSize.Width, screenSize.Height, TextureFormat.RGB24, false);
+
+        UnityEngine.Application.runInBackground = true;
+
+        screenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
+        tex = new Texture2D(screenSize.Width, screenSize.Height, TextureFormat.ARGB32, false);
         target = new Bitmap(screenSize.Width, screenSize.Height, PixelFormat.Format24bppRgb);
         scale = new Vector3(screenSize.Width, screenSize.Height, 0);
         transform.localScale += scale;
@@ -59,6 +62,7 @@ public class monitor : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        
         target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
         using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target))
         target.Save(ms, ImageFormat.Png);
@@ -66,7 +70,7 @@ public class monitor : MonoBehaviour {
         tex.LoadImage(ms.ToArray());
 
         renderer.material.mainTexture = tex;
-
+        
 	}
 
     Bitmap Capture(int x, int y, int width, int height, Bitmap target)
