@@ -10,15 +10,16 @@ using System.IO;
 public class monitor : MonoBehaviour {
 
     // streaming way once we figure out how to do it
-
     /*
     public WWW wwwData;
-    public string url = "http://localhost:8080/";
+    public string url = "http://localhost:8080/desktop";
     private MovieTexture m;
     void Start()
     {
         wwwData = new WWW(url);
         m = wwwData.movie;
+        renderer.material.shader = Shader.Find("Unlit/Texture");
+
     }
     void Update()
     {
@@ -27,12 +28,12 @@ public class monitor : MonoBehaviour {
         if (!m.isPlaying)
         {
             m.Play();
-            audio.Play();
+            //audio.Play();
         }
     }
      */
 
-
+    
     Texture2D tex;
     Rectangle screenSize;
     Bitmap target;
@@ -50,6 +51,7 @@ public class monitor : MonoBehaviour {
         scale = new Vector3(screenSize.Width, screenSize.Height, 0);
         transform.localScale += scale;
         target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
+        
 		ms = new System.IO.MemoryStream(1024);
 		target.Save (ms, ImageFormat.Png);
 
@@ -57,26 +59,26 @@ public class monitor : MonoBehaviour {
         //target.Save("f:\\desktopTest.png", ImageFormat.Png);
 		ms.Seek (0, SeekOrigin.Begin);
 		
-		
 		tex.LoadImage (ms.ToArray ());
 		
 		renderer.material.mainTexture = tex;
+
+        renderer.material.mainTexture.anisoLevel = 9;
 
         renderer.material.shader = Shader.Find("Unlit/Texture");
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        
+    void Update()
+    {
+
         target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
         using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target))
-        target.Save(ms, ImageFormat.Png);
+            target.Save(ms, ImageFormat.Png);
         ms.Seek(0, SeekOrigin.Begin);
         tex.LoadImage(ms.ToArray());
-
         renderer.material.mainTexture = tex;
-        
-	}
+    }
 
     Bitmap Capture(int x, int y, int width, int height, Bitmap target)
     {
@@ -118,4 +120,5 @@ public class monitor : MonoBehaviour {
         }
         return target;
     }
+    
 }

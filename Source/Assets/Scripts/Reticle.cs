@@ -61,8 +61,14 @@ public class Reticle : MonoBehaviour {
     {
         if (selectedMonitor != null)
         {
-            Ray ray = CameraFacing.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-            selectedMonitor.transform.position = new Vector3(ray.direction.x * 1000, ray.direction.y * 1000, selectedMonitor.transform.position.z);
+            selectedMonitor.transform.LookAt(CameraFacing.transform.position);
+
+            // move the position to where the camera is facing
+
+            selectedMonitor.transform.position = CameraFacing.transform.position +
+                        CameraFacing.transform.rotation * Vector3.forward * 950.0f;
+            //selectedMonitor.transform.rotation = new Quaternion(CameraFacing.transform.rotation.x, CameraFacing.transform.rotation.y, 
+                //selectedMonitor.transform.rotation.z, selectedMonitor.transform.rotation.w);
         }
     }
 }
