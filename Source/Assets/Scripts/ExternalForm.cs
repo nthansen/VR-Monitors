@@ -9,6 +9,7 @@ public class ExternalForm : MonoBehaviour {
     TextBox viewSliderValue;
     CheckBox viewCrosshair;
     CheckBox moveMonitor;
+    ComboBox chooseBackground;
     //TextBox primaryMonitorSliderValue;
     TrackBar viewSlider;
     TrackBar primaryMonitorSlider;
@@ -143,6 +144,22 @@ public class ExternalForm : MonoBehaviour {
         primaryMonitorSlider.SmallChange = 2;
         */
 
+        chooseBackground = new ComboBox();
+
+        chooseBackground.Location = new Point(160, 10);
+
+        chooseBackground.Name = "choose Background";
+
+        chooseBackground.Text = "Eerie";
+
+        string[] backgrounds = new string[] { "Dawn Dusk", "Eerie", "Moon Shine", "Overcast1", "Overcast2", "Starry Night", "Sunny1", "Sunny2", "Sunny3" };
+
+        chooseBackground.Items.AddRange(backgrounds);
+
+        chooseBackground.DropDown += new System.EventHandler(chooseBackground_DropDown);
+
+        current.Controls.Add(chooseBackground);
+
         current.Controls.Add(quit);
 
         current.Controls.Add(viewCrosshair);
@@ -214,6 +231,50 @@ public class ExternalForm : MonoBehaviour {
             Reticle.instance.moveTheMonitor = false;
         }
 
+    }
+
+    void chooseBackground_DropDown(object sender, System.EventArgs e)
+    {
+        // reference list of the type of backgrounds we have "Dawn Dusk", 
+        //"Eerie", "Moon Shine", "Overcast1", "Overcast2", "Starry Night", "Sunny1", "Sunny2", "Sunny3"
+ 
+        if (chooseBackground.Text == "Dawn Dusk")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/DawnDusk Skybox", typeof(Material));
+        }
+
+        else if (chooseBackground.Text == "Eerie")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/Eerie Skybox", typeof(Material));
+        }
+        else if (chooseBackground.Text == "Moon Shine")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/MoonShine Skybox", typeof(Material));
+        }
+        else if (chooseBackground.Text == "Overcast1")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/Overcast1 Skybox", typeof(Material));
+        }
+        else if (chooseBackground.Text == "Overcast2")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/Overcast2 Skybox", typeof(Material));
+        }
+        else if (chooseBackground.Text == "Starry Night")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/StarryNight Skybox", typeof(Material));
+        }
+        else if (chooseBackground.Text == "Sunny1")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/Sunny1 Skybox", typeof(Material));
+        }
+        else if (chooseBackground.Text == "Sunny2")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/Sunny2 Skybox", typeof(Material));
+        }
+        else if (chooseBackground.Text == "Sunny3")
+        {
+            RenderSettings.skybox = (Material)Resources.Load("Skyboxes/Sunny3 Skybox", typeof(Material));
+        }
     }
 
     /*
