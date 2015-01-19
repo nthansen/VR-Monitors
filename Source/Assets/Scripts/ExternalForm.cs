@@ -156,7 +156,7 @@ public class ExternalForm : MonoBehaviour {
 
         chooseBackground.Items.AddRange(backgrounds);
 
-        chooseBackground.DropDown += new System.EventHandler(chooseBackground_DropDown);
+        chooseBackground.DropDownClosed += new System.EventHandler(chooseBackground_DropDown);
 
         current.Controls.Add(chooseBackground);
 
