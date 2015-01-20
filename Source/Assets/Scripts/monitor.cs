@@ -49,7 +49,7 @@ public class monitor : MonoBehaviour {
         tex = new Texture2D(screenSize.Width, screenSize.Height, TextureFormat.ARGB32, false);
         target = new Bitmap(screenSize.Width, screenSize.Height, PixelFormat.Format24bppRgb);
         scale = new Vector3(screenSize.Width, screenSize.Height, 0);
-        transform.localScale += scale;
+        transform.localScale += scale/250;
         target = Capture(screenSize.X+50, screenSize.Y+50, screenSize.Width+50, screenSize.Height+50, target);
         
 		ms = new System.IO.MemoryStream(1024);
@@ -66,6 +66,8 @@ public class monitor : MonoBehaviour {
         renderer.material.mainTexture.anisoLevel = 9;
 
         renderer.material.shader = Shader.Find("Unlit/Texture");
+
+       
 	}
 	
 	// Update is called once per frame

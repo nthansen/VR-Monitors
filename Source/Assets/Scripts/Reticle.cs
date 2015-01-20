@@ -66,9 +66,7 @@ public class Reticle : MonoBehaviour {
             // move the position to where the camera is facing
 
             selectedMonitor.transform.position = CameraFacing.transform.position +
-                        CameraFacing.transform.rotation * Vector3.forward * 950.0f;
-            //selectedMonitor.transform.rotation = new Quaternion(CameraFacing.transform.rotation.x, CameraFacing.transform.rotation.y, 
-                //selectedMonitor.transform.rotation.z, selectedMonitor.transform.rotation.w);
+                        CameraFacing.transform.rotation * Vector3.forward * 5.0f;
         }
     }
 }

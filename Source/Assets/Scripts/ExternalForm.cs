@@ -73,22 +73,22 @@ public class ExternalForm : MonoBehaviour {
 
         viewSlider.Scroll += new System.EventHandler(this.viewSlider_Scroll);
 
-        viewSlider.Minimum = -100;
+        viewSlider.Minimum = -10;
 
         // the max amount 
-        viewSlider.Maximum = 100;
+        viewSlider.Maximum = 10;
 
         // The TickFrequency property establishes how many positions 
         // are between each tick-mark.
-        viewSlider.TickFrequency = 10;
+        viewSlider.TickFrequency = 5;
 
         // The LargeChange property sets how many positions to move 
         // if the bar is clicked on either side of the slider.
-        viewSlider.LargeChange = 3;
+        viewSlider.LargeChange = 2;
 
         // The SmallChange property sets how many positions to move 
         // if the keyboard arrows are used to move the slider.
-        viewSlider.SmallChange = 2;
+        viewSlider.SmallChange = 1;
 
         viewCrosshair = new CheckBox();
 
@@ -194,7 +194,7 @@ public class ExternalForm : MonoBehaviour {
         viewSliderValue.Text = "" + viewSlider.Value;
 
         // we need to move it back and forth so only change the z value
-        Vector3 cameraPosition = new Vector3(theCamera.transform.position.x, theCamera.transform.position.y, viewSlider.Value * 5);
+        Vector3 cameraPosition = new Vector3(theCamera.transform.position.x, theCamera.transform.position.y, viewSlider.Value);
 
         theCamera.transform.position = cameraPosition;
     }
