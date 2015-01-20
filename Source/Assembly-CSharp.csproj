@@ -79,10 +79,10 @@
  <HintPath>E:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.1/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="System.Drawing">
- <HintPath>D:/Dropbox/UWB/Capstone/VR-Monitors/Source/Assets/Plugins/System.Drawing.dll</HintPath>
+ <HintPath>C:/VR-Monitors/Source/Assets/Plugins/System.Drawing.dll</HintPath>
  </Reference>
  <Reference Include="System.Windows.Forms">
- <HintPath>D:/Dropbox/UWB/Capstone/VR-Monitors/Source/Assets/Plugins/System.Windows.Forms.dll</HintPath>
+ <HintPath>C:/VR-Monitors/Source/Assets/Plugins/System.Windows.Forms.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
