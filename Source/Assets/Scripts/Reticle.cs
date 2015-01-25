@@ -46,13 +46,16 @@ public class Reticle : MonoBehaviour {
 		RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            print("I'm looking at " + hit.transform.name);
             // grabs the monitor that's being hit
             selectedMonitor = hit.transform.gameObject;
+
+            //print("I'm looking at Monitor ");
+
         }
         else
             selectedMonitor = null;
-            print("I'm looking at nothing!");
+            
+            //print("I'm looking at nothing!");
     }
 
 

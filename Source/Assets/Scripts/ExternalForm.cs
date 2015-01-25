@@ -26,7 +26,7 @@ public class ExternalForm : MonoBehaviour {
         theCamera = Camera.main.gameObject;
 
         // get the primary monitor in use
-        primaryMonitor = GameObject.FindGameObjectWithTag("Primary Monitor");
+        primaryMonitor = GameObject.FindGameObjectWithTag("Monitor");
 
         // primaryMonitorSize = primaryMonitor.transform.localScale;
 
@@ -56,6 +56,14 @@ public class ExternalForm : MonoBehaviour {
         quit.Location = new Point(5, 200);
 
         quit.Click += quit_Click;
+
+        Button addMonitor = new Button();
+
+        addMonitor.Text = "Add Monitor";
+
+        addMonitor.Location = new Point(160, 40);
+
+        addMonitor.Click += addMonitor_Click;
 
         Label viewSliderLabel = new Label();
 
@@ -161,6 +169,8 @@ public class ExternalForm : MonoBehaviour {
         current.Controls.Add(chooseBackground);
 
         current.Controls.Add(quit);
+
+        current.Controls.Add(addMonitor);
 
         current.Controls.Add(viewCrosshair);
 
@@ -302,6 +312,10 @@ public class ExternalForm : MonoBehaviour {
         #endif
     }
 
+    void addMonitor_Click(object sender, System.EventArgs e)
+    {
+        MonitorController.instance.addMonitor = true;
+    }
 
     // make sure the form is closed with the application is closing
     void OnApplicationQuit()

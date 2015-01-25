@@ -57,8 +57,17 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     ovr_Initialize();
     HMD = ovrHmd_Create(0);
 
-    if (!HMD)                       { MessageBoxA(NULL,"Oculus Rift not detected.","", MB_OK); return(0); }
-    if (HMD->ProductName[0] == '\0')  MessageBoxA(NULL,"Rift detected, display not enabled.", "", MB_OK);
+	if (!HMD)
+	{
+
+		// If we didn't detect an Hmd, create a simulated one for debugging.
+		HMD = ovrHmd_CreateDebug(ovrHmd_DK2);
+		if (!HMD)
+		{   // Failed Hmd creation.
+			return 1;
+		}
+	}
+	if (HMD->ProductName[0] == '\0')  MessageBoxA(NULL, "Rift detected, display not enabled.", "", MB_OK);
 
     // Setup Window and Graphics - use window frame if relying on Oculus driver
     bool windowed = (HMD->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;    

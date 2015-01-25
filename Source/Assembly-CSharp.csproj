@@ -63,6 +63,7 @@
      <Compile Include="Assets\OVR\Scripts\Util\OVRUGUI.cs" />
      <Compile Include="Assets\OVR\Scripts\Util\OVRVisionGuide.cs" />
      <Compile Include="Assets\Scripts\ExternalForm.cs" />
+     <Compile Include="Assets\Scripts\MonitorController.cs" />
      <Compile Include="Assets\Scripts\OculusSimulator.cs" />
      <Compile Include="Assets\Scripts\Reticle.cs" />
      <Compile Include="Assets\Scripts\User32.cs" />

@@ -8,55 +8,35 @@ using System.Runtime.InteropServices;
 using System.IO;
 
 public class monitor : MonoBehaviour {
-
-    // streaming way once we figure out how to do it
-    /*
-    public WWW wwwData;
-    public string url = "http://localhost:8080/desktop";
-    private MovieTexture m;
-    void Start()
-    {
-        wwwData = new WWW(url);
-        m = wwwData.movie;
-        renderer.material.shader = Shader.Find("Unlit/Texture");
-
-    }
-    void Update()
-    {
-        renderer.material.mainTexture = m as MovieTexture;
-        // audio.clip = m.audioClip;
-        if (!m.isPlaying)
-        {
-            m.Play();
-            //audio.Play();
-        }
-    }
-     */
-
     
     Texture2D tex;
     Rectangle screenSize;
     Bitmap target;
     System.IO.MemoryStream ms;
     Vector3 scale;
+    public int monitorNumber;
 
 	// Use this for initialization
 	void Awake () {
 
         UnityEngine.Application.runInBackground = true;
 
+        int scaleCubeSize = 250;
+
         screenSize = System.Windows.Forms.Screen.PrimaryScreen.Bounds;
-        tex = new Texture2D(screenSize.Width, screenSize.Height, TextureFormat.ARGB32, false);
         target = new Bitmap(screenSize.Width, screenSize.Height, PixelFormat.Format24bppRgb);
+        tex = new Texture2D(screenSize.Width, screenSize.Height, TextureFormat.ARGB32, false);
         scale = new Vector3(screenSize.Width, screenSize.Height, 0);
-        transform.localScale += scale/250;
+
+        transform.localScale += scale/scaleCubeSize;
         target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
         
 		ms = new System.IO.MemoryStream(1024);
+
 		target.Save (ms, ImageFormat.Png);
 
         // to test the quality of the screen grab. 
-        //target.Save("f:\\desktopTest.png", ImageFormat.Png);
+        target.Save("e:\\desktopTest.png", ImageFormat.Png);
 		ms.Seek (0, SeekOrigin.Begin);
 		
 		tex.LoadImage (ms.ToArray ());
@@ -64,10 +44,11 @@ public class monitor : MonoBehaviour {
 		renderer.material.mainTexture = tex;
 
         renderer.material.mainTexture.anisoLevel = 9;
-
+        renderer.material.mainTexture.filterMode = FilterMode.Trilinear;
+        renderer.material.mainTexture.mipMapBias = -10.0f;
         renderer.material.shader = Shader.Find("Unlit/Texture");
 
-       
+        monitorNumber = MonitorController.instance.monitorCount;
 	}
 	
 	// Update is called once per frame
@@ -75,11 +56,11 @@ public class monitor : MonoBehaviour {
     {
 
         target = Capture(screenSize.X, screenSize.Y, screenSize.Width, screenSize.Height, target);
-        using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(target))
-            target.Save(ms, ImageFormat.Png);
+        target.Save(ms, ImageFormat.Png);
         ms.Seek(0, SeekOrigin.Begin);
         tex.LoadImage(ms.ToArray());
         renderer.material.mainTexture = tex;
+
     }
 
     Bitmap Capture(int x, int y, int width, int height, Bitmap target)
