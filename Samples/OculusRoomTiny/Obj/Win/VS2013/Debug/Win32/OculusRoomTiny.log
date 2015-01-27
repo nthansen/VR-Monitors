@@ -1,0 +1,14 @@
+﻿Build started 1/27/2015 3:06:16 PM.
+     1>Project "C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\OculusRoomTiny.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../../../../../LibOVR/Include /I../../../../../LibOVR/Src /Z7 /nologo /W4 /WX- /MP /Od /Oy- /D OVR_BUILD_DEBUG /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Obj/Win/VS2013/Debug/Win32/" /Fd"C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Obj/Win/VS2013/Debug/Win32/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\..\..\Win32_RoomTiny_Main.cpp
+         Win32_RoomTiny_Main.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Bin/Win/VS2013/Debug/Win32/OculusRoomTiny.exe" /INCREMENTAL /NOLOGO /LIBPATH:../../../../../LibOVR/Lib/Win32/VS2013/ ws2_32.lib Dbghelp.lib libovrd.lib dxgi.lib dxguid.lib d3d10.lib d3d11.lib d3dcompiler.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Bin/Win/VS2013/Debug/Win32/OculusRoomTiny.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Bin/Win/VS2013/Debug/Win32/OculusRoomTiny.lib" /MACHINE:X86 "C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Obj/Win/VS2013/Debug/Win32/Win32_RoomTiny_Main.obj"
+         LINK : C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Bin/Win/VS2013/Debug/Win32/OculusRoomTiny.exe not found or not built by the last incremental link; performing full link
+         OculusRoomTiny.vcxproj -> C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\../../../Bin/Win/VS2013/Debug/Win32/OculusRoomTiny.exe
+     1>Done Building Project "C:\VR-Monitors\Samples\OculusRoomTiny\Projects\Win\VS2013\OculusRoomTiny.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.99

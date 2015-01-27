@@ -1,0 +1,16 @@
+﻿Build started 1/27/2015 3:06:10 PM.
+     1>Project "C:\VR-Monitors\Tools\ShaderReflector\ShaderReflector\ShaderReflector_VS2013.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I../../../LibOVR/Include /I../../../LibOVR/Src /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"ShaderReflector\Debug\\" /Fd"ShaderReflector\Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ShaderReflector.cpp stdafx.cpp
+         stdafx.cpp
+         ShaderReflector.cpp
+         Generating Code...
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\VR-Monitors\Tools\ShaderReflector\ShaderReflector\Debug\..\..\..\..\LibOVR\Src\CAPI\D3D1X\Shaders\ShaderReflector.exe" /INCREMENTAL /NOLOGO /LIBPATH:"D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\/Lib/x86" dxgi.lib dxguid.lib d3d11.lib d3dcompiler.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\VR-Monitors\Tools\ShaderReflector\ShaderReflector\Debug\..\..\..\..\LibOVR\Src\CAPI\D3D1X\Shaders\ShaderReflector.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\VR-Monitors\Tools\ShaderReflector\ShaderReflector\Debug\..\..\..\..\LibOVR\Src\CAPI\D3D1X\Shaders\ShaderReflector.lib" /MACHINE:X86 ShaderReflector\Debug\ShaderReflector.obj
+         ShaderReflector\Debug\stdafx.obj
+         ShaderReflector_VS2013.vcxproj -> C:\VR-Monitors\Tools\ShaderReflector\ShaderReflector\Debug\..\..\..\..\LibOVR\Src\CAPI\D3D1X\Shaders\ShaderReflector.exe
+     1>Done Building Project "C:\VR-Monitors\Tools\ShaderReflector\ShaderReflector\ShaderReflector_VS2013.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.48
