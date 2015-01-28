@@ -166,9 +166,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
             bool          clearEyeImage  = true;
             bool          updateEyeImage = true;
 
-            // Handle key toggles for half-frame rendering, buffer resolution, etc.
-            ExampleFeatures2(eye, &useBuffer, &useEyePose, &useYaw, &clearEyeImage, &updateEyeImage);
-
             if (clearEyeImage)
                 DX11.ClearAndSetRenderTarget(useBuffer->TexRtv,
                                              pEyeDepthBuffer[eye], Recti(EyeRenderViewport[eye]));
