@@ -19,22 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="model.cpp" />
-    <ClCompile Include="Win32_DX11AppUtil.cpp" />
-    <ClCompile Include="Win32_RoomTiny_Main.cpp" />
+    <ClCompile Include="source\model.cpp" />
+    <ClCompile Include="source\Win32_DX11AppUtil.cpp" />
+    <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="model.h" />
-    <ClInclude Include="scene.h" />
-    <ClInclude Include="Win32_DX11AppUtil.h" />
-    <ClInclude Include="Win32_RoomTiny_AppRender.h" />
-    <ClInclude Include="Win32_RoomTiny_ExampleFeatures.h" />
+    <ClInclude Include="source\model.h" />
+    <ClInclude Include="source\scene.h" />
+    <ClInclude Include="source\Win32_DX11AppUtil.h" />
+    <ClInclude Include="source\Win32_RoomTiny_AppRender.h" />
+    <ClInclude Include="source\Win32_RoomTiny_ExampleFeatures.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{394FF596-A90B-4C95-888B-B743834ED15B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>OculusRoomTiny</RootNamespace>
-    <ProjectName>OculusRoomTiny</ProjectName>
+    <RootNamespace>VR-Monitors</RootNamespace>
+    <ProjectName>VR-Monitors</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -81,11 +81,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IntDir>Obj/Win/VS2013/$(Configuration)/$(PlatformName)/</IntDir>
-    <OutDir>Bin/Win/VS2013/$(Configuration)/$(PlatformName)/</OutDir>
+    <IntDir>Obj/$(Configuration)/$(PlatformName)/</IntDir>
+    <OutDir>Bin/$(Configuration)/$(PlatformName)/</OutDir>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);</LibraryPath>
-    <TargetName>OculusRoomTiny</TargetName>
+    <TargetName>VR-Monitors</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

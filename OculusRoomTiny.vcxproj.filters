@@ -1,15 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="Win32_DX11AppUtil.h" />
-    <ClInclude Include="Win32_RoomTiny_AppRender.h" />
-    <ClInclude Include="Win32_RoomTiny_ExampleFeatures.h" />
-    <ClInclude Include="model.h" />
-    <ClInclude Include="scene.h" />
+    <ClInclude Include="source\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Win32_DX11AppUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Win32_RoomTiny_AppRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Win32_RoomTiny_ExampleFeatures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Win32_RoomTiny_Main.cpp" />
-    <ClCompile Include="model.cpp" />
-    <ClCompile Include="Win32_DX11AppUtil.cpp" />
+    <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
+    <ClCompile Include="source\Win32_DX11AppUtil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{23b97ff3-4531-4789-bf47-bf1184efe376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{974bf83c-60ee-4998-a25e-e1b173ad3752}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
