@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\scene.cpp" />
     <ClCompile Include="source\model.cpp" />
     <ClCompile Include="source\Win32_DX11AppUtil.cpp" />
     <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
