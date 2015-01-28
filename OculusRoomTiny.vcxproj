@@ -28,7 +28,6 @@
     <ClInclude Include="source\model.h" />
     <ClInclude Include="source\scene.h" />
     <ClInclude Include="source\Win32_DX11AppUtil.h" />
-    <ClInclude Include="source\Win32_RoomTiny_AppRender.h" />
     <ClInclude Include="source\Win32_RoomTiny_ExampleFeatures.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

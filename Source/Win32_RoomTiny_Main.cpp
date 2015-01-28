@@ -28,19 +28,20 @@ limitations under the License.
 // Choose whether the SDK performs rendering/distortion, or the application.
 #define SDK_RENDER 1
 
-#include "Win32_DX11AppUtil.h"         // Include Non-SDK supporting utilities
+#include "Win32_DX11AppUtil.h"			// Include Non-SDK supporting utilities
 #include "scene.h"
-#include "OVR_CAPI.h"                  // Include the OculusVR SDK
+#include "OVR_CAPI.h"					// Include the OculusVR SDK
 
-ovrHmd           HMD;                  // The handle of the headset
-ovrEyeRenderDesc EyeRenderDesc[2];     // Description of the VR.
-ovrRecti         EyeRenderViewport[2]; // Useful to remember when varying resolution
-ImageBuffer    * pEyeRenderTexture[2]; // Where the eye buffers will be rendered
-ImageBuffer    * pEyeDepthBuffer[2];   // For the eye buffers to use when rendered
-ovrPosef         EyeRenderPose[2];     // Useful to remember where the rendered eye originated
-float            YawAtRender[2];       // Useful to remember where the rendered eye originated
-float            Yaw(3.141592f);       // Horizontal rotation of the player
-Vector3f         Pos(0.0f,1.6f,-5.0f); // Position of player
+ovrHmd           HMD;					// The handle of the headset
+ovrEyeRenderDesc EyeRenderDesc[2];		// Description of the VR.
+ovrRecti         EyeRenderViewport[2];	// Useful to remember when varying resolution
+ImageBuffer    * pEyeRenderTexture[2];	// Where the eye buffers will be rendered
+ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
+ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
+float            YawAtRender[2];		// Useful to remember where the rendered eye originated
+float            Yaw(3.141592f);		// Horizontal rotation of the player
+Vector3f         Pos(0.0f,1.6f,-5.0f);	// Position of player
+bool			 EmulateOculus;			// Eventually use for a key to simulate the oculus 
 
 #include "Win32_RoomTiny_ExampleFeatures.h" // Include extra options to show some simple operations
 
@@ -57,7 +58,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
     HMD = ovrHmd_Create(0);
-
+	
 	if (!HMD)
 	{
 
@@ -135,20 +136,23 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
         ovrHmd_BeginFrameTiming(HMD, 0);
     #endif
 
-        // Handle key toggles for re-centering, meshes, FOV, etc.
+        // Handle key toggles for re-centering
         ExampleFeatures1(&speed, &timesToRenderScene, useHmdToEyeViewOffset);
 
         // Keyboard inputs to adjust player orientation
         if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
         if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
+		if (DX11.Key[VK_UP])	Pos.y += 0.01f;
+		if (DX11.Key[VK_DOWN])	Pos.y -= 0.01f;
 
         // Keyboard inputs to adjust player position
-        if (DX11.Key['W']||DX11.Key[VK_UP])   Pos+=Matrix4f::RotationY(Yaw).Transform(Vector3f(0,0,-speed*0.05f));
-        if (DX11.Key['S']||DX11.Key[VK_DOWN]) Pos+=Matrix4f::RotationY(Yaw).Transform(Vector3f(0,0,+speed*0.05f));
+        if (DX11.Key['W'])   Pos+=Matrix4f::RotationY(Yaw).Transform(Vector3f(0,0,-speed*0.05f));
+        if (DX11.Key['S']) Pos+=Matrix4f::RotationY(Yaw).Transform(Vector3f(0,0,+speed*0.05f));
         if (DX11.Key['D'])                    Pos+=Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f,0,0));
         if (DX11.Key['A'])                    Pos+=Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f,0,0));
-        Pos.y = ovrHmd_GetFloat(HMD, OVR_KEY_EYE_HEIGHT, Pos.y);
-  
+
+		Pos.y = ovrHmd_GetFloat(HMD, OVR_KEY_EYE_HEIGHT, Pos.y);
+
         // Animate the cube
         if (speed)
             roomScene.Models[0]->Pos = Vector3f(9*sin(0.01f*clock),3,9*cos(0.01f*clock));
