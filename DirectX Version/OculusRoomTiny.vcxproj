@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\desktop.cpp" />
     <ClCompile Include="source\scene.cpp" />
     <ClCompile Include="source\model.cpp" />
     <ClCompile Include="source\Win32_DX11AppUtil.cpp" />
     <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\desktop.h" />
     <ClInclude Include="source\model.h" />
     <ClInclude Include="source\scene.h" />
     <ClInclude Include="source\Win32_DX11AppUtil.h" />

@@ -10,6 +10,9 @@
     <ClInclude Include="source\Win32_DX11AppUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\desktop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
@@ -20,6 +23,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\desktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
