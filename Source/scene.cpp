@@ -53,6 +53,9 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	m->AddSolidColorBox(0, 0, 0, +1.0f, +1.0f, 1.0f, Model::Color(64, 64, 64));
 	m->AllocateBuffers(); Add(m);
 
+	m = new Model(Vector3f(0, 0, 0), generated_texture[1]);
+	m->AddSolidColorBox(0, 0, 0, +2.0f, +2.0f, 0.0f, Model::Color(200, 200, 200));
+	m->AllocateBuffers(); Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]);  // Walls
 	m->AddSolidColorBox(-10.1f, 0.0f, -20.0f, -10.0f, 4.0f, 20.0f, Model::Color(128, 128, 128)); // Left Wall
