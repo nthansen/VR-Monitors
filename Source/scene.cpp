@@ -27,24 +27,32 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	static Model::Color tex_pixels[4][256 * 256];
 	ShaderFill * generated_texture[4];
 
+	// this is what makes the checkered floors and walls textures 
 	for (int k = 0; k<4; k++)
 	{
 		for (int j = 0; j < 256; j++)
 		for (int i = 0; i < 256; i++)
 		{
+			// these all alternate back and forth between colors giving them the checkered textures
 			if (k == 0) tex_pixels[0][j * 256 + i] = (((i >> 7) ^ (j >> 7)) & 1) ? Model::Color(180, 180, 180, 255) : Model::Color(80, 80, 80, 255);// floor
 			if (k == 1) tex_pixels[1][j * 256 + i] = (((j / 4 & 15) == 0) || (((i / 4 & 15) == 0) && ((((i / 4 & 31) == 0) ^ ((j / 4 >> 4) & 1)) == 0))) ?
 				Model::Color(60, 60, 60, 255) : Model::Color(180, 180, 180, 255); //wall
 			if (k == 2) tex_pixels[2][j * 256 + i] = (i / 4 == 0 || j / 4 == 0) ? Model::Color(80, 80, 80, 255) : Model::Color(180, 180, 180, 255);// ceiling
 			if (k == 3) tex_pixels[3][j * 256 + i] = Model::Color(128, 128, 128, 255);// blank
 		}
+		// load the finished texture pixels into the image buffer
 		ImageBuffer * t = new ImageBuffer(false, false, Sizei(256, 256), 8, (unsigned char *)tex_pixels[k]);
+		// then create these textures into shaders
 		generated_texture[k] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 	}
 	// Construct geometry
+	
+	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
+
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[2]);  // Moving box
 	m->AddSolidColorBox(0, 0, 0, +1.0f, +1.0f, 1.0f, Model::Color(64, 64, 64));
 	m->AllocateBuffers(); Add(m);
+
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]);  // Walls
 	m->AddSolidColorBox(-10.1f, 0.0f, -20.0f, -10.0f, 4.0f, 20.0f, Model::Color(128, 128, 128)); // Left Wall
