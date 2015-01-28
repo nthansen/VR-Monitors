@@ -10,9 +10,6 @@
     <ClInclude Include="source\Win32_DX11AppUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Win32_RoomTiny_ExampleFeatures.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
