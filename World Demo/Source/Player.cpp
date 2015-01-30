@@ -1,25 +1,3 @@
-/************************************************************************************
-
-Filename    :   Player.cpp
-Content     :   Player location and hit-testing logic source
-Created     :   October 4, 2012
-
-Copyright   :   Copyright 2012 Oculus, Inc. All Rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-*************************************************************************************/
-
 #include "Player.h"
 #include <Kernel/OVR_Alg.h>
 
@@ -28,7 +6,7 @@ Player::Player() :
     UserEyeHeight(1.76f - 0.15f), // 1.76 meters height (ave US male, Wikipedia), less 15 centimeters (TomF's top-of-head-to-eye distance).
     HeightScale(1.0f),
     BodyPos(7.7f, 1.76f - 0.15f, -1.0f),
-    BodyYaw(YawInitial + 1.6f),
+    BodyYaw(YawInitial + 1.6f),	// so then we are facing the objects we create
     HeadPose(),
     MoveForward(0),
     MoveBack(0),

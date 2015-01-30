@@ -693,7 +693,6 @@ void OculusWorldDemoApp::OnIdle()
     // Update pose based on frame!
     ThePlayer.HeadPose = trackState.HeadPose.ThePose;
     // Movement/rotation with the gamepad.
-    ThePlayer.BodyYaw -= ThePlayer.GamepadRotate.x * dt;
     ThePlayer.HandleMovement(dt, &CollisionModels, &GroundCollisionModels, ShiftDown);
 
 

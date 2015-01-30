@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="CommonSrc">
+      <UniqueIdentifier>{ba6e9e50-0655-4f12-a136-6d2a06015925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonSrc\Platform">
+      <UniqueIdentifier>{16e20d8b-eff7-454c-be85-02037c399e97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonSrc\Render">
+      <UniqueIdentifier>{1b6d51ae-a405-4f3d-be93-41a50db4f328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CommonSrc\Util">
+      <UniqueIdentifier>{7fda3cf5-3371-45bc-b3b6-3b0424b46d93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7e1eeb6d-b377-49fa-93a2-f6e571fba6de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{b8918a66-759a-44a9-acdc-e76638ab70b2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Assets\CommonSrc\Platform\Platform.cpp">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Platform\Win32_Platform.cpp">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_Device.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_D3D1X_Device.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_D3D10_Device.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_D3D11_Device.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_LoadTextureTGA.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_LoadTextureDDS.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_XmlSceneLoader.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Platform\Win32_Gamepad.cpp">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\3rdParty\TinyXml\tinyxml2.cpp" />
+    <ClCompile Include="Assets\CommonSrc\Render\Render_GL_Win32_Device.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Render\Render_GL_Device.cpp">
+      <Filter>CommonSrc\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Util\OptionMenu.cpp">
+      <Filter>CommonSrc\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Util\RenderProfiler.cpp">
+      <Filter>CommonSrc\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Desktop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\User.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\VR-MonitorsScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Assets\CommonSrc\Platform\Win32_Platform.h">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Platform\Platform.h">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Platform\Platform_Default.h">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_Font.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_Device.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_D3D1X_Device.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_D3D10_Device.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_D3D11_Device.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_XmlSceneLoader.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Platform\Gamepad.h">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Platform\Win32_Gamepad.h">
+      <Filter>CommonSrc\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_GL_Win32_Device.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Render\Render_GL_Device.h">
+      <Filter>CommonSrc\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Util\RenderProfiler.h">
+      <Filter>CommonSrc\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Util\OptionMenu.h">
+      <Filter>CommonSrc\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Desktop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\User.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\VR-MonitorsScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

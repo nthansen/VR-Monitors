@@ -15,103 +15,100 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assets\CommonSrc\Platform\Platform.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Platform\Platform.cpp">
       <Filter>CommonSrc\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Platform\Win32_Platform.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Platform\Win32_Platform.cpp">
       <Filter>CommonSrc\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Render\Render_Device.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_Device.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Render\Render_D3D1X_Device.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_D3D1X_Device.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Render\Render_D3D10_Device.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_D3D10_Device.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
     <ClCompile Include="source\OculusWorldDemo.cpp" />
-    <ClCompile Include="Assets\CommonSrc\Render\Render_D3D11_Device.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_D3D11_Device.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Render\Render_LoadTextureTGA.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_LoadTextureTGA.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
     <ClCompile Include="source\Player.cpp" />
-    <ClCompile Include="Assets\CommonSrc\Render\Render_LoadTextureDDS.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_LoadTextureDDS.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Render\Render_XmlSceneLoader.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_XmlSceneLoader.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Platform\Win32_Gamepad.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Platform\Win32_Gamepad.cpp">
       <Filter>CommonSrc\Platform</Filter>
     </ClCompile>
     <ClCompile Include="source\OculusWorldDemo_Scene.cpp" />
-    <ClCompile Include="Assets\3rdParty\TinyXml\tinyxml2.cpp" />
-    <ClCompile Include="Assets\CommonSrc\Render\Render_GL_Win32_Device.cpp">
+    <ClCompile Include="..\Assets\3rdParty\TinyXml\tinyxml2.cpp" />
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_GL_Win32_Device.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Render\Render_GL_Device.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Render\Render_GL_Device.cpp">
       <Filter>CommonSrc\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Util\OptionMenu.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Util\OptionMenu.cpp">
       <Filter>CommonSrc\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Assets\CommonSrc\Util\RenderProfiler.cpp">
+    <ClCompile Include="..\Assets\CommonSrc\Util\RenderProfiler.cpp">
       <Filter>CommonSrc\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Assets\CommonSrc\Platform\Win32_Platform.h">
+    <ClInclude Include="..\Assets\CommonSrc\Platform\Win32_Platform.h">
       <Filter>CommonSrc\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Platform\Platform.h">
+    <ClInclude Include="..\Assets\CommonSrc\Platform\Platform.h">
       <Filter>CommonSrc\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Platform\Platform_Default.h">
+    <ClInclude Include="..\Assets\CommonSrc\Platform\Platform_Default.h">
       <Filter>CommonSrc\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Render\Render_Font.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_Font.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Render\Render_Device.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_Device.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Render\Render_D3D1X_Device.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_D3D1X_Device.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Render\Render_D3D10_Device.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_D3D10_Device.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Render\Render_D3D11_Device.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_D3D11_Device.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Render\Render_XmlSceneLoader.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_XmlSceneLoader.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Platform\Gamepad.h">
+    <ClInclude Include="..\Assets\CommonSrc\Platform\Gamepad.h">
       <Filter>CommonSrc\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Platform\Win32_Gamepad.h">
+    <ClInclude Include="..\Assets\CommonSrc\Platform\Win32_Gamepad.h">
       <Filter>CommonSrc\Platform</Filter>
     </ClInclude>
     <ClInclude Include="source\OculusWorldDemo.h" />
     <ClInclude Include="source\Player.h" />
-    <ClInclude Include="Assets\CommonSrc\Render\Render_GL_Win32_Device.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_GL_Win32_Device.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Render\Render_GL_Device.h">
+    <ClInclude Include="..\Assets\CommonSrc\Render\Render_GL_Device.h">
       <Filter>CommonSrc\Render</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Util\RenderProfiler.h">
+    <ClInclude Include="..\Assets\CommonSrc\Util\RenderProfiler.h">
       <Filter>CommonSrc\Util</Filter>
     </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Util\OptionMenu.h">
+    <ClInclude Include="..\Assets\CommonSrc\Util\OptionMenu.h">
       <Filter>CommonSrc\Util</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="source\OculusWorldDemo.rc" />
   </ItemGroup>
 </Project>

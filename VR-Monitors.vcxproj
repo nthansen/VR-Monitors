@@ -22,7 +22,7 @@
     <ProjectGuid>{CA4E4127-1BAD-447C-BFF9-5AF940EEC376}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OculusWorldDemo</RootNamespace>
-    <ProjectName>OculusWorldDemo</ProjectName>
+    <ProjectName>VR-Monitors</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -204,9 +204,10 @@
     <ClCompile Include="Assets\CommonSrc\Render\Render_XmlSceneLoader.cpp" />
     <ClCompile Include="Assets\CommonSrc\Util\OptionMenu.cpp" />
     <ClCompile Include="Assets\CommonSrc\Util\RenderProfiler.cpp" />
-    <ClCompile Include="Source\OculusWorldDemo.cpp" />
-    <ClCompile Include="Source\OculusWorldDemo_Scene.cpp" />
-    <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\Desktop.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="Source\User.cpp" />
+    <ClCompile Include="Source\VR-MonitorsScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assets\CommonSrc\Platform\Gamepad.h" />
@@ -224,11 +225,9 @@
     <ClInclude Include="Assets\CommonSrc\Util\OptionMenu.h" />
     <ClInclude Include="Assets\CommonSrc\Util\RenderProfiler.h" />
     <ClInclude Include="Assets\CommonSrc\Render\Render_XmlSceneLoader.h" />
-    <ClInclude Include="Source\OculusWorldDemo.h" />
-    <ClInclude Include="Source\Player.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Source\OculusWorldDemo.rc" />
+    <ClInclude Include="source\Desktop.h" />
+    <ClInclude Include="Source\User.h" />
+    <ClInclude Include="Source\VR-MonitorsScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

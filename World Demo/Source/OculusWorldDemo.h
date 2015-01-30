@@ -27,12 +27,12 @@ limitations under the License.
 
 #include "OVR_Kernel.h"
 
-#include "../Assets/CommonSrc/Platform/Platform_Default.h"
-#include "../Assets/CommonSrc/Render/Render_Device.h"
-#include "../Assets/CommonSrc/Render/Render_XmlSceneLoader.h"
-#include "../Assets/CommonSrc/Platform/Gamepad.h"
-#include "../Assets/CommonSrc/Util/OptionMenu.h"
-#include "../Assets/CommonSrc/Util/RenderProfiler.h"
+#include "../../Assets/CommonSrc/Platform/Platform_Default.h"
+#include "../../Assets/CommonSrc/Render/Render_Device.h"
+#include "../../Assets/CommonSrc/Render/Render_XmlSceneLoader.h"
+#include "../../Assets/CommonSrc/Platform/Gamepad.h"
+#include "../../Assets/CommonSrc/Util/OptionMenu.h"
+#include "../../Assets/CommonSrc/Util/RenderProfiler.h"
 
 #include "Util/Util_Render_Stereo.h"
 using namespace OVR::Util::Render;

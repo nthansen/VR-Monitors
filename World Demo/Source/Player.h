@@ -26,7 +26,7 @@ limitations under the License.
 
 #include "OVR_Kernel.h"
 #include "Kernel/OVR_KeyCodes.h"
-#include "../Assets/CommonSrc/Render/Render_Device.h"
+#include "../../Assets/CommonSrc/Render/Render_Device.h"
 
 using namespace OVR;
 using namespace OVR::Render;
@@ -87,7 +87,6 @@ public:
     uint8_t     MoveBack;
     uint8_t     MoveLeft;
     uint8_t     MoveRight;
-    Vector3f    GamepadMove, GamepadRotate;
     bool        bMotionRelativeToBody;
 };
 
