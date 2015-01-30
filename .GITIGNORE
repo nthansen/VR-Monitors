@@ -1,2 +1,6 @@
-Bin/*
-Obj/*
+Bin\*
+Release\*
+Obj\*
+*.sdf
+*.suo
+*.sln
