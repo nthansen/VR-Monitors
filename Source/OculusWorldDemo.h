@@ -142,7 +142,6 @@ public:
     Model*      CreateModel(Vector3f pos, struct SlabModel* sm);
     Model*      CreateBoundingModel(CollisionModel &cm);
     void        ChangeDisplay ( bool bBackToWindowed, bool bNextFullscreen, bool bFullWindowDebugging );
-    void        GamepadStateChanged(const GamepadState& pad);    
 
     // Processes DeviceNotificationStatus queue to handles plug/unplug.
     void         ProcessDeviceNotificationQueue();
@@ -157,7 +156,6 @@ public:
     void MirrorSettingChange(OptionVar* = 0)
     { HmdSettingsChanged = true; NotificationTimeout = ovr_GetTimeInSeconds() + 10.0f;}
     
-    void BlockShowChange(OptionVar* = 0)    { BlocksCenter = ThePlayer.BodyPos; }
     void EyeHeightChange(OptionVar* = 0)
     {
         ThePlayer.HeightScale = ScaleAffectsEyeHeight ? PositionTrackingScale : 1.0f;
@@ -169,7 +167,6 @@ public:
     void MultisampleChange(OptionVar* = 0);
     void CenterPupilDepthChange(OptionVar* = 0);
     void DistortionClearColorChange(OptionVar* = 0);
-    void ToggleLogging(OptionVar* = 0);
 
     void ResetHmdPose(OptionVar* = 0);
 
@@ -247,8 +244,6 @@ protected:
     bool                HavePositionTracker;
     bool                HaveHMDConnected;
     
-    GamepadState        LastGamepadState;
-
     Player				ThePlayer;
     Matrix4f            View;
     Scene               MainScene;
@@ -311,36 +306,13 @@ protected:
     bool                ShiftDown;
     bool                CtrlDown;
 
-    // Logging
-    bool                IsLogging;
-
     // ***** Scene Rendering Modes
 
     enum SceneRenderMode
     {
-        Scene_World,
-		Scene_Cubes,
-		Scene_OculusCubes
+        Scene_World
     };
     SceneRenderMode    SceneMode;
-
-    enum GridDispayModeType
-    {
-        GridDisplay_None,
-        GridDisplay_GridOnly,
-        GridDisplay_GridAndScene
-    };
-    GridDispayModeType  GridDisplayMode;
-
-    // What type of grid to display.
-    enum GridModeType
-    {
-        Grid_Rendertarget4,
-        Grid_Rendertarget16,
-        Grid_Lens,
-        Grid_Last
-    };
-    GridModeType       GridMode;
 
     // What help screen we display, brought up by 'Spacebar'.
     enum TextScreen
@@ -353,10 +325,6 @@ protected:
         Text_Count
     };
     TextScreen          TextScreen;
-
-    // Whether we are displaying animated blocks and what type.
-    int                 BlocksShowType;
-    Vector3f            BlocksCenter;
 
 
     // User configurable options, brought up by 'Tab' key.

@@ -54,45 +54,6 @@ void OculusWorldDemoApp::InitMainFilePath()
     OVR_DEBUG_LOG(("Unable to find any version of %s. Do you have your working directory set right?", WORLDDEMO_ASSET_FILE));
 }
 
-// Creates a grid of cubes.
-void PopulateCubeFieldScene(Scene* scene, Fill* fill,
-                            int cubeCountX, int cubeCountY, int cubeCountZ, Vector3f offset,
-                            float cubeSpacing = 0.5f, float cubeSize = 0.1f)
-{    
-
-    Vector3f corner(-(((cubeCountX-1) * cubeSpacing) + cubeSize) * 0.5f,
-                    -(((cubeCountY-1) * cubeSpacing) + cubeSize) * 0.5f,
-                    -(((cubeCountZ-1) * cubeSpacing) + cubeSize) * 0.5f);                    
-    corner += offset;
-
-    Vector3f pos = corner;
-    
-    for (int i = 0; i < cubeCountX; i++)
-    {
-        // Create a new model for each 'plane' of cubes so we don't exceed
-        // the vert size limit.
-        Ptr<Model> model = *new Model();
-        scene->World.Add(model);
-
-        if (fill)
-            model->Fill = fill;
-
-        for (int j = 0; j < cubeCountY; j++)
-        {
-            for (int k = 0; k < cubeCountZ; k++)
-            {
-                model->AddBox(0xFFFFFFFF, pos, Vector3f(cubeSize, cubeSize, cubeSize));
-                pos.z += cubeSpacing;
-            }
-
-            pos.z = corner.z;
-            pos.y += cubeSpacing;
-        }
-
-        pos.y = corner.y;
-        pos.x += cubeSpacing;
-    }
-}
 
 Fill* CreateTextureFill(RenderDevice* prender, const String& filename)
 {
@@ -135,15 +96,6 @@ void OculusWorldDemoApp::PopulateScene(const char *fileName)
     String mainFilePathNoExtension = MainFilePath;
     mainFilePathNoExtension.StripExtension();
 
-
-	
-    float r = 0.01f;
-    Ptr<Model> purpleCubesModel = *new Model(Prim_Triangles);
-	for (int i = 0; i < 10; i++)
-		for (int j = 0; j < 10; j++)
-			for (int k = 0; k < 10; k++)
-	            purpleCubesModel->AddSolidColorBox(i*0.25f-1.25f-r,j*0.25f-1.25f-r,k*0.25f-1.25f-r,
-				                                   i*0.25f-1.25f+r,j*0.25f-1.25f+r,k*0.25f-1.25f+r,0xFF9F009F);
 }
 
 
@@ -214,35 +166,6 @@ void OculusWorldDemoApp::RenderGrid(ovrEyeType eye)
     int midY = 0;
     int limitX = 0;
     int limitY = 0;
-
-    switch ( GridMode )
-    {
-    case Grid_Rendertarget4:
-        lineStep = 4;
-        midX    = renderViewport.w / 2;
-        midY    = renderViewport.h / 2;
-        limitX  = renderViewport.w / 2;
-        limitY  = renderViewport.h / 2;
-        break;
-    case Grid_Rendertarget16:
-        lineStep = 16;
-        midX    = renderViewport.w / 2;
-        midY    = renderViewport.h / 2;
-        limitX  = renderViewport.w / 2;
-        limitY  = renderViewport.h / 2;
-        break;
-    case Grid_Lens:
-        {                           
-            lineStep = 48;
-            Vector2f rendertargetNDC = FovPort(EyeRenderDesc[eye].Fov).TanAngleToRendertargetNDC(Vector2f(0.0f));
-            midX    = (int)( ( rendertargetNDC.x * 0.5f + 0.5f ) * (float)renderViewport.w + 0.5f );
-            midY    = (int)( ( rendertargetNDC.y * 0.5f + 0.5f ) * (float)renderViewport.h + 0.5f );
-            limitX  = Alg::Max ( renderViewport.w - midX, midX );
-            limitY  = Alg::Max ( renderViewport.h - midY, midY );
-        }
-        break;
-    default: OVR_ASSERT ( false ); break;
-    }
 
     int spacerMask = (lineStep<<2)-1;
 

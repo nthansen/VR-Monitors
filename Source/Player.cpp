@@ -90,10 +90,6 @@ void Player::HandleMovement(double dt, Array<Ptr<CollisionModel> >* collisionMod
             controllerMove -= RightVector;
         }
     }
-    else if (GamepadMove.LengthSq() > 0)
-    {
-        controllerMove = GamepadMove;
-    }
     controllerMove = GetOrientation(bMotionRelativeToBody).Rotate(controllerMove);    
     controllerMove.y = 0; // Project to the horizontal plane
     if (controllerMove.LengthSq() > 0)
@@ -110,68 +106,12 @@ void Player::HandleMovement(double dt, Array<Ptr<CollisionModel> >* collisionMod
         orientationVector.Normalize();
         
     float   checkLengthForward = moveLength;
-    Planef  collisionPlaneForward;
-    bool    gotCollision = false;
 
-    for(unsigned int i = 0; i < collisionModels->GetSize(); ++i)
-    {
-        // Checks for collisions at model base level, which should prevent us from
-		// slipping under walls
-        if (collisionModels->At(i)->TestRay(BodyPos, orientationVector, checkLengthForward,
-				                            &collisionPlaneForward))
-        {
-            gotCollision = true;
-            break;
-        }
-    }
-
-    if (gotCollision)
-    {
-        // Project orientationVector onto the plane
-        Vector3f slideVector = orientationVector - collisionPlaneForward.N
-			* (orientationVector.Dot(collisionPlaneForward.N));
-
-        // Make sure we aren't in a corner
-        for(unsigned int j = 0; j < collisionModels->GetSize(); ++j)
-        {
-            if (collisionModels->At(j)->TestPoint(BodyPos - Vector3f(0.0f, RailHeight, 0.0f) +
-					                                (slideVector * (moveLength))) )
-            {
-                moveLength = 0;
-                break;
-            }
-        }
-        if (moveLength != 0)
-        {
-            orientationVector = slideVector;
-        }
-    }
     // Checks for collisions at foot level, which allows us to follow terrain
     orientationVector *= moveLength;
     BodyPos += orientationVector;
 
-    Planef collisionPlaneDown;
     float finalDistanceDown = GetScaledEyeHeight() + 10.0f;
-
-    // Only apply down if there is collision model (otherwise we get jitter).
-    if (groundCollisionModels->GetSize())
-    {
-        for(unsigned int i = 0; i < groundCollisionModels->GetSize(); ++i)
-        {
-            float checkLengthDown = GetScaledEyeHeight() + 10;
-            if (groundCollisionModels->At(i)->TestRay(BodyPos, Vector3f(0.0f, -1.0f, 0.0f),
-                checkLengthDown, &collisionPlaneDown))
-            {
-                finalDistanceDown = Alg::Min(finalDistanceDown, checkLengthDown);
-            }
-        }
-
-        // Maintain the minimum camera height
-        if (GetScaledEyeHeight() - finalDistanceDown < 1.0f)
-        {
-            BodyPos.y += GetScaledEyeHeight() - finalDistanceDown;
-        }
-    }
 
 }
 

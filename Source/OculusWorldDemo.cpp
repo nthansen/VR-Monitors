@@ -75,8 +75,6 @@ OculusWorldDemoApp::OculusWorldDemoApp() :
     HavePositionTracker(false),
     HaveHMDConnected(false),
 
-    LastGamepadState(),
-
     ThePlayer(),
     View(),
     MainScene(),
@@ -125,14 +123,9 @@ OculusWorldDemoApp::OculusWorldDemoApp() :
     DistortionClearBlue(0),
     ShiftDown(false),
     CtrlDown(false),
-    IsLogging(false),
 
     SceneMode(Scene_World),
-    GridDisplayMode(GridDisplay_None),
-    GridMode(Grid_Lens),
     TextScreen(Text_None),
-    BlocksShowType(0),
-    BlocksCenter(0.0f, 0.0f, 0.0f),
     Menu(),
     Profiler(),
     ExceptionHandler()
@@ -360,7 +353,7 @@ bool OculusWorldDemoApp::SetupWindowAndRendering(int argc, const char** argv)
     #endif
 
     StringBuffer title;
-    title.AppendFormat("Oculus World Demo %s : %s", graphics, Hmd->ProductName[0] ? Hmd->ProductName : "<unknown device>");
+    title.AppendFormat("VR-Monitors %s : %s", graphics, Hmd->ProductName[0] ? Hmd->ProductName : "<unknown device>");
     pPlatform->SetWindowTitle(title);
 
     if ((RenderParams.RenderAPIType == ovrRenderAPI_OpenGL) && !(Hmd->HmdCaps & ovrHmdCap_ExtendDesktop))
@@ -454,10 +447,7 @@ void OculusWorldDemoApp::PopulateOptionMenu()
     Menu.AddBool( "Timewarp.TimewarpEnabled 'O'",   &TimewarpEnabled).AddShortcutKey(Key_O).
     																SetNotify(this, &OWD::HmdSettingChange);
     Menu.AddBool( "Timewarp.Timewarp No-JIT",       &TimewarpNoJitEnabled).SetNotify(this, &OWD::HmdSettingChange);
-    Menu.AddBool( "Timewarp.FreezeEyeUpdate 'C'",   &FreezeEyeUpdate).AddShortcutKey(Key_C);
-    Menu.AddFloat("Timewarp.RenderIntervalSeconds", &TimewarpRenderIntervalInSeconds,   
-                                                    0.0001f, 1.00f, 0.0001f, "%.1f", 1.0f, &FormatTimewarp).
-                                                    AddShortcutUpKey(Key_J).AddShortcutDownKey(Key_U);
+
 
 #if defined(OVR_OS_WIN32) || defined(OVR_OS_WIN64)
     Menu.AddBool( "Timewarp.ComputeShaderEnabled",  &ComputeShaderEnabled).
@@ -478,7 +468,6 @@ void OculusWorldDemoApp::PopulateOptionMenu()
     Menu.AddBool("Body Relative Motion",&ThePlayer.bMotionRelativeToBody).AddShortcutKey(Key_E);    
     Menu.AddBool("Zero Head Movement",  &ForceZeroHeadMovement) .AddShortcutKey(Key_F7, ShortcutKey::Shift_RequireOn);
     Menu.AddBool("VSync 'V'",           &VsyncEnabled)          .AddShortcutKey(Key_V).SetNotify(this, &OWD::HmdSettingChange);
-    Menu.AddBool("Logging 'L'", &IsLogging).AddShortcutKey(Key_L).SetNotify(this, &OWD::ToggleLogging);
     Menu.AddTrigger("Recenter HMD pose 'R'").AddShortcutKey(Key_R).SetNotify(this, &OWD::ResetHmdPose);
     
     // Add DK2 options to menu only for that headset.
@@ -486,10 +475,6 @@ void OculusWorldDemoApp::PopulateOptionMenu()
     {
         Menu.AddBool("Low Persistence 'P'",     &IsLowPersistence).
                                                   AddShortcutKey(Key_P).SetNotify(this, &OWD::HmdSettingChange);
-        Menu.AddBool("Dynamic Prediction",      &DynamicPrediction).
-                                                  SetNotify(this, &OWD::HmdSettingChange);
-        Menu.AddBool("Display Sleep",           &DisplaySleep).
-                                                  AddShortcutKey(Key_Z).SetNotify(this, &OWD::HmdSettingChange);
         Menu.AddBool("Positional Tracking 'X'", &PositionTrackingEnabled).
                                                   AddShortcutKey(Key_X).SetNotify(this, &OWD::HmdSettingChange);
 		Menu.AddBool("Pixel Luminance Overdrive", &PixelLuminanceOverdrive).SetNotify(this, &OWD::HmdSettingChange);        
@@ -943,13 +928,6 @@ void OculusWorldDemoApp::OnIdle()
     HmdFrameTiming = ovrHmd_BeginFrame(Hmd, 0);
 
 
-    // Update gamepad.
-    GamepadState gamepadState;
-    if (GetPlatformCore()->GetGamepadManager()->GetGamepadState(0, &gamepadState))
-    {
-        GamepadStateChanged(gamepadState);
-    }
-
     ovrTrackingState trackState = ovrHmd_GetTrackingState(Hmd, HmdFrameTiming.ScanoutMidpointSeconds);
     HmdStatus = trackState.StatusFlags;
 
@@ -1244,18 +1222,7 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
     Matrix4f baseYaw       = Matrix4f::RotationY(ThePlayer.BodyYaw.Get());
 
 
-    if (GridDisplayMode != GridDisplay_GridOnly)
-    {
-        if (SceneMode != Scene_OculusCubes)
-        {
-            MainScene.Render(pRender, View);        
-        }
-    }   
-
-    if (GridDisplayMode != GridDisplay_None)
-    {
-        RenderGrid(eye);
-    }
+	MainScene.Render(pRender, View);        
 
 
     // *** 2D Text - Configure Orthographic rendering.
@@ -1476,18 +1443,6 @@ void OculusWorldDemoApp::DistortionClearColorChange(OptionVar*)
                          clearColor[(int)DistortionClearBlue], 4);
 }
 
-void OculusWorldDemoApp::ToggleLogging(OptionVar*)
-{
-    if (IsLogging)
-    {
-        ovrHmd_StartPerfLog(Hmd, "OWDLog.csv", 0);
-    }
-    else
-    {
-        ovrHmd_StopPerfLog(Hmd);
-    }
-}
-
 void OculusWorldDemoApp::ResetHmdPose(OptionVar* /* = 0 */)
 {
     ovrHmd_RecenterPose(Hmd);
@@ -1608,28 +1563,6 @@ void OculusWorldDemoApp::ChangeDisplay ( bool bBackToWindowed, bool bNextFullscr
     
     // Updates render target pointers & sizes.
     HmdSettingChangeFreeRTs();    
-}
-
-void OculusWorldDemoApp::GamepadStateChanged(const GamepadState& pad)
-{
-    if (pad.Buttons != 0)
-    {   // Dismiss Safety warning with any key.
-        ovrHmd_DismissHSWDisplay(Hmd);
-    }
-
-    ThePlayer.GamepadMove   = Vector3f(pad.LX * pad.LX * (pad.LX > 0 ? 1 : -1),
-                             0,
-                             pad.LY * pad.LY * (pad.LY > 0 ? -1 : 1));
-    ThePlayer.GamepadRotate = Vector3f(2 * pad.RX, -2 * pad.RY, 0);
-
-    uint32_t gamepadDeltas = (pad.Buttons ^ LastGamepadState.Buttons) & pad.Buttons;
-
-    if (gamepadDeltas)
-    {
-        Menu.OnGamepad(gamepadDeltas);
-    }
-
-    LastGamepadState = pad;
 }
 
 
