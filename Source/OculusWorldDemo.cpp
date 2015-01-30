@@ -109,9 +109,7 @@ OculusWorldDemoApp::OculusWorldDemoApp() :
     ForceZeroHeadMovement(false),
     VsyncEnabled(true),
     MultisampleEnabled(true),
-#if defined(OVR_OS_LINUX)
-    LinuxFullscreenOnDevice(false),
-#endif
+
     IsLowPersistence(true),
     DynamicPrediction(true),
     DisplaySleep(false),
@@ -291,82 +289,16 @@ bool OculusWorldDemoApp::SetupWindowAndRendering(int argc, const char** argv)
 
     // *** Initialize Rendering
 
-    #if defined(OVR_OS_MS)
-        const char* graphics = "d3d11";  //Default to DX11. Can be overridden below.
-    #else
-        const char* graphics = "GL";
-    #endif
+    const char* graphics = "d3d11";  //Default to DX11. Can be overridden below.
 
-    // Select renderer based on command line arguments.
-    // Example usage: App.exe -r d3d9 -fs
-    // Example usage: App.exe -r GL
-    // Example usage: App.exe -r GL -GLVersion 4.1 -GLCoreProfile -DebugEnabled 
-    for(int i = 1; i < argc; i++)
-    {
-        const bool lastArg = (i == (argc - 1)); // False if there are any more arguments after this.
-        
-        if(!OVR_stricmp(argv[i], "-r") && !lastArg)  // Example: -r GL
-        {
-            graphics = argv[++i];
-        }
-        else if(!OVR_stricmp(argv[i], "-fs"))        // Example: -fs
-        {
-            RenderParams.Fullscreen = 1;
-        }
-        else if(!OVR_stricmp(argv[i], "-MultisampleDisabled")) // Example: -MultisampleDisabled
-        {
-            MultisampleEnabled = false;
-        }
-        else if(!OVR_stricmp(argv[i], "-DebugEnabled")) // Example: -DebugEnabled
-        {
-            RenderParams.DebugEnabled = true;
-        }
-        else if(!OVR_stricmp(argv[i], "-GLVersion") && !lastArg) // Example: -GLVersion 3.2
-        {
-            const char* version = argv[++i];
-            sscanf(version, "%d.%d", &RenderParams.GLMajorVersion, &RenderParams.GLMinorVersion);
-        }
-        else if(!OVR_stricmp(argv[i], "-GLCoreProfile")) // Example: -GLCoreProfile
-        {
-            RenderParams.GLCoreProfile = true;
-        }
-        else if(!OVR_stricmp(argv[i], "-GLCoreCompatibilityProfile")) // Example: -GLCompatibilityProfile
-        {
-            RenderParams.GLCompatibilityProfile = true;
-        }
-        else if(!OVR_stricmp(argv[i], "-GLForwardCompatibleProfile")) // Example: -GLForwardCompatibleProfile
-        {
-            RenderParams.GLForwardCompatibleProfile = true;
-        }
-    }
 
-    // Setup RenderParams.RenderAPIType
-    if (OVR_stricmp(graphics, "GL") == 0)
-        RenderParams.RenderAPIType = ovrRenderAPI_OpenGL;
-    #if defined(OVR_OS_MS)
-        else if (OVR_stricmp(graphics, "d3d9") == 0)
-            RenderParams.RenderAPIType = ovrRenderAPI_D3D9;
-        else if (OVR_stricmp(graphics, "d3d10") == 0)
-            RenderParams.RenderAPIType = ovrRenderAPI_D3D10;
-        else if (OVR_stricmp(graphics, "d3d11") == 0)
-            RenderParams.RenderAPIType = ovrRenderAPI_D3D11;
-    #endif
+
+    RenderParams.RenderAPIType = ovrRenderAPI_D3D11;
 
     StringBuffer title;
     title.AppendFormat("VR-Monitors %s : %s", graphics, Hmd->ProductName[0] ? Hmd->ProductName : "<unknown device>");
     pPlatform->SetWindowTitle(title);
 
-    if ((RenderParams.RenderAPIType == ovrRenderAPI_OpenGL) && !(Hmd->HmdCaps & ovrHmdCap_ExtendDesktop))
-        SupportsSrgb = false;
-
-    // Ideally we would use the created OpenGL context to determine multisamping support,
-    // but that creates something of a chicken-and-egg problem which is easier to solve in
-    // practice by the code below, as it's the only case where multisamping isn't supported
-    // in modern computers of interest to us.
-    #if defined(OVR_OS_MAC)
-        if (RenderParams.GLMajorVersion < 3)
-            SupportsMultisampling = false;
-    #endif
     
     // Enable multi-sampling by default.
     RenderParams.Display        = DisplayId(Hmd->DisplayDeviceName, Hmd->DisplayId);
