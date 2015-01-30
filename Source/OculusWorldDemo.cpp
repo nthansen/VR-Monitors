@@ -112,7 +112,6 @@ OculusWorldDemoApp::OculusWorldDemoApp() :
 
     IsLowPersistence(true),
     DynamicPrediction(true),
-    DisplaySleep(false),
     PositionTrackingEnabled(true),
 	PixelLuminanceOverdrive(true),
     HqAaDistortion(true),
@@ -813,11 +812,7 @@ void OculusWorldDemoApp::OnIdle()
 
         if(MultisampleEnabled && SupportsMultisampling)
         {
-            if (MonoscopicRender)
-            {
-                pRender->ResolveMsaa(MsaaRenderTargets[Rendertarget_Left].pTex, RenderTargets[Rendertarget_Left].pTex);
-            }
-            else if (RendertargetIsSharedByBothEyes)
+			if (RendertargetIsSharedByBothEyes)
             {
                 pRender->ResolveMsaa(MsaaRenderTargets[Rendertarget_BothEyes].pTex, RenderTargets[Rendertarget_BothEyes].pTex);
             }
@@ -1019,12 +1014,8 @@ static const char* HelpText1 =
     
 static const char* HelpText2 =        
     "R              \t250 Reset sensor orientation\n"
-    "G 			    \t250 Cycle grid overlay mode\n"
-    "-, +           \t250 Adjust eye height\n"
     "Esc            \t250 Cancel full-screen\n"
     "F4			    \t250 Multisampling toggle\n"    
-    "F9             \t250 Hardware full-screen (low latency)\n"
-    "F11            \t250 Faked full-screen (easier debugging)\n"
     "Ctrl+Q		    \t250 Quit";
 
 
@@ -1288,11 +1279,6 @@ void OculusWorldDemoApp::ChangeDisplay ( bool bBackToWindowed, bool bNextFullscr
             }
         }
 
-        // Always restore windowed mode before going to next screen, even if we were already fullscreen.
-#if defined(OVR_OS_LINUX)
-        LinuxFullscreenOnDevice = false;
-        HmdSettingsChanged = true;
-#endif
         pPlatform->SetFullscreen(RenderParams, Display_Window);
         if ( screenNumberToSwitchTo >= 0 )
         {
@@ -1301,14 +1287,6 @@ void OculusWorldDemoApp::ChangeDisplay ( bool bBackToWindowed, bool bNextFullscr
             pRender->SetParams(RenderParams);
             pPlatform->SetFullscreen(RenderParams, Display_Fullscreen);            
             
-#if defined(OVR_OS_LINUX)
-            DisplayId HMD (Hmd->DisplayDeviceName, Hmd->DisplayId);
-            if (pPlatform->GetDisplay(screenNumberToSwitchTo) == HMD)
-            {
-                LinuxFullscreenOnDevice = true;
-                HmdSettingsChanged = true;
-            }
-#endif
         }
     }
 

@@ -292,7 +292,6 @@ protected:
     // DK2 only:
     bool                IsLowPersistence;
     bool                DynamicPrediction;
-    bool                DisplaySleep;
     bool                PositionTrackingEnabled;
 	bool				PixelLuminanceOverdrive;
     bool                HqAaDistortion;
