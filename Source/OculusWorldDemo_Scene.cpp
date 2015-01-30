@@ -129,24 +129,12 @@ void OculusWorldDemoApp::PopulateScene(const char *fileName)
     MainScene.SetAmbient(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
     
     // Handy cube.
-    Ptr<Model> smallGreenCubeModel = *Model::CreateBox(Color(0, 255, 0, 255), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(0.004f, 0.004f, 0.004f));
-    SmallGreenCube.World.Add(smallGreenCubeModel);
+    Ptr<Model> smallGreenCubeModel = *Model::CreateBox(Color(0, 255, 0, 255), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(1.0f, 1.0f, 4.0f));
+    MainScene.World.Add(smallGreenCubeModel);
 
     String mainFilePathNoExtension = MainFilePath;
     mainFilePathNoExtension.StripExtension();
 
-
-    // 10x10x10 cubes.
-    Ptr<Fill> fillR = *CreateTextureFill(pRender, mainFilePathNoExtension + "_redCube.tga");
-    PopulateCubeFieldScene(&RedCubesScene, fillR.GetPtr(), 10, 10, 10, Vector3f(0.0f, 0.0f, 0.0f), 0.4f);
-
-    // 10x10x10 cubes.
-    Ptr<Fill> fillB = *CreateTextureFill(pRender, mainFilePathNoExtension + "_blueCube.tga");
-    PopulateCubeFieldScene(&BlueCubesScene, fillB.GetPtr(), 10, 10, 10, Vector3f(0.0f, 0.0f, 0.0f), 0.4f);
-
-	// Anna: OculusWorldDemo/Assets/Tuscany/Tuscany_OculusCube.tga file needs to be added    
-    Ptr<Fill> imageFill = *CreateTextureFill(pRender, mainFilePathNoExtension + "_OculusCube.tga");
-    PopulateCubeFieldScene(&OculusCubesScene, imageFill.GetPtr(), 11, 4, 35, Vector3f(0.0f, 0.0f, -6.0f), 0.5f);
 
 	
     float r = 0.01f;
@@ -195,109 +183,11 @@ void OculusWorldDemoApp::PopulatePreloadScene()
 void OculusWorldDemoApp::ClearScene()
 {
     MainScene.Clear();
-    SmallGreenCube.Clear();
 }
 
 
 //-------------------------------------------------------------------------------------
 // ***** Rendering Content
-
-
-void OculusWorldDemoApp::RenderAnimatedBlocks(ovrEyeType eye, double appTime)
-{
-    Matrix4f hmdToEyeViewOffset = Matrix4f::Translation(Vector3f(EyeRenderDesc[eye].HmdToEyeViewOffset));
-
-    switch (BlocksShowType)
-    {
-    case 0:
-        // No blocks;
-        break;
-
-    case 1:
-        {
-            // Horizontal circle around your head.
-            const int   numBlocks = 10;
-            const float radius = 1.0f;
-            Matrix4f    scaleUp = Matrix4f::Scaling(20.0f);
-            double      scaledTime = appTime * 0.1;
-            float       fracTime = (float)(scaledTime - floor(scaledTime));
-
-            for (int j = 0; j < 2; j++)
-            {
-                for (int i = 0; i < numBlocks; i++)
-                {
-                    float angle = (((float)i / numBlocks) + fracTime) * (MATH_FLOAT_PI * 2.0f);
-                    Vector3f pos;
-                    pos.x = BlocksCenter.x + radius * cosf(angle);
-                    pos.y = BlocksCenter.y;
-                    pos.z = BlocksCenter.z + radius * sinf(angle);
-                    if (j == 0)
-                    {
-                        pos.x = BlocksCenter.x - radius * cosf(angle);
-                        pos.y = BlocksCenter.y - 0.5f;
-                    }
-                    Matrix4f mat = Matrix4f::Translation(pos);
-                    SmallGreenCube.Render(pRender, hmdToEyeViewOffset * View * mat * scaleUp);
-                }
-            }
-        }
-        break;
-
-    case 2:
-        {
-            // Vertical circle around your head.
-            const int   numBlocks = 10;
-            const float radius = 1.0f;
-            Matrix4f    scaleUp = Matrix4f::Scaling(20.0f);
-            double      scaledTime = appTime * 0.1;
-            float       fracTime = (float)(scaledTime - floor(scaledTime));
-
-            for (int j = 0; j < 2; j++)
-            {
-                for (int i = 0; i < numBlocks; i++)
-                {
-                    float angle = (((float)i / numBlocks) + fracTime) * (MATH_FLOAT_PI * 2.0f);
-                    Vector3f pos;
-                    pos.x = BlocksCenter.x;
-                    pos.y = BlocksCenter.y + radius * cosf(angle);
-                    pos.z = BlocksCenter.z + radius * sinf(angle);
-                    if (j == 0)
-                    {
-                        pos.x = BlocksCenter.x - 0.5f;
-                        pos.y = BlocksCenter.y - radius * cosf(angle);
-                    }
-                    Matrix4f mat = Matrix4f::Translation(pos);
-                    SmallGreenCube.Render(pRender, hmdToEyeViewOffset * View * mat * scaleUp);
-                }
-            }
-        }
-        break;
-
-    case 3:
-        {
-            // Bouncing.
-            const int   numBlocks = 10;
-            Matrix4f    scaleUp = Matrix4f::Scaling(20.0f);
-
-            for (int i = 1; i <= numBlocks; i++)
-            {
-                double scaledTime = 4.0f * appTime / (double)i;
-                float fracTime = (float)(scaledTime - floor(scaledTime));
-
-                Vector3f pos = BlocksCenter;
-                pos.z += (float)i;
-                pos.y += -1.5f + 4.0f * (2.0f * fracTime * (1.0f - fracTime));
-                Matrix4f mat = Matrix4f::Translation(pos);
-                SmallGreenCube.Render(pRender, hmdToEyeViewOffset * View * mat * scaleUp);
-            }
-        }
-        break;
-
-    default:
-        BlocksShowType = 0;
-        break;
-    }
-}
 
 void OculusWorldDemoApp::RenderGrid(ovrEyeType eye)
 {

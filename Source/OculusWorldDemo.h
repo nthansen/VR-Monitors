@@ -128,7 +128,6 @@ public:
     void         RenderEyeView(ovrEyeType eye);
     // Renderes HUD overlay brough up by spacebar; 2D viewport must be set before call.
     void         RenderTextInfoHud(float textHeight);
-    void         RenderAnimatedBlocks(ovrEyeType eye, double appTime);
     void         RenderGrid(ovrEyeType eye);
     
     Matrix4f     CalculateViewFromPose(const Posef& pose);
@@ -254,11 +253,6 @@ protected:
     Matrix4f            View;
     Scene               MainScene;
     Scene               LoadingScene;
-    Scene               SmallGreenCube;
-
-	Scene				OculusCubesScene;
-	Scene               RedCubesScene;
-	Scene				BlueCubesScene;
 
     // Last frame asn sensor data reported by BeginFrame().
     ovrFrameTiming      HmdFrameTiming;

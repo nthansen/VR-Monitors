@@ -81,11 +81,6 @@ OculusWorldDemoApp::OculusWorldDemoApp() :
     View(),
     MainScene(),
     LoadingScene(),
-    SmallGreenCube(),
-
-	OculusCubesScene(),
-	RedCubesScene(),
-	BlueCubesScene(),
 
     HmdFrameTiming(),
     HmdStatus(0),
@@ -426,27 +421,6 @@ void OculusWorldDemoApp::PopulateOptionMenu()
         AddEnumValue("Same Pose+TW",   2);
     */
 
-    // Navigate between scenes.
-    Menu.AddEnum("Scene Content.Rendered Scene ';'", &SceneMode).AddShortcutKey(Key_Semicolon).
-                 AddEnumValue("World",        Scene_World).
-                 AddEnumValue("Cubes",        Scene_Cubes).
-                 AddEnumValue("Oculus Cubes", Scene_OculusCubes);  
-    // Animating blocks    
-    Menu.AddEnum("Scene Content.Animated Blocks", &BlocksShowType).
-                 AddShortcutKey(Key_B).SetNotify(this, &OWD::BlockShowChange).
-                 AddEnumValue("None",  0).
-                 AddEnumValue("Horizontal Circle", 1).
-                 AddEnumValue("Vertical Circle",   2).
-                 AddEnumValue("Bouncing Blocks",   3);  
-    // Toggle grid
-    Menu.AddEnum("Scene Content.Grid Display 'G'",  &GridDisplayMode).AddShortcutKey(Key_G).
-                 AddEnumValue("No Grid",             GridDisplay_None).
-                 AddEnumValue("Grid Only",           GridDisplay_GridOnly).
-                 AddEnumValue("Grid And Scene",      GridDisplay_GridAndScene);  
-    Menu.AddEnum("Scene Content.Grid Mode 'H'",     &GridMode).AddShortcutKey(Key_H).
-                 AddEnumValue("4-pixel RT-centered", Grid_Rendertarget4).
-                 AddEnumValue("16-pixel RT-centered",Grid_Rendertarget16).
-                 AddEnumValue("Lens-centered grid",  Grid_Lens);  
 
     // *** Scene Content Sub-Menu
     Menu.AddBool( "Render Target.Share RenderTarget",  &RendertargetIsSharedByBothEyes).
@@ -1275,20 +1249,6 @@ void OculusWorldDemoApp::RenderEyeView(ovrEyeType eye)
         if (SceneMode != Scene_OculusCubes)
         {
             MainScene.Render(pRender, View);        
-            RenderAnimatedBlocks(eye, ovr_GetTimeInSeconds());
-        }
-	    
-        if (SceneMode == Scene_Cubes)
-	    {
-            // Draw scene cubes overlay. Red if position tracked, blue otherwise.
-            Scene sceneCubes = (HmdStatus & ovrStatus_PositionTracked) ?
-                               RedCubesScene : BlueCubesScene;        
-            sceneCubes.Render(pRender, View * baseTranslate * baseYaw);
-        }
-
-	    else if (SceneMode == Scene_OculusCubes)
-	    {
-            OculusCubesScene.Render(pRender, View * baseTranslate * baseYaw);
         }
     }   
 
