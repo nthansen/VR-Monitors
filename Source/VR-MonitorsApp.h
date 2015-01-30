@@ -1,5 +1,5 @@
-#ifndef VR-Monitors
-#define VR-Monitors
+#ifndef VRMonitors
+#define VRMonitors
 
 #include "OVR_Kernel.h"
 
@@ -12,6 +12,9 @@
 
 #include "Util/Util_Render_Stereo.h"
 using namespace OVR::Util::Render;
+
+#include "Kernel/OVR_DebugHelp.h"
+
 
 #include "Sensors/OVR_DeviceConstants.h"
 
@@ -34,14 +37,19 @@ public:
 
 private: 
 
-	virtual int  OnStartup(int argc, const char** argv);
-	virtual void OnIdle();
+	int  OnStartup(int argc, const char** argv);
+	void OnIdle();
 
-	virtual void OnMouseMove(int x, int y, int modifiers);
-	virtual void OnKey(OVR::KeyCode key, int chr, bool down, int modifiers);
-	virtual void OnResize(int width, int height);
+	void OnMouseMove(int x, int y, int modifiers);
+	void OnKey(OVR::KeyCode key, int chr, bool down, int modifiers);
+	void OnResize(int width, int height);
 
 	bool         SetupWindowAndRendering(int argc, const char** argv);
+
+private:
+
+	ovrHmd	Hmd;
+	Sizei	WindowSize;
 
 	enum SceneRenderMode
 	{
