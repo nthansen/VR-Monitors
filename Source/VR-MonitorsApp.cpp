@@ -1,6 +1,6 @@
 #include "VR-MonitorsApp.h"
 
-// when the app starts it'll call this function to initialize everything for the oculus
+// when the app starts it'll call this function because of the platform file to initialize everything for the oculus
 
 int VRMonitorsApp::OnStartup(int argc, const char** argv) {
 	

@@ -19,11 +19,11 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{b8918a66-759a-44a9-acdc-e76638ab70b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="How Platforms Work in Oculus">
+      <UniqueIdentifier>{0a148e4e-8952-432d-8a17-3916e4b9fb03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Assets\CommonSrc\Platform\Platform.cpp">
-      <Filter>CommonSrc\Platform</Filter>
-    </ClCompile>
     <ClCompile Include="Assets\CommonSrc\Platform\Win32_Platform.cpp">
       <Filter>CommonSrc\Platform</Filter>
     </ClCompile>
@@ -76,12 +76,12 @@
     <ClCompile Include="Source\VR-MonitorsApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Assets\CommonSrc\Platform\Platform.cpp">
+      <Filter>How Platforms Work in Oculus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assets\CommonSrc\Platform\Win32_Platform.h">
-      <Filter>CommonSrc\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Assets\CommonSrc\Platform\Platform.h">
       <Filter>CommonSrc\Platform</Filter>
     </ClInclude>
     <ClInclude Include="Assets\CommonSrc\Platform\Platform_Default.h">
@@ -134,6 +134,9 @@
     </ClInclude>
     <ClInclude Include="Source\VR-MonitorsApp.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\CommonSrc\Platform\Platform.h">
+      <Filter>How Platforms Work in Oculus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
