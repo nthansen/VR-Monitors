@@ -74,6 +74,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="Source\VR-Monitors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assets\CommonSrc\Platform\Win32_Platform.h">
@@ -128,6 +131,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\VR-MonitorsScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\VR-Monitors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

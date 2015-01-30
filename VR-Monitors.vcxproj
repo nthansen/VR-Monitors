@@ -207,6 +207,7 @@
     <ClCompile Include="Source\Desktop.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="Source\User.cpp" />
+    <ClCompile Include="Source\VR-Monitors.cpp" />
     <ClCompile Include="Source\VR-MonitorsScene.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -227,6 +228,7 @@
     <ClInclude Include="Assets\CommonSrc\Render\Render_XmlSceneLoader.h" />
     <ClInclude Include="source\Desktop.h" />
     <ClInclude Include="Source\User.h" />
+    <ClInclude Include="Source\VR-Monitors.h" />
     <ClInclude Include="Source\VR-MonitorsScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

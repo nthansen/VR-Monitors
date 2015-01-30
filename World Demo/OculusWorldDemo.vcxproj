@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CA4E4127-1BAD-447C-BFF9-5AF940EEC376}</ProjectGuid>
+    <ProjectGuid>{F0FA102D-ABA0-4F85-9F15-2D8B58816CBB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OculusWorldDemo</RootNamespace>
     <ProjectName>OculusWorldDemo</ProjectName>
