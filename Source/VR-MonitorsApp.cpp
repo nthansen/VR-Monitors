@@ -1,5 +1,27 @@
 #include "VR-MonitorsApp.h"
 
+// what happens in the constructer, must initialize the variables before it starts
+VRMonitorsApp::VRMonitorsApp() :
+pRender(0),
+RenderParams(),
+WindowSize(1280, 800), 
+Hmd(0)
+{}
+
+
+VRMonitorsApp::~VRMonitorsApp()
+{
+	CleanupDrawTextFont();
+
+	if (Hmd)
+	{
+		ovrHmd_Destroy(Hmd);
+		Hmd = 0;
+	}
+
+	ovr_Shutdown();
+}
+
 // when the app starts it'll call this function because of the platform file to initialize everything for the oculus
 
 int VRMonitorsApp::OnStartup(int argc, const char** argv) {
@@ -60,3 +82,61 @@ int VRMonitorsApp::OnStartup(int argc, const char** argv) {
 	// everything went smooth so exit fine
 	return 0;
 }
+
+
+bool VRMonitorsApp::SetupWindowAndRendering(int argc, const char** argv)
+{
+	// *** Window creation
+
+	void* windowHandle = pPlatform->SetupWindow(WindowSize.w, WindowSize.h);
+
+	if (!windowHandle)
+		return false;
+
+	ovrHmd_AttachToWindow(Hmd, windowHandle, NULL, NULL);
+
+	// Report relative mouse motion in OnMouseMove
+	pPlatform->SetMouseMode(Mouse_Relative);
+
+	// *** Initialize Rendering
+
+	const char* graphics = "d3d11";  //Default to DX11. Can be overridden below.
+
+	RenderParams.RenderAPIType = ovrRenderAPI_D3D11;
+
+	StringBuffer title;
+	title.AppendFormat("VR-Monitors %s : %s", graphics, Hmd->ProductName[0] ? Hmd->ProductName : "<unknown device>");
+	pPlatform->SetWindowTitle(title);
+
+
+	// Enable multi-sampling by default.
+	RenderParams.Display = DisplayId(Hmd->DisplayDeviceName, Hmd->DisplayId);
+	RenderParams.SrgbBackBuffer = true;
+	RenderParams.Multisample = true;
+	RenderParams.Resolution = Hmd->Resolution;
+
+	pRender = pPlatform->SetupGraphics(OVR_DEFAULT_RENDER_DEVICE_SET,
+		graphics, RenderParams); // To do: Remove the graphics argument to SetupGraphics, as RenderParams already has this info.
+	return (pRender != nullptr);
+}
+
+void VRMonitorsApp::OnKey(OVR::KeyCode key, int chr, bool down, int modifiers)
+{
+	if (down)
+	{   // Dismiss Safety warning with any key.
+		ovrHmd_DismissHSWDisplay(Hmd);
+	}
+
+	switch (key)
+	{
+	case Key_Q:
+		if (down && (modifiers & Mod_Control))
+			pPlatform->Exit(0);
+		break;
+
+	default:
+		break;
+	}
+}
+
+OVR_PLATFORM_APP(VRMonitorsApp);

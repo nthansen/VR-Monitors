@@ -40,17 +40,19 @@ private:
 	// These fivev functions are virtual because we are overriding the functions inside the platform.h/.cpp files
 
 	virtual int  OnStartup(int argc, const char** argv);
-	virtual void OnIdle();
+	//virtual void OnIdle();
 
-	virtual void OnMouseMove(int x, int y, int modifiers);
+	//virtual void OnMouseMove(int x, int y, int modifiers);
 	virtual void OnKey(OVR::KeyCode key, int chr, bool down, int modifiers);
-	virtual void OnResize(int width, int height);
+	//virtual void OnResize(int width, int height);
 
 	bool         SetupWindowAndRendering(int argc, const char** argv);
 
 private:
 
 	ovrHmd	Hmd;
+	RenderDevice*       pRender;
+	RendererParams      RenderParams;
 	Sizei	WindowSize;
 
 	enum SceneRenderMode
