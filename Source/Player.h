@@ -41,8 +41,6 @@ const float		YawInitial	= 0.0f;
 const float		Sensitivity	= 0.3f; // low sensitivity to ease people into it gently.
 const float		MoveSpeed	= 3.0f; // m/s
 
-// These are used for collision detection
-const float		RailHeight	= 0.8f;
 
 
 //-------------------------------------------------------------------------------------

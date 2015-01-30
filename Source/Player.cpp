@@ -28,7 +28,7 @@ Player::Player() :
     UserEyeHeight(1.76f - 0.15f), // 1.76 meters height (ave US male, Wikipedia), less 15 centimeters (TomF's top-of-head-to-eye distance).
     HeightScale(1.0f),
     BodyPos(7.7f, 1.76f - 0.15f, -1.0f),
-    BodyYaw(YawInitial),
+    BodyYaw(YawInitial + 1.6f),
     HeadPose(),
     MoveForward(0),
     MoveBack(0),
