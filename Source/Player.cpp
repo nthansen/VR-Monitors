@@ -34,8 +34,6 @@ Player::Player() :
     MoveBack(0),
     MoveLeft(0),
     MoveRight(0),
-    GamepadMove(),
-    GamepadRotate(),
     bMotionRelativeToBody(false)
 {
 }
@@ -107,7 +105,6 @@ void Player::HandleMovement(double dt, Array<Ptr<CollisionModel> >* collisionMod
         
     float   checkLengthForward = moveLength;
 
-    // Checks for collisions at foot level, which allows us to follow terrain
     orientationVector *= moveLength;
     BodyPos += orientationVector;
 

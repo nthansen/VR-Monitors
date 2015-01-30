@@ -158,15 +158,13 @@ public:
     
     void EyeHeightChange(OptionVar* = 0)
     {
-        ThePlayer.HeightScale = ScaleAffectsEyeHeight ? PositionTrackingScale : 1.0f;
+        ThePlayer.HeightScale = PositionTrackingScale;
         ThePlayer.BodyPos.y = ThePlayer.GetScaledEyeHeight();
     }
 
 	void HmdSensorToggle(OptionVar* = 0);
     void HmdSettingChangeFreeRTs(OptionVar* = 0);
     void MultisampleChange(OptionVar* = 0);
-    void CenterPupilDepthChange(OptionVar* = 0);
-    void DistortionClearColorChange(OptionVar* = 0);
 
     void ResetHmdPose(OptionVar* = 0);
 
@@ -262,12 +260,8 @@ protected:
     bool                HmdSettingsChanged;
 
     // Render Target - affecting state.
-    bool                RendertargetIsSharedByBothEyes;
-    bool                DynamicRezScalingEnabled;
 	bool                EnableSensor;
-    bool                MonoscopicRender;
     float               PositionTrackingScale;
-    bool                ScaleAffectsEyeHeight;
     float               DesiredPixelDensity;    
     float               FovSideTanMax;
     float               FovSideTanLimit; // Limit value for Fov.
@@ -275,20 +269,14 @@ protected:
 
     // Time-warp.
     bool                TimewarpEnabled;
-    bool                TimewarpNoJitEnabled;
     float               TimewarpRenderIntervalInSeconds;    
-    bool                FreezeEyeUpdate;
-    bool                FreezeEyeOneFrameRendered;
     bool                ComputeShaderEnabled;
 
     // Other global settings.
     float               CenterPupilDepthMeters;
-    bool                ForceZeroHeadMovement;
     bool                VsyncEnabled;
     bool                MultisampleEnabled;
-#if defined(OVR_OS_LINUX)
-    bool                LinuxFullscreenOnDevice;
-#endif
+
     // DK2 only:
     bool                IsLowPersistence;
     bool                DynamicPrediction;

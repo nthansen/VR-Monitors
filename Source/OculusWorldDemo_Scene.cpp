@@ -93,6 +93,7 @@ void OculusWorldDemoApp::PopulateScene(const char *fileName)
     Ptr<Model> smallGreenCubeModel = *Model::CreateBox(Color(0, 255, 0, 255), Vector3f(0.0f, 0.0f, 0.0f), Vector3f(1.0f, 1.0f, 4.0f));
     MainScene.World.Add(smallGreenCubeModel);
 
+
     String mainFilePathNoExtension = MainFilePath;
     mainFilePathNoExtension.StripExtension();
 
