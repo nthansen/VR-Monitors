@@ -50,12 +50,15 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	ID3D11ShaderResourceView* shaderResource;
 
 	CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);
+	
+	// my attempt at using the cube map, unsuccessful
+	//CreateDDSTextureFromFileEx(DX11.Device, L"Assets/skyboxCubeMap.dds", 0U, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
 
 	ID3D11Texture2D* tex2d;
 
 	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
 	
-	ImageBuffer* t = new ImageBuffer(false, false, Sizei(256, 256), 8, tex2d, shaderResource);
+	ImageBuffer* t = new ImageBuffer(false, false, Sizei(512, 512), 8, tex2d, shaderResource);
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 
 	// Construct geometry
@@ -67,13 +70,17 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	m->AllocateBuffers(); Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
-	m->AddSolidColorBox(0, 0, 0, +2.0f, +2.0f, 0.0f, Model::Color(200, 200, 200));
+	m->AddSolidColorBox(0, 0, 0, +2.0f, +2.0f, 2.0f, Model::Color(128, 128, 128));
 	m->AllocateBuffers(); Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]);  // Walls
 	m->AddSolidColorBox(-10.1f, 0.0f, -20.0f, -10.0f, 4.0f, 20.0f, Model::Color(128, 128, 128)); // Left Wall
 	m->AddSolidColorBox(-10.0f, -0.1f, -20.1f, 10.0f, 4.0f, -20.0f, Model::Color(128, 128, 128)); // Back Wall
 	m->AddSolidColorBox(10.0f, -0.1f, -20.0f, 10.1f, 4.0f, 20.0f, Model::Color(128, 128, 128));  // Right Wall
+	m->AllocateBuffers(); Add(m);
+
+	m = new Model(Vector3f(0, 0, 0), generated_texture[4]); // Skybox
+	m->AddSolidColorBox(-100.f, -100.0f, -200.0f, -100.0f, 100.0f, 200.0f, Model::Color(128, 128, 128)); 
 	m->AllocateBuffers(); Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[0]);  // Floors

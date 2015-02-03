@@ -33,11 +33,6 @@
     <ClInclude Include="source\scene.h" />
     <ClInclude Include="source\Win32_DX11AppUtil.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj">
-      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{394FF596-A90B-4C95-888B-B743834ED15B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

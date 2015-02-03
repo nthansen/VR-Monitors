@@ -3,6 +3,7 @@
 
 #include "Win32_DX11AppUtil.h"
 #include "model.h"
+#include <d3d11_2.h>
 #include "DDSTextureLoader\DDSTextureLoader.h"
 
 using namespace DirectX;
@@ -22,7 +23,6 @@ struct Scene
 	Scene();
 
 	void Render(Matrix4f view, Matrix4f proj);
-
 
 };
 
