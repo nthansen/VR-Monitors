@@ -1,0 +1,9 @@
+﻿Build started 2/2/2015 6:42:08 PM.
+     1>Project "D:\DirectX Projects\dx11tut22\Engine\DirectXTK\DirectXTK_Windows81.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         DirectXTK_Windows81.vcxproj -> D:\DirectX Projects\dx11tut22\Engine\DirectXTK\Bin\Windows81\Win32\Debug\DirectXTK.lib
+     1>Done Building Project "D:\DirectX Projects\dx11tut22\Engine\DirectXTK\DirectXTK_Windows81.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.07
