@@ -1,16 +1,6 @@
-﻿Build started 2/3/2015 9:07:20 AM.
+﻿Build started 2/3/2015 9:10:50 AM.
      1>Project "C:\VR-Monitors\DirectX Version\OculusRoomTiny.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IDirectXTK\Inc /ILibOVR/Include /ILibOVR/Src /Z7 /nologo /W4 /WX- /MP /Od /Oy- /D OVR_BUILD_DEBUG /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Obj/Debug/Win32/" /Fd"Obj/Debug/Win32/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source\desktop.cpp source\scene.cpp source\model.cpp source\Win32_DX11AppUtil.cpp source\Win32_RoomTiny_Main.cpp
-         desktop.cpp
-         scene.cpp
-         model.cpp
-         Win32_DX11AppUtil.cpp
-         Win32_RoomTiny_Main.cpp
-     1>source\Win32_RoomTiny_Main.cpp(185): warning C4100: 'useHmdToEyeViewOffset' : unreferenced formal parameter
-     1>source\Win32_RoomTiny_Main.cpp(185): warning C4100: 'pTimesToRenderScene' : unreferenced formal parameter
-     1>source\Win32_RoomTiny_Main.cpp(185): warning C4100: 'pSpeed' : unreferenced formal parameter
-       Link:
+     1>Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Bin/Debug/Win32/VR-Monitors.exe" /INCREMENTAL /NOLOGO /LIBPATH:LibOVR/Lib/Win32/VS2013/ ws2_32.lib Dbghelp.lib libovrd.lib dxgi.lib dxguid.lib d3d10.lib d3d11.lib d3dcompiler.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Bin/Debug/Win32/VR-Monitors.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Bin/Debug/Win32/VR-Monitors.lib" /MACHINE:X86 Obj/Debug/Win32/desktop.obj
          Obj/Debug/Win32/scene.obj
          Obj/Debug/Win32/model.obj
@@ -22,4 +12,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.09
+Time Elapsed 00:00:00.12
