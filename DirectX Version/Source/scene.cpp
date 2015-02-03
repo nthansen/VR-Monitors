@@ -25,7 +25,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 
 	// Construct textures
 	static Model::Color tex_pixels[4][256 * 256];
-	ShaderFill * generated_texture[4];
+	ShaderFill * generated_texture[5];
 
 	// this is what makes the checkered floors and walls textures 
 	for (int k = 0; k<4; k++)
@@ -45,6 +45,19 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 		// then create these textures into shaders
 		generated_texture[k] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 	}
+
+	ID3D11Resource* resource;
+	ID3D11ShaderResourceView* shaderResource;
+
+	CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);
+
+	ID3D11Texture2D* tex2d;
+
+	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
+	
+	ImageBuffer* t = new ImageBuffer(false, false, Sizei(256, 256), 8, tex2d, shaderResource);
+	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
+
 	// Construct geometry
 	
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
@@ -53,7 +66,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	m->AddSolidColorBox(0, 0, 0, +1.0f, +1.0f, 1.0f, Model::Color(64, 64, 64));
 	m->AllocateBuffers(); Add(m);
 
-	m = new Model(Vector3f(0, 0, 0), generated_texture[1]);
+	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
 	m->AddSolidColorBox(0, 0, 0, +2.0f, +2.0f, 0.0f, Model::Color(200, 200, 200));
 	m->AllocateBuffers(); Add(m);
 
@@ -138,3 +151,4 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 			sizeof(Model::Vertex), Models[i]->numIndices);
 	}
 }
+

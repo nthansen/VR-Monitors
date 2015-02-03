@@ -92,6 +92,9 @@ struct ImageBuffer
 	ImageBuffer(bool rendertarget, bool depth, Sizei size, int mipLevels = 1,
 		unsigned char * data = NULL);
 
+	ImageBuffer(bool rendertarget, bool depth, Sizei size, int mipLevels,
+		ID3D11Texture2D* newTex, ID3D11ShaderResourceView* newResource);
+
 };
 //-----------------------------------------------------
 struct ShaderFill
