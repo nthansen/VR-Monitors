@@ -1,4 +1,4 @@
-﻿Build started 2/4/2015 10:30:27 AM.
+﻿Build started 2/4/2015 10:34:46 AM.
      1>Project "C:\VR-Monitors\DirectX Version\OculusRoomTiny.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IDirectXTex /ILibOVR/Include /ILibOVR/Src /Z7 /nologo /W4 /WX- /MP /Od /Oy- /D OVR_BUILD_DEBUG /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Obj/Debug/Win32/" /Fd"Obj/Debug/Win32/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source\scene.cpp
@@ -17,4 +17,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.21
+Time Elapsed 00:00:06.53

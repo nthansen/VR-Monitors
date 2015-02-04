@@ -62,7 +62,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);//if skyboxCubeMapDDS is used the image is warped in all directions, but only shows one "face" of the cubemap on all sides
 
 	ID3D11Texture2D* tex2d;
-
+	
 	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
 
 	D3D11_TEXTURE2D_DESC SMTextureDesc;
@@ -83,26 +83,6 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	m->AddSolidColorBox(-1, 1, 2, 1, 2, 2, Model::Color(128, 128, 128));
 	m->AllocateBuffers(); Add(m);
 
-}
-
-Scene::Scene() : num_models(0)
-{
-	D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
-	{ { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
-
-	char* VertexShaderSrc =
-		"float4x4 Proj, View;"
-		"float4 NewCol;"
-		"void main(in float4 Position : POSITION, out float4 oPosition : SV_Position, out float4 oColor: COLOR0)"
-		"{   oPosition = mul(Proj, Position); oColor = NewCol; }";
-	char* PixelShaderSrc =
-		"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0) : SV_Target"
-		"{   return Color ; }";
-
-	Model* m = new Model(Vector3f(0, 0, 0), new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, 0));
-	float scale = 0.04f;  float extra_y = ((float)DX11.WinSize.w / (float)DX11.WinSize.h);
-	m->AddSolidColorBox(1 - scale, 1 - (scale*extra_y), -1, 1 + scale, 1 + (scale*extra_y), -1, Model::Color(0, 128, 0));
-	m->AllocateBuffers(); Add(m);
 }
 
 void Scene::Render(Matrix4f view, Matrix4f proj)
