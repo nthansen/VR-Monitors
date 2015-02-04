@@ -292,26 +292,11 @@ ImageBuffer::ImageBuffer(bool rendertarget, bool depth, Sizei size, int mipLevel
 	}
 }
 
-ImageBuffer::ImageBuffer(bool rendertarget, bool depth, Sizei size, int mipLevels, ID3D11Texture2D* newTex, ID3D11ShaderResourceView* newResource ) : Size(size)
+ImageBuffer::ImageBuffer(bool rendertarget, bool depth, Sizei size, ID3D11Texture2D* newTex, ID3D11ShaderResourceView* newResource ) : Size(size)
 {
-	D3D11_TEXTURE2D_DESC dsDesc;
-	dsDesc.Width = size.w;
-	dsDesc.Height = size.h;
-	dsDesc.MipLevels = mipLevels;
-	dsDesc.ArraySize = 1;
-	dsDesc.Format = depth ? DXGI_FORMAT_D32_FLOAT : DXGI_FORMAT_R8G8B8A8_UNORM;//if depth was specified make format 32 bit color or else 
-	dsDesc.SampleDesc.Count = 1;
-	dsDesc.SampleDesc.Quality = 0;
-	dsDesc.Usage = D3D11_USAGE_DEFAULT;
-	dsDesc.CPUAccessFlags = 0;
-	dsDesc.MiscFlags = 0;
-	dsDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
 	Tex = newTex;
 	TexSv = newResource;
-
-	if (rendertarget &&  depth) dsDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	if (rendertarget && !depth) dsDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 
 	if (rendertarget &&  depth) DX11.Device->CreateDepthStencilView(Tex, NULL, &TexDsv);
 	if (rendertarget && !depth) DX11.Device->CreateRenderTargetView(Tex, NULL, &TexRtv);

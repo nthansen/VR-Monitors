@@ -68,7 +68,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	D3D11_TEXTURE2D_DESC SMTextureDesc;
 	tex2d->GetDesc(&SMTextureDesc);
 
-	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, tex2d, shaderResource);
+	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 
 
