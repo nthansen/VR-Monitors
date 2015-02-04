@@ -31,7 +31,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 		"Texture2D Texture   : register(t0); SamplerState Linear : register(s0); "
 		"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float2 TexCoord : TEXCOORD0) : SV_Target"
 		"{   return Color * Texture.Sample(Linear, TexCoord); }";
-//	CreateSphere(10, 10);
+	//	CreateSphere(10, 10);
 
 	// Construct textures
 	static Model::Color tex_pixels[4][256 * 256];
@@ -41,15 +41,15 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	for (int k = 0; k<4; k++)
 	{
 		for (int j = 0; j < 256; j++)
-		for (int i = 0; i < 256; i++)
-		{
-			// these all alternate back and forth between colors giving them the checkered textures
-			if (k == 0) tex_pixels[0][j * 256 + i] = (((i >> 7) ^ (j >> 7)) & 1) ? Model::Color(180, 180, 180, 255) : Model::Color(80, 80, 80, 255);// floor
-			if (k == 1) tex_pixels[1][j * 256 + i] = (((j / 4 & 15) == 0) || (((i / 4 & 15) == 0) && ((((i / 4 & 31) == 0) ^ ((j / 4 >> 4) & 1)) == 0))) ?
-				Model::Color(60, 60, 60, 255) : Model::Color(180, 180, 180, 255); //wall
-			if (k == 2) tex_pixels[2][j * 256 + i] = (i / 4 == 0 || j / 4 == 0) ? Model::Color(80, 80, 80, 255) : Model::Color(180, 180, 180, 255);// ceiling
-			if (k == 3) tex_pixels[3][j * 256 + i] = Model::Color(128, 128, 128, 255);// blank
-		}
+			for (int i = 0; i < 256; i++)
+			{
+				// these all alternate back and forth between colors giving them the checkered textures
+				if (k == 0) tex_pixels[0][j * 256 + i] = (((i >> 7) ^ (j >> 7)) & 1) ? Model::Color(180, 180, 180, 255) : Model::Color(80, 80, 80, 255);// floor
+				if (k == 1) tex_pixels[1][j * 256 + i] = (((j / 4 & 15) == 0) || (((i / 4 & 15) == 0) && ((((i / 4 & 31) == 0) ^ ((j / 4 >> 4) & 1)) == 0))) ?
+					Model::Color(60, 60, 60, 255) : Model::Color(180, 180, 180, 255); //wall
+				if (k == 2) tex_pixels[2][j * 256 + i] = (i / 4 == 0 || j / 4 == 0) ? Model::Color(80, 80, 80, 255) : Model::Color(180, 180, 180, 255);// ceiling
+				if (k == 3) tex_pixels[3][j * 256 + i] = Model::Color(128, 128, 128, 255);// blank
+			}
 		// load the finished texture pixels into the image buffer
 		ImageBuffer * t = new ImageBuffer(false, false, Sizei(256, 256), 8, (unsigned char *)tex_pixels[k]);
 		// then create these textures into shaders
@@ -67,8 +67,8 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 
 	D3D11_TEXTURE2D_DESC SMTextureDesc;
 	tex2d->GetDesc(&SMTextureDesc);
-	
-	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256,256), 8, tex2d, shaderResource);
+
+	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, tex2d, shaderResource);
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 
 
@@ -80,13 +80,13 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
 	cmdesc.FillMode = D3D11_FILL_SOLID;
 	//i just left these below for example
-//	cmdesc.CullMode = D3D11_CULL_BACK;
-//	cmdesc.FrontCounterClockwise = true;
-//	DX11.Device->CreateRasterizerState(&cmdesc, &CCWcullMode);
+	//	cmdesc.CullMode = D3D11_CULL_BACK;
+	//	cmdesc.FrontCounterClockwise = true;
+	//	DX11.Device->CreateRasterizerState(&cmdesc, &CCWcullMode);
 
-//	cmdesc.FrontCounterClockwise = false;
+	//	cmdesc.FrontCounterClockwise = false;
 
-//	DX11.Device->CreateRasterizerState(&cmdesc, &CWcullMode);
+	//	DX11.Device->CreateRasterizerState(&cmdesc, &CWcullMode);
 	//skymap render states
 	//-----------------------
 	cmdesc.CullMode = D3D11_CULL_NONE;
@@ -100,7 +100,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 
 	DX11.Device->CreateDepthStencilState(&dssDesc, &DSLessEqual);
 
-//set culling none, shows both sides
+	//set culling none, shows both sides
 	DX11.Context->RSSetState(RSCullNone);//if this is commented out the cube will be invisible from the inside but visible on the outside
 
 
