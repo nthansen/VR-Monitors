@@ -152,7 +152,7 @@ bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed)
 	D3D11_RASTERIZER_DESC rs;
 	memset(&rs, 0, sizeof(rs));
 	rs.AntialiasedLineEnable = rs.DepthClipEnable = true;
-	rs.CullMode = D3D11_CULL_BACK;
+	rs.CullMode = D3D11_CULL_NONE;
 	rs.FillMode = D3D11_FILL_SOLID;
 	ID3D11RasterizerState *  Rasterizer = NULL;
 	Device->CreateRasterizerState(&rs, &Rasterizer);
@@ -161,7 +161,7 @@ bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed)
 	D3D11_DEPTH_STENCIL_DESC dss;
 	memset(&dss, 0, sizeof(dss));
 	dss.DepthEnable = true;
-	dss.DepthFunc = D3D11_COMPARISON_LESS;
+	dss.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 	dss.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	ID3D11DepthStencilState * DepthState;
 	Device->CreateDepthStencilState(&dss, &DepthState);

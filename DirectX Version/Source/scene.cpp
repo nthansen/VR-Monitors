@@ -72,38 +72,6 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 
 
-
-
-	//setup Culling
-	D3D11_RASTERIZER_DESC cmdesc;
-
-	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
-	cmdesc.FillMode = D3D11_FILL_SOLID;
-	//i just left these below for example
-	//	cmdesc.CullMode = D3D11_CULL_BACK;
-	//	cmdesc.FrontCounterClockwise = true;
-	//	DX11.Device->CreateRasterizerState(&cmdesc, &CCWcullMode);
-
-	//	cmdesc.FrontCounterClockwise = false;
-
-	//	DX11.Device->CreateRasterizerState(&cmdesc, &CWcullMode);
-	//skymap render states
-	//-----------------------
-	cmdesc.CullMode = D3D11_CULL_NONE;
-	DX11.Device->CreateRasterizerState(&cmdesc, &RSCullNone);
-
-	D3D11_DEPTH_STENCIL_DESC dssDesc;
-	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
-	dssDesc.DepthEnable = true;
-	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-
-	DX11.Device->CreateDepthStencilState(&dssDesc, &DSLessEqual);
-
-	//set culling none, shows both sides
-	DX11.Context->RSSetState(RSCullNone);//if this is commented out the cube will be invisible from the inside but visible on the outside
-
-
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
