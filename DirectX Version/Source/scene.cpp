@@ -107,59 +107,14 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
-	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[2]);  // Moving box
-	m->AddSolidColorBox(0, 0, 0, +1.0f, +1.0f, 1.0f, Model::Color(64, 64, 64));
+	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); // eventually will be skybox
+	m->AddSolidColorBox(-3, -3, -3, 3, 3, 3, Model::Color(128, 128, 128));
 	m->AllocateBuffers(); Add(m);
 
-	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
-	m->AddSolidColorBox(-20, -20, -20, 20, 20, 20, Model::Color(200, 200, 200));
+	m = new Model(Vector3f(0, 0, 0), generated_texture[1]); // eventually will be the monitor
+	m->AddSolidColorBox(-1, 1, 2, 1, 2, 2, Model::Color(128, 128, 128));
 	m->AllocateBuffers(); Add(m);
 
-	m = new Model(Vector3f(0, 0, 0), generated_texture[1]);  // Walls
-	m->AddSolidColorBox(-10.1f, 0.0f, -20.0f, -10.0f, 4.0f, 20.0f, Model::Color(128, 128, 128)); // Left Wall
-	m->AddSolidColorBox(-10.0f, -0.1f, -20.1f, 10.0f, 4.0f, -20.0f, Model::Color(128, 128, 128)); // Back Wall
-	m->AddSolidColorBox(10.0f, -0.1f, -20.0f, 10.1f, 4.0f, 20.0f, Model::Color(128, 128, 128));  // Right Wall
-	m->AllocateBuffers(); Add(m);
-
-	m = new Model(Vector3f(0, 0, 0), generated_texture[0]);  // Floors
-	m->AddSolidColorBox(-10.0f, -0.1f, -20.0f, 10.0f, 0.0f, 20.1f, Model::Color(128, 128, 128)); // Main floor
-	m->AddSolidColorBox(-15.0f, -6.1f, 18.0f, 15.0f, -6.0f, 30.0f, Model::Color(128, 128, 128));// Bottom floor
-	m->AllocateBuffers(); Add(m);
-
-	if (reducedVersion) return;
-
-	m = new Model(Vector3f(0, 0, 0), generated_texture[2]);  // Ceiling
-	m->AddSolidColorBox(-10.0f, 4.0f, -20.0f, 10.0f, 4.1f, 20.1f, Model::Color(128, 128, 128));
-	m->AllocateBuffers(); Add(m);
-
-	m = new Model(Vector3f(0, 0, 0), generated_texture[3]);  // Fixtures & furniture
-	m->AddSolidColorBox(9.5f, 0.75f, 3.0f, 10.1f, 2.5f, 3.1f, Model::Color(96, 96, 96));   // Right side shelf// Verticals
-	m->AddSolidColorBox(9.5f, 0.95f, 3.7f, 10.1f, 2.75f, 3.8f, Model::Color(96, 96, 96));   // Right side shelf
-	m->AddSolidColorBox(9.55f, 1.20f, 2.5f, 10.1f, 1.30f, 3.75f, Model::Color(96, 96, 96)); // Right side shelf// Horizontals
-	m->AddSolidColorBox(9.55f, 2.00f, 3.05f, 10.1f, 2.10f, 4.2f, Model::Color(96, 96, 96)); // Right side shelf
-	m->AddSolidColorBox(5.0f, 1.1f, 20.0f, 10.0f, 1.2f, 20.1f, Model::Color(96, 96, 96));   // Right railing   
-	m->AddSolidColorBox(-10.0f, 1.1f, 20.0f, -5.0f, 1.2f, 20.1f, Model::Color(96, 96, 96));   // Left railing  
-	for (float f = 5.0f; f <= 9.0f; f += 1.0f)
-	{
-		m->AddSolidColorBox(f, 0.0f, 20.0f, f + 0.1f, 1.1f, 20.1f, Model::Color(128, 128, 128));// Left Bars
-		m->AddSolidColorBox(-f, 1.1f, 20.0f, -f - 0.1f, 0.0f, 20.1f, Model::Color(128, 128, 128));// Right Bars
-	}
-	m->AddSolidColorBox(-1.8f, 0.8f, 1.0f, 0.0f, 0.7f, 0.0f, Model::Color(128, 128, 0)); // Table
-	m->AddSolidColorBox(-1.8f, 0.0f, 0.0f, -1.7f, 0.7f, 0.1f, Model::Color(128, 128, 0)); // Table Leg 
-	m->AddSolidColorBox(-1.8f, 0.7f, 1.0f, -1.7f, 0.0f, 0.9f, Model::Color(128, 128, 0)); // Table Leg 
-	m->AddSolidColorBox(0.0f, 0.0f, 1.0f, -0.1f, 0.7f, 0.9f, Model::Color(128, 128, 0)); // Table Leg 
-	m->AddSolidColorBox(0.0f, 0.7f, 0.0f, -0.1f, 0.0f, 0.1f, Model::Color(128, 128, 0)); // Table Leg 
-	m->AddSolidColorBox(-1.4f, 0.5f, -1.1f, -0.8f, 0.55f, -0.5f, Model::Color(44, 44, 128)); // Chair Set
-	m->AddSolidColorBox(-1.4f, 0.0f, -1.1f, -1.34f, 1.0f, -1.04f, Model::Color(44, 44, 128)); // Chair Leg 1
-	m->AddSolidColorBox(-1.4f, 0.5f, -0.5f, -1.34f, 0.0f, -0.56f, Model::Color(44, 44, 128)); // Chair Leg 2
-	m->AddSolidColorBox(-0.8f, 0.0f, -0.5f, -0.86f, 0.5f, -0.56f, Model::Color(44, 44, 128)); // Chair Leg 2
-	m->AddSolidColorBox(-0.8f, 1.0f, -1.1f, -0.86f, 0.0f, -1.04f, Model::Color(44, 44, 128)); // Chair Leg 2
-	m->AddSolidColorBox(-1.4f, 0.97f, -1.05f, -0.8f, 0.92f, -1.10f, Model::Color(44, 44, 128)); // Chair Back high bar
-
-	for (float f = 3.0f; f <= 6.6f; f += 0.4f)
-		m->AddSolidColorBox(-3, 0.0f, f, -2.9f, 1.3f, f + 0.1f, Model::Color(64, 64, 64));//Posts
-
-	m->AllocateBuffers(); Add(m);
 }
 
 Scene::Scene() : num_models(0)

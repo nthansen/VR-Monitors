@@ -1,8 +1,8 @@
-﻿Build started 2/3/2015 1:27:39 PM.
-     1>Project "C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" on node 2 (Build target(s)).
+﻿Build started 2/4/2015 1:09:07 AM.
+     1>Project "C:\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" on node 2 (Build target(s)).
      1>Lib:
-         DirectXTex_Desktop_2013.vcxproj -> C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\Bin\Desktop_2013\Win32\Debug\DirectXTex.lib
-     1>Done Building Project "C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" (Build target(s)).
+         DirectXTex_Desktop_2013.vcxproj -> C:\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\Bin\Desktop_2013\Win32\Debug\DirectXTex.lib
+     1>Done Building Project "C:\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" (Build target(s)).
 
 Build succeeded.
 
