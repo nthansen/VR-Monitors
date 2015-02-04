@@ -1,5 +1,14 @@
 #include "scene.h"
 
+
+
+
+ID3D11ShaderResourceView* smrv;
+ID3D11DepthStencilState* DSLessEqual;
+ID3D11RasterizerState* RSCullNone;
+
+
+
 void	Scene::Add(Model * n)
 {
 	Models[num_models++] = n;
@@ -22,6 +31,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 		"Texture2D Texture   : register(t0); SamplerState Linear : register(s0); "
 		"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float2 TexCoord : TEXCOORD0) : SV_Target"
 		"{   return Color * Texture.Sample(Linear, TexCoord); }";
+//	CreateSphere(10, 10);
 
 	// Construct textures
 	static Model::Color tex_pixels[4][256 * 256];
@@ -49,17 +59,52 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	ID3D11Resource* resource;
 	ID3D11ShaderResourceView* shaderResource;
 
-	CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);
+	CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);//if skyboxCubeMapDDS is used the image is warped in all directions, but only shows one "face" of the cubemap on all sides
 
 	ID3D11Texture2D* tex2d;
 
 	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
+
+	D3D11_TEXTURE2D_DESC SMTextureDesc;
+	tex2d->GetDesc(&SMTextureDesc);
 	
-	ImageBuffer* t = new ImageBuffer(false, false, Sizei(256, 256), 8, tex2d, shaderResource);
+	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256,256), 8, tex2d, shaderResource);
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 
+
+
+
+	//setup Culling
+	D3D11_RASTERIZER_DESC cmdesc;
+
+	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
+	cmdesc.FillMode = D3D11_FILL_SOLID;
+	//i just left these below for example
+//	cmdesc.CullMode = D3D11_CULL_BACK;
+//	cmdesc.FrontCounterClockwise = true;
+//	DX11.Device->CreateRasterizerState(&cmdesc, &CCWcullMode);
+
+//	cmdesc.FrontCounterClockwise = false;
+
+//	DX11.Device->CreateRasterizerState(&cmdesc, &CWcullMode);
+	//skymap render states
+	//-----------------------
+	cmdesc.CullMode = D3D11_CULL_NONE;
+	DX11.Device->CreateRasterizerState(&cmdesc, &RSCullNone);
+
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	dssDesc.DepthEnable = true;
+	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+	DX11.Device->CreateDepthStencilState(&dssDesc, &DSLessEqual);
+
+//set culling none, shows both sides
+	DX11.Context->RSSetState(RSCullNone);//if this is commented out the cube will be invisible from the inside but visible on the outside
+
+
 	// Construct geometry
-	
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[2]);  // Moving box
@@ -67,7 +112,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	m->AllocateBuffers(); Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
-	m->AddSolidColorBox(0, 0, 0, +2.0f, +2.0f, 0.0f, Model::Color(200, 200, 200));
+	m->AddSolidColorBox(-20, -20, -20, 20, 20, 20, Model::Color(200, 200, 200));
 	m->AllocateBuffers(); Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]);  // Walls

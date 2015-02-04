@@ -1,5 +1,5 @@
-﻿Build started 2/3/2015 12:27:03 PM.
-     1>Project "C:\VR-Monitors\DirectX Version\OculusRoomTiny.vcxproj" on node 2 (Build target(s)).
+﻿Build started 2/3/2015 11:54:39 PM.
+     1>Project "C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\OculusRoomTiny.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IDirectXTex /ILibOVR/Include /ILibOVR/Src /Z7 /nologo /W4 /WX- /MP /Od /Oy- /D OVR_BUILD_DEBUG /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Obj/Debug/Win32/" /Fd"Obj/Debug/Win32/vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source\scene.cpp
          scene.cpp
@@ -10,10 +10,10 @@
          Obj/Debug/Win32/model.obj
          Obj/Debug/Win32/Win32_DX11AppUtil.obj
          Obj/Debug/Win32/Win32_RoomTiny_Main.obj
-         "C:\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\Bin\Desktop_2013\Win32\Debug\DirectXTex.lib"
-         OculusRoomTiny.vcxproj -> C:\VR-Monitors\DirectX Version\Bin/Debug/Win32/VR-Monitors.exe
-     1>Done Building Project "C:\VR-Monitors\DirectX Version\OculusRoomTiny.vcxproj" (Build target(s)).
+         "C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\Bin\Desktop_2013\Win32\Debug\DirectXTex.lib"
+         OculusRoomTiny.vcxproj -> C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\Bin/Debug/Win32/VR-Monitors.exe
+     1>Done Building Project "C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\OculusRoomTiny.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.65
+Time Elapsed 00:00:00.76
