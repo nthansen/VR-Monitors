@@ -1,20 +1,11 @@
 #include "scene.h"
 
-
-
-
-ID3D11ShaderResourceView* smrv;
-ID3D11DepthStencilState* DSLessEqual;
-ID3D11RasterizerState* RSCullNone;
-
-
-
 void	Scene::Add(Model * n)
 {
 	Models[num_models++] = n;
 }
 
-Scene::Scene(int reducedVersion) : num_models(0) // Main world
+Scene::Scene() : num_models(0) // Main world
 {
 	D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 	{ { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -31,7 +22,6 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 		"Texture2D Texture   : register(t0); SamplerState Linear : register(s0); "
 		"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float2 TexCoord : TEXCOORD0) : SV_Target"
 		"{   return Color * Texture.Sample(Linear, TexCoord); }";
-	//	CreateSphere(10, 10);
 
 	// Construct textures
 	static Model::Color tex_pixels[4][256 * 256];
@@ -59,14 +49,26 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	ID3D11Resource* resource;
 	ID3D11ShaderResourceView* shaderResource;
 
-	CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);//if skyboxCubeMapDDS is used the image is warped in all directions, but only shows one "face" of the cubemap on all sides
-
+	//CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);//if skyboxCubeMapDDS is used the image is warped in all directions, but only shows one "face" of the cubemap on all sides
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/skyboxCubeMapDDS.dds", 0U, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, NULL);
+	
 	ID3D11Texture2D* tex2d;
 	
 	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
 
+	// use only when making a cube map
+
 	D3D11_TEXTURE2D_DESC SMTextureDesc;
 	tex2d->GetDesc(&SMTextureDesc);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC SMViewDesc;
+	SMViewDesc.Format = SMTextureDesc.Format;
+	SMViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	SMViewDesc.TextureCube.MipLevels = SMTextureDesc.MipLevels;
+	SMViewDesc.TextureCube.MostDetailedMip = 0;
+
+	DX11.Device->CreateShaderResourceView(tex2d, &SMViewDesc, &shaderResource);
+
 
 	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
@@ -80,7 +82,7 @@ Scene::Scene(int reducedVersion) : num_models(0) // Main world
 	m->AllocateBuffers(); Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]); // eventually will be the monitor
-	m->AddSolidColorBox(-1, 1, 2, 1, 2, 2, Model::Color(128, 128, 128));
+	m->AddSolidColorBox(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
 	m->AllocateBuffers(); Add(m);
 
 }

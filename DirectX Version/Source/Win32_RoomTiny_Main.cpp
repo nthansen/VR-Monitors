@@ -88,7 +88,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	}
 
     // Create the room model
-    Scene roomScene(false); // Can simplify scene further with parameter if required.
+    Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
 
     // MAIN LOOP
     // =========

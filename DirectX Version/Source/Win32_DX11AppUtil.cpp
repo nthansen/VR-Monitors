@@ -317,9 +317,10 @@ ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
 
 	D3D11_SAMPLER_DESC ss; memset(&ss, 0, sizeof(ss));
 	ss.AddressU = ss.AddressV = ss.AddressW = wrap ? D3D11_TEXTURE_ADDRESS_WRAP : D3D11_TEXTURE_ADDRESS_BORDER;
-	ss.Filter = D3D11_FILTER_ANISOTROPIC;
-	ss.MaxAnisotropy = 8;
-	ss.MaxLOD = 15;
+	ss.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	ss.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	ss.MinLOD = 0;
+	ss.MaxLOD = D3D11_FLOAT32_MAX;
 	DX11.Device->CreateSamplerState(&ss, &SamplerState);
 }
 

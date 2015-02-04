@@ -3,7 +3,11 @@
 
 #include "Kernel/OVR_Math.h"
 #include "Win32_DX11AppUtil.h"
+#include <DirectXMath.h>
 #include <d3d11.h>
+
+using namespace DirectX;
+using namespace std;
 
 //---------------------------------------------------------------------------
 struct Model
