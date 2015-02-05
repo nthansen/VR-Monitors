@@ -208,7 +208,7 @@ void UtilFoldExtraYawIntoTimewarpMatrix(Matrix4f * timewarpMatrix, Quatf eyePose
 d3d10 is used because dx11 extends it and nothing new was added for dx11
 @param which_type if 0 then vertex shader will be created else pixel shader
 */
-Shader::Shader(ID3D10Blob* s, int which_type) : numUniformInfo(0)
+Shader::Shader(ID3DBlob* s, int which_type) : numUniformInfo(0)
 {
 	if (which_type == 0) DX11.Device->CreateVertexShader(s->GetBufferPointer(), s->GetBufferSize(), NULL, &D3DVert);
 	else               DX11.Device->CreatePixelShader(s->GetBufferPointer(), s->GetBufferSize(), NULL, &D3DPix);
@@ -308,8 +308,10 @@ ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
 	char* vertexShader, char* pixelShader, ImageBuffer * t, bool wrap)
 	: OneTexture(t)
 {
-	ID3D10Blob *blobData;
-	D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_5_0", 0, 0, &blobData, NULL);
+	ID3DBlob *blobData;
+	ID3DBlob * pErrorBlob;
+	D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_5_0", 0, 0, &blobData, &pErrorBlob);
+	if (pErrorBlob) { OutputDebugString((LPCTSTR)pErrorBlob->GetBufferPointer()); pErrorBlob->Release(); }
 	VShader = new Shader(blobData, 0);
 	DX11.Device->CreateInputLayout(VertexDesc, numVertexDesc,
 		blobData->GetBufferPointer(), blobData->GetBufferSize(), &InputLayout);

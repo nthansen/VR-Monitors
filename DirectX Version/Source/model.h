@@ -4,6 +4,7 @@
 #include "Kernel/OVR_Math.h"
 #include "Win32_DX11AppUtil.h"
 #include <DirectXMath.h>
+#include <vector>
 #include <d3d11.h>
 
 using namespace DirectX;
@@ -28,6 +29,28 @@ struct Model
 		float     U, V;
 	};
 
+	/*/
+	struct SkyboxVertex	//Overloaded SkyboxVertex Structure
+	{
+		SkyboxVertex(){}
+		SkyboxVertex(float x, float y, float z,
+			float u, float v,
+			float nx, float ny, float nz)
+			: pos(x, y, z), texCoord(u, v), normal(nx, ny, nz){}
+
+		XMFLOAT3 pos;
+		XMFLOAT2 texCoord;
+		XMFLOAT3 normal;
+	};
+
+	int NumSphereVertices;
+	int NumSphereFaces;
+
+	XMMATRIX Rotationx;
+	XMMATRIX Rotationy;
+	XMMATRIX Rotationz;
+	*/
+
 	Vector3f     Pos;
 	Quatf        Rot;
 	Matrix4f     Mat;
@@ -44,7 +67,13 @@ struct Model
 
 	void AllocateBuffers();
 
+	void AllocateSkyboxBuffers();
+
 	void AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
+
+	void AddSkybox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
+
+	//void CreateSphere(int LatLines, int LongLines);
 };
 
 #endif

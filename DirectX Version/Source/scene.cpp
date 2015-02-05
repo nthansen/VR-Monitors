@@ -12,6 +12,13 @@ Scene::Scene() : num_models(0) // Main world
 	{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex, U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
 
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
 	char* VertexShaderSrc =
 		"float4x4 Proj, View;"
 		"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float2 TexCoord  : TEXCOORD0,"
@@ -31,6 +38,19 @@ Scene::Scene() : num_models(0) // Main world
 		"TextureCube textureCube   : register(t0); SamplerState Linear : register(s0); "
 		"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float3 TexCoord : TEXCOORD0) : SV_Target"
 		"{   return Color * textureCube.Sample(Linear, TexCoord); }";
+
+	/*
+	char* VertexShaderSphere =
+		"float4x4 WVP;"
+		"void main(in float3 Position : POSITION, in float3 normal : NORMAL, in float2 inTexCoord : TEXCOORD,"
+		"	out float4 Pos : SV_POSITION, out float3 texCoord : TEXCOORD)"
+		" { Pos = mul(float4(Position, 1.0f), WVP).xyww; texCoord = Position;} ";
+	char* PixelShaderSphere =
+		"TextureCube textureCube : register(t0); SamplerState ObjSamplerState : register(s0);"
+		"float4 main(in float4 Pos : SV_POSITION, in float3 texCoord : TEXCOORD) : SV_Target"
+		"{ return textureCube.Sample(ObjSamplerState, texCoord); }";
+	*/
+
 
 	// Construct textures
 	static Model::Color tex_pixels[4][256 * 256];
@@ -58,10 +78,10 @@ Scene::Scene() : num_models(0) // Main world
 	ID3D11Resource* resource;
 	ID3D11ShaderResourceView* shaderResource;
 
-	CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);//if skyboxCubeMapDDS is used the image is warped in all directions, but only shows one "face" of the cubemap on all sides
+	//CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);//if skyboxCubeMapDDS is used the image is warped in all directions, but only shows one "face" of the cubemap on all sides
 	
-	//CreateDDSTextureFromFileEx(DX11.Device, L"Assets/skyboxCubeMapDDS.dds", 0U, D3D11_USAGE_DEFAULT, 
-		//D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/skyboxCubeMapDDS.dds", 0U, D3D11_USAGE_DEFAULT, 
+		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
 	
 	ID3D11Texture2D* tex2d;
 	
@@ -73,17 +93,21 @@ Scene::Scene() : num_models(0) // Main world
 	//D3D11_SHADER_RESOURCE_VIEW_DESC *shaderResourceView = new D3D11_SHADER_RESOURCE_VIEW_DESC;
 	//shaderResource->GetDesc(shaderResourceView);
 
-	ImageBuffer* t = new ImageBuffer(false, false, Sizei(512, 512), tex2d, shaderResource);
-	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t, false);
+	ImageBuffer* t = new ImageBuffer(true, true, Sizei(512, 512), tex2d, shaderResource);
+	
+	// for if you are using the sphere
+	//generated_texture[4] = new ShaderFill(layout, 3, VertexShaderSphere, PixelShaderSphere, t);
 
-	//generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSkybox, PixelShaderSkybox, t);
+	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSkybox, PixelShaderSkybox, t);
 
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); // eventually will be skybox
-	m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
-	m->AllocateBuffers(); Add(m);
+	m->AddSkybox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
+	m->AllocateBuffers();
+	//m->CreateSphere(10, 10);
+	Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]); // eventually will be the monitor
 	m->AddSolidColorBox(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
@@ -98,11 +122,34 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 		Matrix4f modelmat = Models[i]->GetMatrix();
 		Matrix4f mat = (view * modelmat).Transposed();
 
-		Models[i]->Fill->VShader->SetUniform("View", 16, (float *)&mat);
-		Models[i]->Fill->VShader->SetUniform("Proj", 16, (float *)&proj);
+		// use only if using the sphere
+		/*if (i == 0) {
+			Matrix4f sphereWorld = sphereWorld.Identity();
 
-		DX11.Render(Models[i]->Fill, Models[i]->VertexBuffer, Models[i]->IndexBuffer,
-			sizeof(Model::Vertex), Models[i]->numIndices);
+			//Define sphereWorld's world space matrix
+			Matrix4f Scale = Scale.Scaling(5.0f, 5.0f, 5.0f);
+			//Make sure the sphere is always centered around camera
+			Matrix4f Trans = Matrix4f();
+			
+			Trans.SetTranslation(view.GetTranslation());
+
+			//Set sphereWorld's world space using the transformations
+			sphereWorld = Scale * Trans;
+
+			Matrix4f WVP = sphereWorld * view * proj;
+			WVP = WVP.Transposed();
+			Models[i]->Fill->VShader->SetUniform("WVP", 16, (float *)&WVP);
+			DX11.Render(Models[i]->Fill, Models[i]->VertexBuffer, Models[i]->IndexBuffer,
+				sizeof(Model::SkyboxVertex), Models[i]->NumSphereFaces * 3);
+		} */
+		//else {
+
+			Models[i]->Fill->VShader->SetUniform("View", 16, (float *)&mat);
+			Models[i]->Fill->VShader->SetUniform("Proj", 16, (float *)&proj);
+			DX11.Render(Models[i]->Fill, Models[i]->VertexBuffer, Models[i]->IndexBuffer,
+				sizeof(Model::Vertex), Models[i]->numIndices);
+		
+			//}
 	}
 }
 
