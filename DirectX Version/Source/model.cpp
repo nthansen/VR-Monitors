@@ -143,7 +143,6 @@ void Model::CreateSphere(int LatLines, int LongLines)
 		}
 	}
 
-
 	VertexBuffer = new DataBuffer(D3D11_BIND_VERTEX_BUFFER, &vertices[0], sizeof(SkyboxVertex)* NumSphereVertices);
 
 	std::vector<DWORD> indices(NumSphereFaces * 3);
@@ -236,7 +235,7 @@ void Model::CreateSphere(int LatLines, int LongLines)
 
 	for (DWORD l = 0; l < LongLines - 1; ++l)
 	{
-		indices[k] = -NumSphereVertices - 1;
+		indices[k] = NumSphereVertices - 1;
 		indices[k + 1] = (NumSphereVertices - 1) - (l + 1);
 		indices[k + 2] = (NumSphereVertices - 1) - (l + 2);
 		k += 3;

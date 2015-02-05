@@ -78,7 +78,7 @@ Scene::Scene() : num_models(0) // Main world
 
 	//CreateDDSTextureFromFile(DX11.Device, L"Assets/skybox.dds", &resource, &shaderResource);//if skyboxCubeMapDDS is used the image is warped in all directions, but only shows one "face" of the cubemap on all sides
 	
-	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/SkyboxFixed.dds", 0U, D3D11_USAGE_DEFAULT, 
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/skymapSunny.dds", 0U, D3D11_USAGE_DEFAULT, 
 		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
 	
 	ID3D11Texture2D* tex2d;
@@ -91,7 +91,7 @@ Scene::Scene() : num_models(0) // Main world
 	//D3D11_SHADER_RESOURCE_VIEW_DESC *shaderResourceView = new D3D11_SHADER_RESOURCE_VIEW_DESC;
 	//shaderResource->GetDesc(shaderResourceView);
 
-	ImageBuffer* t = new ImageBuffer(true, true, Sizei(512, 512), tex2d, shaderResource);
+	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
 	
 	// for if you are using the sphere
 	generated_texture[4] = new ShaderFill(layout, 3, VertexShaderSphere, PixelShaderSphere, t);
@@ -102,7 +102,7 @@ Scene::Scene() : num_models(0) // Main world
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); // eventually will be skybox
-	m->CreateSphere(5,5);
+	m->CreateSphere(100,100);
 	Add(m);
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]); // eventually will be the monitor
