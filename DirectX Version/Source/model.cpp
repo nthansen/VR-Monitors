@@ -34,22 +34,34 @@ void Model::AllocateBuffers()
 void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c)
 {
 	Vector3f Vert[][2] =
-	{ Vector3f(x1, y2, z1), Vector3f(z1, x1), Vector3f(x2, y2, z1), Vector3f(z1, x2),
+	{ Vector3f(x1, y2, z1), Vector3f(z1, x1), Vector3f(x2, y2, z1), Vector3f(z1, x2), // side 1
 	Vector3f(x2, y2, z2), Vector3f(z2, x2), Vector3f(x1, y2, z2), Vector3f(z2, x1),
-	Vector3f(x1, y1, z1), Vector3f(z1, x1), Vector3f(x2, y1, z1), Vector3f(z1, x2),
+	Vector3f(x1, y1, z1), Vector3f(z1, x1), Vector3f(x2, y1, z1), Vector3f(z1, x2), // side 2
 	Vector3f(x2, y1, z2), Vector3f(z2, x2), Vector3f(x1, y1, z2), Vector3f(z2, x1),
-	Vector3f(x1, y1, z2), Vector3f(z2, y1), Vector3f(x1, y1, z1), Vector3f(z1, y1),
+	Vector3f(x1, y1, z2), Vector3f(z2, y1), Vector3f(x1, y1, z1), Vector3f(z1, y1), // side 3
 	Vector3f(x1, y2, z1), Vector3f(z1, y2), Vector3f(x1, y2, z2), Vector3f(z2, y2),
-	Vector3f(x2, y1, z2), Vector3f(z2, y1), Vector3f(x2, y1, z1), Vector3f(z1, y1),
+	Vector3f(x2, y1, z2), Vector3f(z2, y1), Vector3f(x2, y1, z1), Vector3f(z1, y1), // side 4
 	Vector3f(x2, y2, z1), Vector3f(z1, y2), Vector3f(x2, y2, z2), Vector3f(z2, y2),
-	Vector3f(x1, y1, z1), Vector3f(x1, y1), Vector3f(x2, y1, z1), Vector3f(x2, y1),
+	Vector3f(x1, y1, z1), Vector3f(x1, y1), Vector3f(x2, y1, z1), Vector3f(x2, y1), // side 5
 	Vector3f(x2, y2, z1), Vector3f(x2, y2), Vector3f(x1, y2, z1), Vector3f(x1, y2),
-	Vector3f(x1, y1, z2), Vector3f(x1, y1), Vector3f(x2, y1, z2), Vector3f(x2, y1),
+	Vector3f(x1, y1, z2), Vector3f(x1, y1), Vector3f(x2, y1, z2), Vector3f(x2, y1), // side 6
 	Vector3f(x2, y2, z2), Vector3f(x2, y2), Vector3f(x1, y2, z2), Vector3f(x1, y2), };
 
-	uint16_t CubeIndices[] = { 0, 1, 3, 3, 1, 2, 5, 4, 6, 6, 4, 7,
-		8, 9, 11, 11, 9, 10, 13, 12, 14, 14, 12, 15,
-		16, 17, 19, 19, 17, 18, 21, 20, 22, 22, 20, 23 };
+	// each number is the vertex number
+	uint16_t CubeIndices[] = { 
+		0, 1, 3, // side 1
+		3, 1, 2, 
+		5, 4, 6, // side 2
+		6, 4, 7,
+		8, 9, 11,  // side 3
+		11, 9, 10, 
+		13, 12, 14, // side 4
+		14, 12, 15,
+		16, 17, 19, // side 5
+		19, 17, 18, 
+		21, 20, 22, // side 6
+		22, 20, 23 
+	};
 
 	for (int i = 0; i < 36; i++)
 		AddIndex(CubeIndices[i] + (uint16_t)numVertices);

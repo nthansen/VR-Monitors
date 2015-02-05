@@ -296,6 +296,7 @@ ImageBuffer::ImageBuffer(bool rendertarget, bool depth, Sizei size, ID3D11Textur
 {
 
 	Tex = newTex;
+
 	TexSv = newResource;
 
 	if (rendertarget &&  depth) DX11.Device->CreateDepthStencilView(Tex, NULL, &TexDsv);
@@ -308,11 +309,11 @@ ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
 	: OneTexture(t)
 {
 	ID3D10Blob *blobData;
-	D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_4_0", 0, 0, &blobData, NULL);
+	D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_5_0", 0, 0, &blobData, NULL);
 	VShader = new Shader(blobData, 0);
 	DX11.Device->CreateInputLayout(VertexDesc, numVertexDesc,
 		blobData->GetBufferPointer(), blobData->GetBufferSize(), &InputLayout);
-	D3DCompile(pixelShader, strlen(pixelShader), NULL, NULL, NULL, "main", "ps_4_0", 0, 0, &blobData, NULL);
+	D3DCompile(pixelShader, strlen(pixelShader), NULL, NULL, NULL, "main", "ps_5_0", 0, 0, &blobData, NULL);
 	PShader = new Shader(blobData, 1);
 
 	D3D11_SAMPLER_DESC ss; memset(&ss, 0, sizeof(ss));
