@@ -29,7 +29,6 @@ struct Model
 		float     U, V;
 	};
 
-	/*/
 	struct SkyboxVertex	//Overloaded SkyboxVertex Structure
 	{
 		SkyboxVertex(){}
@@ -49,7 +48,6 @@ struct Model
 	XMMATRIX Rotationx;
 	XMMATRIX Rotationy;
 	XMMATRIX Rotationz;
-	*/
 
 	Vector3f     Pos;
 	Quatf        Rot;
@@ -73,7 +71,7 @@ struct Model
 
 	void AddSkybox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
 
-	//void CreateSphere(int LatLines, int LongLines);
+	void CreateSphere(int LatLines, int LongLines);
 };
 
 #endif
