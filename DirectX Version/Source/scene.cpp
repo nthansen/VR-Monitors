@@ -79,7 +79,7 @@ Scene::Scene() : num_models(0) // Main world
 
 	// skybox
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); 
-	m->CreateSphere(190,190);
+	m->CreateSphere(4,4);
 	Add(m);
 
 	// Construct geometry

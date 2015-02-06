@@ -89,7 +89,7 @@ void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, f
 
 void Model::CreateSphere(int LatLines, int LongLines)
 {
-	NumSphereVertices = ((LatLines - 2) * LongLines) + 2;
+	NumSphereVertices = ((LatLines - 2) * LongLines) + 4;
 	NumSphereVertices *= 2;
 	NumSphereFaces = ((LatLines - 3)*(LongLines)* 2) + (LongLines * 2);
 	NumSphereFaces *= 2;
@@ -142,6 +142,11 @@ void Model::CreateSphere(int LatLines, int LongLines)
 			vertices[i*LongLines + j + 1].pos.z = -XMVectorGetZ(currVertPos);
 		}
 	}
+
+	// if enabled causes a texture
+	//vertices[NumSphereVertices - 1].pos.x = 0.0f;
+	//vertices[NumSphereVertices - 1].pos.y = 0.0f;
+	//vertices[NumSphereVertices - 1].pos.z = -1.0f;
 
 	VertexBuffer = new DataBuffer(D3D11_BIND_VERTEX_BUFFER, &vertices[0], sizeof(SkyboxVertex)* NumSphereVertices);
 
@@ -199,51 +204,7 @@ void Model::CreateSphere(int LatLines, int LongLines)
 	indices[k + 1] = (NumSphereVertices - 1) - LongLines;
 	indices[k + 2] = NumSphereVertices - 2;
 
-	for (DWORD l = 0; l < LongLines - 1; ++l)
-	{
-		indices[k] = 0;
-		indices[k + 1] = l + 1;
-		indices[k + 2] = l + 2;
-		k += 3;
-	}
 
-	for (DWORD i = 0; i < LatLines - 3; ++i)
-	{
-		for (DWORD j = 0; j < LongLines - 1; ++j)
-		{
-			indices[k] = i*LongLines + j + 1;
-			indices[k + 1] = i*LongLines + j + 2;
-			indices[k + 2] = (i + 1)*LongLines + j + 1;
-
-			indices[k + 3] = (i + 1)*LongLines + j + 1;
-			indices[k + 4] = i*LongLines + j + 2;
-			indices[k + 5] = (i + 1)*LongLines + j + 2;
-
-			k += 6; // next quad
-		}
-
-		indices[k] = (i*LongLines) + LongLines;
-		indices[k + 1] = (i*LongLines) + 1;
-		indices[k + 2] = ((i + 1)*LongLines) + LongLines;
-
-		indices[k + 3] = ((i + 1)*LongLines) + LongLines;
-		indices[k + 4] = (i*LongLines) + 1;
-		indices[k + 5] = ((i + 1)*LongLines) + 1;
-
-		k += 6;
-	}
-
-	for (DWORD l = 0; l < LongLines - 1; ++l)
-	{
-		indices[k] = NumSphereVertices - 1;
-		indices[k + 1] = (NumSphereVertices - 1) - (l + 1);
-		indices[k + 2] = (NumSphereVertices - 1) - (l + 2);
-		k += 3;
-	}
-
-	indices[k] = NumSphereVertices - 1;
-	indices[k + 1] = (NumSphereVertices - 1) - LongLines;
-	indices[k + 2] = NumSphereVertices - 2;
 
 	IndexBuffer = new DataBuffer(D3D11_BIND_INDEX_BUFFER, &indices[0], sizeof(DWORD)* NumSphereFaces * 3);
 
