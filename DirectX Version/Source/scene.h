@@ -14,10 +14,14 @@ struct Scene
 {
 	int     num_models;
 	Model * Models[10];
+	Vector3f monitorOffset;//used by getters and setters for adding monitors
+	float monitorHeight;
+	//startFloat startingPoint();
 
 	void  Add(Model * n);
 	Vector3f getLastMonitorPosition();//return the positon of the last monitor
 	Vector3f getOffset();//sets position of new monitor based on offset //TODO
+	void setOffset();//sets monitor offset
 	void addMonitor();//adds monitor to scene uses position of last monitor
 	Scene(int reducedVersion); // Main world
 
@@ -27,6 +31,19 @@ struct Scene
 	void Render(Matrix4f view, Matrix4f proj);
 
 
+};
+
+//can probably get rid of
+struct startFloat {
+	float x1;
+	float y1;
+	float z1;
+	float x2;
+	float y2;
+	float z2;
+	Model::Color color;
+	startFloat(float _x1, float _y1, float _z1, float _x2, float _y2, float _z2, Model::Color c) : x1(_x1),
+		y1(_y1), z1(_z1), x2(_x2), y2(_y2), z2(_z2), color(c){}
 };
 
 #endif

@@ -32,6 +32,11 @@ char* PixelShaderSphere =
 "float4 main(in float4 Pos : SV_POSITION, in float3 texCoord : TEXCOORD) : SV_Target"
 "{ return textureCube.Sample(ObjSamplerState, texCoord); }";
 
+float monitorHeight = 1;
+float monitorWidth = 2;
+//used in addmonitor and initial
+startFloat startingPoint(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
+
 void Scene::Add(Model * n)
 {
 	Models[num_models++] = n;
@@ -40,7 +45,7 @@ void Scene::Add(Model * n)
 Scene::Scene() : num_models(0) // Main world
 {
 
-
+	Vector3f monitorOffset = Vector3f(0, 0, 0);
 
 	// Construct textures
 	static Model::Color tex_pixels[4][256 * 256];
@@ -88,7 +93,8 @@ Scene::Scene() : num_models(0) // Main world
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
 	m = new Model(Vector3f(0, 0, 0), generated_texture[1]); // eventually will be the monitor
-	m->AddSolidColorBox(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
+	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
+		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
 	m->AllocateBuffers(); Add(m);
 
 }
@@ -138,7 +144,11 @@ Vector3f Scene::getLastMonitorPosition(){
 
 Vector3f Scene::getOffset(){
 	//TODO
-	return Vector3f(0, 0, 0);
+	return monitorOffset;
+}
+
+void Scene::setOffset(){
+	monitorOffset += Vector3f(0, monitorHeight, 0);
 }
 
 void Scene::addMonitor(){
@@ -146,8 +156,18 @@ void Scene::addMonitor(){
 	//we would probably fill this tex with pixels from desktop dup here
 	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, (unsigned char *)tex_pixels); // eventually will be the monitor
 	ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
-	Vector3f tempVect = Vector3f(.5, 0, 0) + getLastMonitorPosition();
+	Vector3f temp = getLastMonitorPosition();
+	Vector3f tempVect = Vector3f(2, 0, 0) + getLastMonitorPosition();//initialize in case we change in loop below
+	if (num_models % 3 == 0){//reset the position of the next monitor if they wont fit on screen
+		
+		temp.x = startingPoint.x1;
+		temp.y = startingPoint.y1 + monitorHeight;
+		temp.z = startingPoint.z1;
+		tempVect = temp;
+	}
+	
 	Model* m = new Model(tempVect, generated_texture);
-	m->AddSolidColorBox(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
+	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
+		startingPoint.y2, startingPoint.z2, startingPoint.color);
 	m->AllocateBuffers(); Add(m);
 }
