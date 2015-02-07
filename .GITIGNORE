@@ -3,3 +3,5 @@
 */Obj/*
 */Bin/*
 */*/Bin/*
+*.tlog
+*/Debug/*
