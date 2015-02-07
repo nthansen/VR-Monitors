@@ -1,43 +1,45 @@
 #include "scene.h"
 
-void	Scene::Add(Model * n)
+D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
+{ { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex, U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
+
+D3D11_INPUT_ELEMENT_DESC layout[] =
+{
+	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+};
+
+char* VertexShaderSrc =
+"float4x4 Proj, View;"
+"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float2 TexCoord  : TEXCOORD0,"
+"          out float4 oPosition : SV_Position, out float4 oColor: COLOR0, out float2 oTexCoord : TEXCOORD0)"
+"{   oPosition = mul(Proj, mul(View, Position)); oTexCoord = TexCoord; oColor = Color; }";
+char* PixelShaderSrc =
+"Texture2D Texture   : register(t0); SamplerState Linear : register(s0); "
+"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float2 TexCoord : TEXCOORD0) : SV_Target"
+"{   return Color * Texture.Sample(Linear, TexCoord); }";
+
+char* VertexShaderSphere =
+"float4x4 WVP;"
+"void main(in float3 Position : POSITION, in float3 normal : NORMAL, in float2 inTexCoord : TEXCOORD,"
+"	out float4 Pos : SV_POSITION, out float3 texCoord : TEXCOORD)"
+" { Pos = mul(float4(Position, 1.0f), WVP).xyww; texCoord = Position;} ";
+char* PixelShaderSphere =
+"TextureCube textureCube : register(t0); SamplerState ObjSamplerState : register(s0);"
+"float4 main(in float4 Pos : SV_POSITION, in float3 texCoord : TEXCOORD) : SV_Target"
+"{ return textureCube.Sample(ObjSamplerState, texCoord); }";
+
+void Scene::Add(Model * n)
 {
 	Models[num_models++] = n;
 }
 
 Scene::Scene() : num_models(0) // Main world
 {
-	D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
-	{ { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex, U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
 
-	D3D11_INPUT_ELEMENT_DESC layout[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
-	char* VertexShaderSrc =
-		"float4x4 Proj, View;"
-		"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float2 TexCoord  : TEXCOORD0,"
-		"          out float4 oPosition : SV_Position, out float4 oColor: COLOR0, out float2 oTexCoord : TEXCOORD0)"
-		"{   oPosition = mul(Proj, mul(View, Position)); oTexCoord = TexCoord; oColor = Color; }";
-	char* PixelShaderSrc =
-		"Texture2D Texture   : register(t0); SamplerState Linear : register(s0); "
-		"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float2 TexCoord : TEXCOORD0) : SV_Target"
-		"{   return Color * Texture.Sample(Linear, TexCoord); }";
-
-	char* VertexShaderSphere =
-		"float4x4 WVP;"
-		"void main(in float3 Position : POSITION, in float3 normal : NORMAL, in float2 inTexCoord : TEXCOORD,"
-		"	out float4 Pos : SV_POSITION, out float3 texCoord : TEXCOORD)"
-		" { Pos = mul(float4(Position, 1.0f), WVP).xyww; texCoord = Position;} ";
-	char* PixelShaderSphere =
-		"TextureCube textureCube : register(t0); SamplerState ObjSamplerState : register(s0);"
-		"float4 main(in float4 Pos : SV_POSITION, in float3 texCoord : TEXCOORD) : SV_Target"
-		"{ return textureCube.Sample(ObjSamplerState, texCoord); }";
 
 
 	// Construct textures
@@ -79,7 +81,7 @@ Scene::Scene() : num_models(0) // Main world
 
 	// skybox
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); 
-	m->CreateSphere(4,4);
+	m->CreateSphere(10,10);
 	Add(m);
 
 	// Construct geometry
@@ -126,6 +128,26 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 				sizeof(Model::Vertex), Models[i]->numIndices);
 		
 			}
-	}
+	
 }
 
+}
+Vector3f Scene::getLastMonitorPosition(){
+	return Models[num_models-1]->Pos;
+}
+
+Vector3f Scene::getOffset(){
+	//TODO
+	return Vector3f(0, 0, 0);
+}
+
+void Scene::addMonitor(){
+	static Model::Color tex_pixels[4][256 * 256];
+	//we would probably fill this tex with pixels from desktop dup here
+	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, (unsigned char *)tex_pixels); // eventually will be the monitor
+	ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
+	Vector3f tempVect = Vector3f(.5, 0, 0) + getLastMonitorPosition();
+	Model* m = new Model(tempVect, generated_texture);
+	m->AddSolidColorBox(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
+	m->AllocateBuffers(); Add(m);
+}

@@ -24,6 +24,8 @@ int				 clock;
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
+
+
 void NecessaryFeatures(float * pSpeed, int * pTimesToRenderScene, ovrVector3f * useHmdToEyeViewOffset);
 
 //-------------------------------------------------------------------------------------
@@ -115,6 +117,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (DX11.Key['S'] || DX11.Key[VK_DOWN])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, +speed*0.05f));
 		if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
 		if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
+		//spawn a new monitor
+		if (DX11.Key['M']){
+			roomScene.addMonitor();
+		}
 
 		Pos.y = ovrHmd_GetFloat(HMD, OVR_KEY_EYE_HEIGHT, Pos.y);
 
@@ -194,6 +200,8 @@ void NecessaryFeatures(float * pSpeed, int * pTimesToRenderScene, ovrVector3f * 
 	// Recenter the Rift by pressing 'R'
 	if (DX11.Key['R'])
 		ovrHmd_RecenterPose(HMD);
+
+
 
 	// Dismiss the Health and Safety message by pressing any key
 	if (DX11.IsAnyKeyPressed())
