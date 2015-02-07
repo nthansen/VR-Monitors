@@ -118,7 +118,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
 		if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
 		//spawn a new monitor
-		if (DX11.Key['M'] && clock%3==0){//restricts multiple monitors being made
+		if (DX11.Key['M'] && clock%6==0){//restricts multiple monitors being made
 			//could probably fix this by adding a splash screen to confirm add monitor
 			roomScene.addMonitor();
 		}
