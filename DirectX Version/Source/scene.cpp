@@ -32,9 +32,7 @@ char* PixelShaderSphere =
 "float4 main(in float4 Pos : SV_POSITION, in float3 texCoord : TEXCOORD) : SV_Target"
 "{ return textureCube.Sample(ObjSamplerState, texCoord); }";
 
-//these are defined in scene
-//float monitorHeight;
-//float monitorWidth;
+
 //used in addmonitor and initialization just below here for the first "screen"
 startFloat startingPoint(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
 
@@ -143,13 +141,16 @@ Vector3f Scene::getLastMonitorPosition(){
 	return Models[num_models-1]->Pos;
 }
 
+
+//This is set in scene.cpp
 Vector3f Scene::getOffset(){
 	//TODO
 	return monitorOffset;
 }
 
-void Scene::setOffset(){
-	monitorOffset += Vector3f(0, monitorHeight, 0);
+//sets the monitor offset used to separate monitors
+void Scene::setOffset(Vector3f _Voffset){
+	monitorOffset = _Voffset;
 }
 
 void Scene::addMonitor(){
@@ -157,19 +158,22 @@ void Scene::addMonitor(){
 	//we would probably fill this tex with pixels from desktop dup here
 	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, (unsigned char *)tex_pixels); // eventually will be the monitor
 	ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
+	
+	//if we have two monitors on the bottom then we need to add some up top
+	//so get where we started from and add an offset, only supports about 5 monitors total right now
 	Vector3f temp = getLastMonitorPosition();
-	Vector3f tempVect = Vector3f(1.2, 0, 0) + getLastMonitorPosition();//initialize in case we change in loop below
-	if (num_models % 3 == 0){//reset the position of the next monitor if they wont fit on screen
-		
+	Vector3f tempVect = getOffset() + getLastMonitorPosition();//initialize in case we change in loop below
+	if (num_models % 3 == 0){//reset the position of the next monitor if they wont fit on screen	
+		//so go back to the initial point on x, add an offset to put them on top 
 		temp.x = startingPoint.x1;
 		temp.y = startingPoint.y1 + monitorHeight/2;
-		temp.z = startingPoint.z1;
+		temp.z = startingPoint.z1;//and reset z so when we get the last monitor position it doesnt start pushing them back
 		tempVect = temp;//reset tempVect to this one since we had to reposition
-
 	}
-	tempVect.z = startingPoint.z2;
 	
+	//set the new model with the repositioned ones above
 	Model* m = new Model(tempVect, generated_texture);
+	//everything is added based on the first monitor the startingpoint monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);
 	m->AllocateBuffers(); Add(m);

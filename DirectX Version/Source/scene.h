@@ -14,7 +14,7 @@ struct Scene
 {
 	int     num_models;
 	Model * Models[10];
-	Vector3f monitorOffset;//used by getters and setters for adding monitors
+	Vector3f monitorOffset = Vector3f(1.2,0,0);//used by getters and setters for adding monitors
 	//float monitorHeight;
 	//startFloat startingPoint;
 	float monitorHeight = 1;
@@ -23,7 +23,7 @@ struct Scene
 	void  Add(Model * n);
 	Vector3f getLastMonitorPosition();//return the positon of the last monitor
 	Vector3f getOffset();//sets position of new monitor based on offset //TODO
-	void setOffset();//sets monitor offset
+	void setOffset(Vector3f);//sets monitor offset
 	void addMonitor();//adds monitor to scene uses position of last monitor
 	Scene(int reducedVersion); // Main world
 
