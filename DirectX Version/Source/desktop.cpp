@@ -69,6 +69,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
 
     // QI for IDXGIResource
     hr = desktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&desktopImage));
+    data->Frame = desktopImage;
     desktopResource->Release();
     desktopResource = nullptr;
 }
