@@ -13,6 +13,16 @@ D3D11_INPUT_ELEMENT_DESC layout[] =
 	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
+char * monitorVertes =
+"struct VS_INPUT{float4 Pos : POSITION;float2 Tex : TEXCOORD;};"
+"struct VS_OUTPUT{float4 Pos : SV_POSITION;float2 Tex : TEXCOORD;};"
+"VS_OUTPUT main(VS_INPUT input){return input;}";
+
+char * monitorPixels =
+"Texture2D tx : register(t0); SamplerState samLinear : register(s0);"
+"struct PS_INPUT{ float4 Pos : SV_POSITION; float2 Tex : TEXCOORD; };"
+"float4 main(PS_INPUT input) : SV_Target{ return tx.Sample(samLinear, input.Tex); }";
+
 char* VertexShaderSrc =
 "float4x4 Proj, View;"
 "void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float2 TexCoord  : TEXCOORD0,"
@@ -152,7 +162,6 @@ void Scene::setOffset(Vector3f _Voffset){
 
 void Scene::addMonitor(){
 
-    // Construct geometry
     // first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
     Desktop * desktop = new Desktop();
     desktop->init();
@@ -161,18 +170,18 @@ void Scene::addMonitor(){
     desktop->getFrame(&data, &timed);
 
     // The way the final prototype will work is that there will be one master surface that is rendered
-    // and then a second disposable surface which will map dirty bits onto the new one
+    // and then a second disposable surface which will map dirty bits onto the new one. 
 
     D3D11_TEXTURE2D_DESC DeskTexD;
     desktop->desktopImage->GetDesc(&DeskTexD);
     DeskTexD.MipLevels = 1;
-    DeskTexD.ArraySize = 2;
+    DeskTexD.ArraySize = 1;
     DeskTexD.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
     DeskTexD.SampleDesc.Count = 1;
     DeskTexD.SampleDesc.Quality = 0;
-    DeskTexD.Usage = D3D11_USAGE_DEFAULT;
-    DeskTexD.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    DeskTexD.CPUAccessFlags = 0;
+    DeskTexD.Usage = D3D11_USAGE_STAGING;
+    DeskTexD.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    DeskTexD.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
     DeskTexD.MiscFlags = 0;
     ID3D11Texture2D* masterTex;
     DX11.Device->CreateTexture2D(&DeskTexD, NULL, &masterTex);
@@ -181,12 +190,13 @@ void Scene::addMonitor(){
     DX11.Device->CreateShaderResourceView(masterTex, NULL, &ShaderResource);
     desktop->deviceContext->CopyResource(masterTex, desktop->desktopImage);
 
-    ImageBuffer* w = new ImageBuffer(true, false, Sizei(DeskTexD.Width, DeskTexD.Height), masterTex, ShaderResource);
-
-	static Model::Color tex_pixels[4][256 * 256];
-	//we would probably fill this tex with pixels from desktop dup here
-	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, (unsigned char *)tex_pixels); // eventually will be the monitor
-	ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
+    ImageBuffer* w = new ImageBuffer(true, false, Sizei(DeskTexD.Width, DeskTexD.Height), masterTex, shaderResource);
+    D3D11_INPUT_ELEMENT_DESC Layout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    };
+    ShaderFill * generated_texture = new ShaderFill(Layout, 3, monitorVertes, monitorPixels, w);
 	
 	//if we have two monitors on the bottom then we need to add some up top
 	//so get where we started from and add an offset, only supports about 5 monitors total right now
