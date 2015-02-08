@@ -190,7 +190,7 @@ void Scene::addMonitor(){
     DX11.Device->CreateShaderResourceView(masterTex, NULL, &ShaderResource);
     desktop->deviceContext->CopyResource(masterTex, desktop->desktopImage);
 
-    ImageBuffer* w = new ImageBuffer(true, false, Sizei(DeskTexD.Width, DeskTexD.Height), masterTex, shaderResource);
+    ImageBuffer* w = new ImageBuffer(true, false, Sizei(DeskTexD.Width, DeskTexD.Height), masterTex, ShaderResource);
     D3D11_INPUT_ELEMENT_DESC Layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
