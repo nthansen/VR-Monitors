@@ -1,5 +1,5 @@
-﻿Build started 2/7/2015 10:33:10 AM.
-     1>Project "C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" on node 2 (Build target(s)).
+﻿Build started 2/7/2015 11:25:53 PM.
+     1>Project "C:\Users\osmond\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W4 /WX- /Od /Oi /Oy- /D _UNICODE /D UNICODE /D WIN32 /D _DEBUG /D _LIB /D _WIN7_PLATFORM_UPDATE /D _WIN32_WINNT=0x0600 /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /arch:SSE2 /fp:fast /Zc:wchar_t /Zc:forScope /openmp /Yc"DirectXTexP.h" /Fp"Bin\Desktop_2013\Win32\Debug\DirectXTex.pch" /Fo"Bin\Desktop_2013\Win32\Debug\\" /Fd"Bin\Desktop_2013\Win32\Debug\DirectXTex.pdb" /Gd /TP /analyze- /errorReport:prompt  DirectXTexUtil.cpp
          DirectXTexUtil.cpp
@@ -43,9 +43,9 @@
          Bin\Desktop_2013\Win32\Debug\DirectXTexTGA.obj
          Bin\Desktop_2013\Win32\Debug\DirectXTexUtil.obj
          Bin\Desktop_2013\Win32\Debug\DirectXTexWIC.obj
-         DirectXTex_Desktop_2013.vcxproj -> C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\Bin\Desktop_2013\Win32\Debug\DirectXTex.lib
-     1>Done Building Project "C:\Users\Brian\git_repo\vrmaster\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" (Build target(s)).
+         DirectXTex_Desktop_2013.vcxproj -> C:\Users\osmond\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\Bin\Desktop_2013\Win32\Debug\DirectXTex.lib
+     1>Done Building Project "C:\Users\osmond\VR-Monitors\DirectX Version\DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.34
+Time Elapsed 00:00:06.37

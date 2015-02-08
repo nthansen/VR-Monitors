@@ -8,6 +8,7 @@
 
 #include "Win32_DX11AppUtil.h"			// Include Non-SDK supporting utilities
 #include "scene.h"
+#include "desktop.h"
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 
 ovrHmd           HMD;					// The handle of the headset
@@ -91,6 +92,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
+
 
     // MAIN LOOP
     // =========

@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "desktop.h"
 
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 { { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -34,7 +35,7 @@ char* PixelShaderSphere =
 
 
 //used in addmonitor and initialization just below here for the first "screen"
-startFloat startingPoint(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
+startFloat startingPoint(-2.0, 0, 1, 2, 4, 1, Model::Color(128, 128, 128));
 
 void Scene::Add(Model * n)
 {
@@ -83,6 +84,9 @@ Scene::Scene() : num_models(0) // Main world
 	
 	generated_texture[4] = new ShaderFill(layout, 3, VertexShaderSphere, PixelShaderSphere, t);
 
+    //TODO: add desktop duplication
+
+
 	// skybox
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); 
 	m->CreateSphere(10,10);
@@ -90,6 +94,36 @@ Scene::Scene() : num_models(0) // Main world
 
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
+    Desktop * desktop = new Desktop();
+    desktop->init();
+    FRAME_DATA data;
+    bool timed;
+    desktop->getFrame(&data, &timed);
+
+    // The way the final prototype will work is that there will be one master surface that is rendered
+    // and then a second disposable surface which will map dirty bits onto the new one
+
+    D3D11_TEXTURE2D_DESC DeskTexD;
+    desktop->desktopImage->GetDesc(&DeskTexD);
+    DeskTexD.MipLevels = 1;
+    DeskTexD.ArraySize = 2;
+    DeskTexD.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    DeskTexD.SampleDesc.Count = 1;
+    DeskTexD.SampleDesc.Quality = 0;
+    DeskTexD.Usage = D3D11_USAGE_DEFAULT;
+    DeskTexD.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    DeskTexD.CPUAccessFlags = 0;
+    DeskTexD.MiscFlags = 0;
+    ID3D11Texture2D* masterTex;
+    DX11.Device->CreateTexture2D(&DeskTexD, NULL, &masterTex);
+
+    ID3D11ShaderResourceView* ShaderResource = nullptr;
+    DX11.Device->CreateShaderResourceView(masterTex, NULL, &ShaderResource);
+    desktop->deviceContext->CopyResource(masterTex, desktop->desktopImage);
+
+    ImageBuffer* w = new ImageBuffer(true, false, Sizei(DeskTexD.Width, DeskTexD.Height), masterTex, ShaderResource);
+
+    generated_texture[1] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, w);
 
 	m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // eventually will be the monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
