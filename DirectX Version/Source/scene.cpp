@@ -3,7 +3,11 @@
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 { { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 { "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex, U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
+{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex,U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
+
+D3D11_INPUT_ELEMENT_DESC SkyboxVertexDesc[] =
+{ { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
 
 D3D11_INPUT_ELEMENT_DESC layout[] =
 {
@@ -21,6 +25,16 @@ char* PixelShaderSrc =
 "Texture2D Texture   : register(t0); SamplerState Linear : register(s0); "
 "float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float2 TexCoord : TEXCOORD0) : SV_Target"
 "{   return Color * Texture.Sample(Linear, TexCoord); }";
+
+char* VertexShaderSkybox =
+"float4x4 Proj, View;"
+"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float3 TexCoord  : TEXCOORD0,"
+"          out float4 oPosition : SV_Position, out float4 oColor: COLOR0, out float3 oTexCoord : TEXCOORD0)"
+"{   oPosition = mul(Proj, mul(View, Position)).xyww; oTexCoord = TexCoord; oColor = Color; }";
+char* PixelShaderSkybox =
+"TextureCube skyMap   : register(t0); SamplerState Linear : register(s0); "
+"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float3 TexCoord : TEXCOORD0) : SV_Target"
+"{   TexCoord = Position; return Color * Texture.Sample(Linear,TexCoord); }";
 
 char* VertexShaderSphere =
 "float4x4 WVP;"
@@ -81,11 +95,13 @@ Scene::Scene() : num_models(0) // Main world
 
 	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
 	
-	generated_texture[4] = new ShaderFill(layout, 3, VertexShaderSphere, PixelShaderSphere, t);
+	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSkybox, PixelShaderSkybox, t);
 
 	// skybox
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); 
-	m->CreateSphere(10,10);
+	m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
+	//m->CreateSphere(10,10);
+	m->AllocateBuffers();
 	Add(m);
 
 	// Construct geometry
@@ -105,6 +121,7 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 		Matrix4f modelmat = Models[i]->GetMatrix();
 		Matrix4f mat = (view * modelmat).Transposed();
 
+		/*
 		// use only if using the sphere
 		if (i == 0) {
 			Matrix4f sphereWorld = sphereWorld.Identity();
@@ -126,13 +143,13 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 				sizeof(Model::SkyboxVertex), Models[i]->NumSphereFaces * 3);
 		} 
 		else {
-
+		*/
 			Models[i]->Fill->VShader->SetUniform("View", 16, (float *)&mat);
 			Models[i]->Fill->VShader->SetUniform("Proj", 16, (float *)&proj);
 			DX11.Render(Models[i]->Fill, Models[i]->VertexBuffer, Models[i]->IndexBuffer,
 				sizeof(Model::Vertex), Models[i]->numIndices);
 		
-			}
+			//}
 	
 }
 

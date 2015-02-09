@@ -34,6 +34,21 @@ void Model::AllocateBuffers()
 
 
 
+void Model::AddSkybox()
+{
+	VertexPos Vert[] =
+	{
+		{ Vector3f(1.0f, 1.0f, 1.0f), Vector2f(1.0f, 1.0f) },
+		{ Vector3f(1.0f, -1.0f, 1.0f), Vector2f(1.0f, 0.0f) },
+		{ Vector3f(-1.0f, -1.0f, 1.0f), Vector2f(0.0f, 0.0f) },
+		{ Vector3f(-1.0f, -1.0f, 1.0f), Vector2f(0.0f, 0.0f) },
+		{ Vector3f(-1.0f, 1.0f, 1.0f), Vector2f(0.0f, 1.0f) },
+		{ Vector3f(1.0f, 1.0f, 1.0f), Vector2f(1.0f, 1.0f) },
+	};
+
+
+}
+
 void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c)
 {
 	Vector3f Vert[][2] =
@@ -53,19 +68,19 @@ void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, f
 	};
 
 	// each number is the SkyboxVertex number
-	uint16_t CubeIndices[] = { 
+	uint16_t CubeIndices[] = {
 		0, 1, 3, // side 1
-		3, 1, 2, 
+		3, 1, 2,
 		5, 4, 6, // side 2
 		6, 4, 7,
 		8, 9, 11,  // side 3
-		11, 9, 10, 
+		11, 9, 10,
 		13, 12, 14, // side 4
 		14, 12, 15,
 		16, 17, 19, // side 5
-		19, 17, 18, 
+		19, 17, 18,
 		21, 20, 22, // side 6
-		22, 20, 23 
+		22, 20, 23
 	};
 
 	for (int i = 0; i < 36; i++)
@@ -73,7 +88,7 @@ void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, f
 
 	for (int v = 0; v < 24; v++)
 	{
-		Vertex vvv; vvv.Pos = Vert[v][0];  vvv.U = Vert[v][1].x; vvv.V = Vert[v][1].y;
+		Vertex vvv; vvv.Pos = Vert[v][0]; vvv.U = Vert[v][1].x; vvv.V = Vert[v][1].y;
 		float dist1 = (vvv.Pos - Vector3f(-2, 4, -2)).Length();
 		float dist2 = (vvv.Pos - Vector3f(3, 4, -3)).Length();
 		float dist3 = (vvv.Pos - Vector3f(-4, 3, 25)).Length();

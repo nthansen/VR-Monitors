@@ -30,6 +30,12 @@ struct Model
 		float     U, V;
 	};
 
+	struct VertexPos
+	{
+		Vector3f pos;
+		Vector2f tex0;
+	};
+
 	struct SkyboxVertex	//Overloaded SkyboxVertex Structure
 	{
 		SkyboxVertex(){}
@@ -70,7 +76,7 @@ struct Model
 	void AddSquare(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
 	void AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
 
-	void AddSkybox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
+	void AddSkybox();
 
 	void CreateSphere(int LatLines, int LongLines);
 };
