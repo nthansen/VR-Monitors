@@ -14,6 +14,8 @@ struct Scene
 {
 	int     num_models;
 	Model * Models[10];
+	// used to change textures
+	ShaderFill * generated_texture[5];
 	Vector3f monitorOffset = Vector3f(1.2,0,0);//used by getters and setters for adding monitors
 	//float monitorHeight;
 	//startFloat startingPoint;

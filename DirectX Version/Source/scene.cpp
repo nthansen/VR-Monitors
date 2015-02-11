@@ -34,7 +34,7 @@ char* VertexShaderSkybox =
 char* PixelShaderSkybox =
 "TextureCube skyMap   : register(t0); SamplerState Linear : register(s0); "
 "float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float3 TexCoord : TEXCOORD0) : SV_Target"
-"{   TexCoord = Position; return Color * Texture.Sample(Linear,TexCoord); }";
+"{   TexCoord = Position; return Color * skyMap.Sample(Linear,TexCoord); }";
 
 char* VertexShaderSphere =
 "float4x4 WVP;"
@@ -62,7 +62,6 @@ Scene::Scene() : num_models(0) // Main world
 
 	// Construct textures
 	static Model::Color tex_pixels[4][256 * 256];
-	ShaderFill * generated_texture[5];
 
 	// this is what makes the checkered floors and walls textures 
 	for (int k = 0; k<4; k++)

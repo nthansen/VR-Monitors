@@ -122,6 +122,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			//could probably fix this by adding a splash screen to confirm add monitor
 			roomScene.addMonitor();
 		}
+		// just so it'd give some time before switching between each texture
+		if (clock % 24 == 0) {
+			// accesses the actual texture in the shaderfill and switches them out
+			roomScene.Models[1]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
+		}
 
 		Pos.y = ovrHmd_GetFloat(HMD, OVR_KEY_EYE_HEIGHT, Pos.y);
 
@@ -201,8 +206,6 @@ void NecessaryFeatures(float * pSpeed, int * pTimesToRenderScene, ovrVector3f * 
 	// Recenter the Rift by pressing 'R'
 	if (DX11.Key['R'])
 		ovrHmd_RecenterPose(HMD);
-
-
 
 	// Dismiss the Health and Safety message by pressing any key
 	if (DX11.IsAnyKeyPressed())
