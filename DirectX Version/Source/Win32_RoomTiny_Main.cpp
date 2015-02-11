@@ -125,7 +125,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		// just so it'd give some time before switching between each texture
 		if (clock % 24 == 0) {
 			// accesses the actual texture in the shaderfill and switches them out
-			roomScene.Models[1]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
+			roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
 		}
 
 		Pos.y = ovrHmd_GetFloat(HMD, OVR_KEY_EYE_HEIGHT, Pos.y);

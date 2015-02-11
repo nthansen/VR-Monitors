@@ -5,16 +5,15 @@ D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 { "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 { "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex,U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
 
-D3D11_INPUT_ELEMENT_DESC SkyboxVertexDesc[] =
-{ { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
-
+/*
 D3D11_INPUT_ELEMENT_DESC layout[] =
 {
 	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
+*/
+
 
 char* VertexShaderSrc =
 "float4x4 Proj, View;"
@@ -28,14 +27,17 @@ char* PixelShaderSrc =
 
 char* VertexShaderSkybox =
 "float4x4 Proj, View;"
-"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float3 TexCoord  : TEXCOORD0,"
+"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float2 TexCoord  : TEXCOORD0,"
 "          out float4 oPosition : SV_Position, out float4 oColor: COLOR0, out float3 oTexCoord : TEXCOORD0)"
-"{   oPosition = mul(Proj, mul(View, Position)).xyww; oTexCoord = TexCoord; oColor = Color; }";
+"{   oPosition = mul(Proj, mul(View, Position)).xyww; oTexCoord = Position; oColor = Color; }";
+
 char* PixelShaderSkybox =
 "TextureCube skyMap   : register(t0); SamplerState Linear : register(s0); "
 "float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float3 TexCoord : TEXCOORD0) : SV_Target"
-"{   TexCoord = Position; return Color * skyMap.Sample(Linear,TexCoord); }";
+"{   return skyMap.Sample(Linear,TexCoord); }";
 
+
+/*
 char* VertexShaderSphere =
 "float4x4 WVP;"
 "void main(in float3 Position : POSITION, in float3 normal : NORMAL, in float2 inTexCoord : TEXCOORD,"
@@ -45,7 +47,7 @@ char* PixelShaderSphere =
 "TextureCube textureCube : register(t0); SamplerState ObjSamplerState : register(s0);"
 "float4 main(in float4 Pos : SV_POSITION, in float3 texCoord : TEXCOORD) : SV_Target"
 "{ return textureCube.Sample(ObjSamplerState, texCoord); }";
-
+*/
 
 //used in addmonitor and initialization just below here for the first "screen"
 startFloat startingPoint(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
@@ -96,21 +98,20 @@ Scene::Scene() : num_models(0) // Main world
 	
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSkybox, PixelShaderSkybox, t);
 
-	// skybox
-	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); 
-	m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
-	//m->CreateSphere(10,10);
-	m->AllocateBuffers();
-	Add(m);
-
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
-	m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // eventually will be the monitor
+	Model * m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // eventually will be the monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
 	m->AllocateBuffers(); Add(m);
 
+	// skybox
+	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
+	m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
+	m->AllocateBuffers();
+	//m->CreateSphere(10,10);
+	Add(m);
 }
 
 void Scene::Render(Matrix4f view, Matrix4f proj)

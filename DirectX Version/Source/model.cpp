@@ -31,24 +31,6 @@ void Model::AllocateBuffers()
 	IndexBuffer = new DataBuffer(D3D11_BIND_INDEX_BUFFER, &Indices[0], numIndices * 2);
 }
 
-
-
-
-void Model::AddSkybox()
-{
-	VertexPos Vert[] =
-	{
-		{ Vector3f(1.0f, 1.0f, 1.0f), Vector2f(1.0f, 1.0f) },
-		{ Vector3f(1.0f, -1.0f, 1.0f), Vector2f(1.0f, 0.0f) },
-		{ Vector3f(-1.0f, -1.0f, 1.0f), Vector2f(0.0f, 0.0f) },
-		{ Vector3f(-1.0f, -1.0f, 1.0f), Vector2f(0.0f, 0.0f) },
-		{ Vector3f(-1.0f, 1.0f, 1.0f), Vector2f(0.0f, 1.0f) },
-		{ Vector3f(1.0f, 1.0f, 1.0f), Vector2f(1.0f, 1.0f) },
-	};
-
-
-}
-
 void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c)
 {
 	Vector3f Vert[][2] =
@@ -104,6 +86,7 @@ void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, f
 }
 
 
+/*
 void Model::CreateSphere(int LatLines, int LongLines)
 {
 	NumSphereVertices = ((LatLines - 2) * LongLines) + 4;
@@ -226,5 +209,5 @@ void Model::CreateSphere(int LatLines, int LongLines)
 	IndexBuffer = new DataBuffer(D3D11_BIND_INDEX_BUFFER, &indices[0], sizeof(DWORD)* NumSphereFaces * 3);
 
 }
-
+*/
 

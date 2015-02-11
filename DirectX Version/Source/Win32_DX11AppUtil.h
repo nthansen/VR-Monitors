@@ -115,7 +115,6 @@ struct DataBuffer
     size_t         Size;
 
 	DataBuffer(D3D11_BIND_FLAG use, const void* buffer, size_t size);
-
 	void Refresh(const void* buffer, size_t size);
 
 };
