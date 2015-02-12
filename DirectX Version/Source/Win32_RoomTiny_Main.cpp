@@ -118,14 +118,25 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
 		if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
 		//spawn a new monitor
-		if (DX11.Key['M'] && clock%6==0){//restricts multiple monitors being made
+		if (DX11.Key['M'] && clock % 6 == 0){//restricts multiple monitors being made
 			//could probably fix this by adding a splash screen to confirm add monitor
 			roomScene.addMonitor();
 		}
 		// just so it'd give some time before switching between each texture
 		if (clock % 24 == 0) {
+			// replaces the shader fill to the new shaderfill
+			roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
 			// accesses the actual texture in the shaderfill and switches them out
-			roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
+			//roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
+		}
+
+		// these buttons to allow the user to change the skybox
+		if (DX11.Key['1']) {
+			roomScene.Models[1]->Fill = roomScene.generated_texture[4];
+		}
+
+		if (DX11.Key['2']) {
+			roomScene.Models[1]->Fill = roomScene.generated_texture[5];
 		}
 
 		Pos.y = ovrHmd_GetFloat(HMD, OVR_KEY_EYE_HEIGHT, Pos.y);
@@ -210,5 +221,7 @@ void NecessaryFeatures(float * pSpeed, int * pTimesToRenderScene, ovrVector3f * 
 	// Dismiss the Health and Safety message by pressing any key
 	if (DX11.IsAnyKeyPressed())
 		ovrHmd_DismissHSWDisplay(HMD);
+
+
 }
 

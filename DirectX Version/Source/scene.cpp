@@ -62,19 +62,7 @@ Scene::Scene() : num_models(0) // Main world
 		generated_texture[k] = new ShaderFill(ModelVertexDesc, 3, Box, t);
 	}
 
-	ID3D11Resource* resource;
-	ID3D11ShaderResourceView* shaderResource;
-
-	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/skymapSunny.dds", 0U, D3D11_USAGE_DEFAULT, 
-		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
-	
-	ID3D11Texture2D* tex2d;
-	
-	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
-
-	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
-	
-	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
+	loadSkyboxes();
 
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
@@ -172,4 +160,29 @@ void Scene::addMonitor(){
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);
 	m->AllocateBuffers(); Add(m);
+}
+
+void Scene::loadSkyboxes() {
+
+	ID3D11Resource* resource;
+	ID3D11ShaderResourceView* shaderResource;
+	ID3D11Texture2D* tex2d;
+
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/SkyboxEvening.dds", 0U, D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
+
+	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
+
+	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
+
+	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
+
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/SkyboxSunny.dds", 0U, D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
+
+	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
+
+	t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
+
+	generated_texture[5] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
 }
