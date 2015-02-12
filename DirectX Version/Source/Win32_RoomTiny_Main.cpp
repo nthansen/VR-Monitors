@@ -138,9 +138,15 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (DX11.Key['2']) {
 			roomScene.Models[1]->Fill = roomScene.generated_texture[5];
 		}
-
-		Pos.y = ovrHmd_GetFloat(HMD, OVR_KEY_EYE_HEIGHT, Pos.y);
-
+		if (DX11.Key['3']) {
+			roomScene.Models[1]->Fill = roomScene.generated_texture[6];
+		}
+		if (DX11.Key['4']) {
+			roomScene.Models[1]->Fill = roomScene.generated_texture[7];
+		}
+		if (DX11.Key['5']) {
+			roomScene.Models[1]->Fill = roomScene.generated_texture[8];
+		}
 
 		// shows how to select a model and mess with it
 		/*

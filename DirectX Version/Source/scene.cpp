@@ -28,7 +28,7 @@ char* PixelShaderSphere =
 */
 
 //used in addmonitor and initialization just below here for the first "screen"
-startFloat startingPoint(-0.5, 1, 1, 0.5, 2, 1, Model::Color(128, 128, 128));
+startFloat startingPoint(-0.5, -0.5, 0.8, 0.5, 0.5, 0.8, Model::Color(128, 128, 128));
 
 void Scene::Add(Model * n)
 {
@@ -168,7 +168,7 @@ void Scene::loadSkyboxes() {
 	ID3D11ShaderResourceView* shaderResource;
 	ID3D11Texture2D* tex2d;
 
-	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/SkyboxEvening.dds", 0U, D3D11_USAGE_DEFAULT,
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/Evening.dds", 0U, D3D11_USAGE_DEFAULT,
 		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
 
 	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
@@ -177,7 +177,7 @@ void Scene::loadSkyboxes() {
 
 	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
 
-	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/SkyboxSunny.dds", 0U, D3D11_USAGE_DEFAULT,
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/Sunny.dds", 0U, D3D11_USAGE_DEFAULT,
 		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
 
 	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
@@ -185,4 +185,32 @@ void Scene::loadSkyboxes() {
 	t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
 
 	generated_texture[5] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
+
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/Pier.dds", 0U, D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
+
+	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
+
+	t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
+
+	generated_texture[6] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
+
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/Beach.dds", 0U, D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
+
+	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
+
+	t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
+
+	generated_texture[7] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
+
+	CreateDDSTextureFromFileEx(DX11.Device, L"Assets/Beach2.dds", 0U, D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE, 0, D3D11_RESOURCE_MISC_TEXTURECUBE, true, &resource, &shaderResource);
+
+	resource->QueryInterface(IID_ID3D11Texture2D, (void **)&tex2d);
+
+	t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
+
+	generated_texture[8] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
+
 }
