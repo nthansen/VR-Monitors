@@ -304,18 +304,31 @@ ImageBuffer::ImageBuffer(bool rendertarget, bool depth, Sizei size, ID3D11Textur
 
 }
 
+
+// Creates the shaders for the model
+
 ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
-	char* vertexShader, char* pixelShader, ImageBuffer * t, bool wrap)
+	int type, ImageBuffer * t, bool wrap)
 	: OneTexture(t)
 {
 	ID3DBlob *blobData;
-	ID3DBlob * pErrorBlob;
-	D3DCompile(vertexShader, strlen(vertexShader), NULL, NULL, NULL, "main", "vs_5_0", 0, 0, &blobData, &pErrorBlob);
-	if (pErrorBlob) { OutputDebugString((LPCTSTR)pErrorBlob->GetBufferPointer()); pErrorBlob->Release(); }
+	
+	// 0 means it's a box
+	if (type == Box) {
+		D3DCompileFromFile(L"Source/VertexShaderBox.hlsl", NULL, NULL, "main", "vs_5_0", 0, 0, &blobData, NULL);
+	}
+	else if(type == Skybox) {
+		D3DCompileFromFile(L"Source/VertexShaderSkybox.hlsl", NULL, NULL, "main", "vs_5_0", 0, 0, &blobData, NULL);
+	}
 	VShader = new Shader(blobData, 0);
 	DX11.Device->CreateInputLayout(VertexDesc, numVertexDesc,
 		blobData->GetBufferPointer(), blobData->GetBufferSize(), &InputLayout);
-	D3DCompile(pixelShader, strlen(pixelShader), NULL, NULL, NULL, "main", "ps_5_0", 0, 0, &blobData, NULL);
+	if (type == Box) {
+		D3DCompileFromFile(L"Source/PixelShaderBox.hlsl", NULL, NULL, "main", "ps_5_0", 0, 0, &blobData, NULL);
+	}
+	else if(type == Skybox) {
+		D3DCompileFromFile(L"Source/PixelShaderSkybox.hlsl", NULL, NULL, "main", "ps_5_0", 0, 0, &blobData, NULL);
+	}
 	PShader = new Shader(blobData, 1);
 
 	D3D11_SAMPLER_DESC ss; memset(&ss, 0, sizeof(ss));

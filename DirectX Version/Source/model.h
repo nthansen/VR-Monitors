@@ -3,7 +3,6 @@
 
 #include "Kernel/OVR_Math.h"
 #include "Win32_DX11AppUtil.h"
-#define _XM_NO_INTRINSICS_
 #include <DirectXMath.h>
 #include <vector>
 #include <d3d11.h>

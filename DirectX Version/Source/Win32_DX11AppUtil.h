@@ -103,9 +103,15 @@ struct ShaderFill
     ImageBuffer        * OneTexture;
     ID3D11InputLayout  * InputLayout;
     ID3D11SamplerState * SamplerState;
+	
+	// allows us to know what type of model we need to grab a shader for
+	enum modelTypes
+	{
+		Box, Skybox
+	};
 
 	ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
-		char* vertexShader, char* pixelShader, ImageBuffer * t, bool wrap = 1);
+		int type, ImageBuffer * t, bool wrap = 1);
 };
 
 //----------------------------------------------------------------
