@@ -2,6 +2,8 @@
 *.suo
 DirectX Version/Obj/*
 DirectX Version/Bin/*
+DirectXTex/DirectXTex/Bin/*
+DirectX Version/LibOVR/Obj/*
 */*/Bin/*
 *.tlog
 */Debug/*
