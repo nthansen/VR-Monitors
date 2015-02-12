@@ -1,7 +1,7 @@
 *.sdf
 *.suo
-*/Obj/*
-*/Bin/*
+DirectX Version/Obj/*
+DirectX Version/Bin/*
 */*/Bin/*
 *.tlog
 */Debug/*

@@ -3,7 +3,6 @@
 
 #include "Kernel/OVR_Math.h"
 #include "Win32_DX11AppUtil.h"
-#define _XM_NO_INTRINSICS_
 #include <DirectXMath.h>
 #include <vector>
 #include <d3d11.h>
@@ -70,7 +69,7 @@ struct Model
 
 	void AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
 
-	//void CreateSphere(int LatLines, int LongLines);
+	void CreateSphere(int LatLines, int LongLines);
 };
 
 #endif

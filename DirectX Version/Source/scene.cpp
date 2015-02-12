@@ -15,28 +15,6 @@ D3D11_INPUT_ELEMENT_DESC layout[] =
 */
 
 
-char* VertexShaderSrc =
-"float4x4 Proj, View;"
-"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float2 TexCoord  : TEXCOORD0,"
-"          out float4 oPosition : SV_Position, out float4 oColor: COLOR0, out float2 oTexCoord : TEXCOORD0)"
-"{   oPosition = mul(Proj, mul(View, Position)); oTexCoord = TexCoord; oColor = Color; }";
-char* PixelShaderSrc =
-"Texture2D Texture   : register(t0); SamplerState Linear : register(s0); "
-"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float2 TexCoord : TEXCOORD0) : SV_Target"
-"{   return Color * Texture.Sample(Linear, TexCoord); }";
-
-char* VertexShaderSkybox =
-"float4x4 Proj, View;"
-"void main(in  float4 Position  : POSITION,    in  float4 Color : COLOR0, in  float2 TexCoord  : TEXCOORD0,"
-"          out float4 oPosition : SV_Position, out float4 oColor: COLOR0, out float3 oTexCoord : TEXCOORD0)"
-"{   oPosition = mul(Proj, mul(View, Position)).xyww; oTexCoord = Position; oColor = Color; }";
-
-char* PixelShaderSkybox =
-"TextureCube skyMap   : register(t0); SamplerState Linear : register(s0); "
-"float4 main(in float4 Position : SV_Position, in float4 Color: COLOR0, in float3 TexCoord : TEXCOORD0) : SV_Target"
-"{   return skyMap.Sample(Linear,TexCoord); }";
-
-
 /*
 char* VertexShaderSphere =
 "float4x4 WVP;"
@@ -81,7 +59,7 @@ Scene::Scene() : num_models(0) // Main world
 		// load the finished texture pixels into the image buffer
 		ImageBuffer * t = new ImageBuffer(false, false, Sizei(256, 256), 8, (unsigned char *)tex_pixels[k]);
 		// then create these textures into shaders
-		generated_texture[k] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
+		generated_texture[k] = new ShaderFill(ModelVertexDesc, 3, Box, t);
 	}
 
 	ID3D11Resource* resource;
@@ -96,7 +74,7 @@ Scene::Scene() : num_models(0) // Main world
 
 	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), tex2d, shaderResource);
 	
-	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSkybox, PixelShaderSkybox, t);
+	generated_texture[4] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
 
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
@@ -174,7 +152,7 @@ void Scene::addMonitor(){
 	static Model::Color tex_pixels[4][256 * 256];
 	//we would probably fill this tex with pixels from desktop dup here
 	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, (unsigned char *)tex_pixels); // eventually will be the monitor
-	ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
+	ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, Box, t);
 	
 	//if we have two monitors on the bottom then we need to add some up top
 	//so get where we started from and add an offset, only supports about 5 monitors total right now

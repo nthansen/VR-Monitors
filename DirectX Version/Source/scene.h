@@ -12,6 +12,13 @@ using namespace DirectX;
 //------------------------------------------------------------------------- 
 struct Scene
 {
+	
+	// used when shaderfilling objects, allows for eventually creating more objects
+	enum modelTypes
+	{
+		Box, Skybox
+	};
+
 	int     num_models;
 	Model * Models[10];
 	// used to change textures
