@@ -9,6 +9,7 @@
 #include "Win32_DX11AppUtil.h"			// Include Non-SDK supporting utilities
 #include "scene.h"
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
+#include "controlPanel.h"
 
 ovrHmd           HMD;					// The handle of the headset
 ovrEyeRenderDesc EyeRenderDesc[2];		// Description of the VR.
@@ -20,13 +21,14 @@ float            YawAtRender[2];		// Useful to remember where the rendered eye o
 float            Yaw(3.141592f);		// Horizontal rotation of the player
 Vector3f         Pos(0.0f,0.0f,0.0f);	// Position of player
 int				 clock;
+ControlPanel	 controlPanel;
 
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
 
 
-void NecessaryFeatures(float * pSpeed, int * pTimesToRenderScene, ovrVector3f * useHmdToEyeViewOffset);
+void NecessaryFeatures();
 
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
@@ -50,7 +52,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Setup Window and Graphics - use window frame if relying on Oculus driver
     bool windowed = (HMD->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;    
-    if (!DX11.InitWindowAndDevice(hinst, Recti(HMD->WindowsPos, HMD->Resolution), windowed))
+    if (!DX11.InitWindowAndDevice(hinst, Recti(HMD->WindowsPos, HMD->Resolution), windowed, controlPanel.window))
         return(0);
 
     DX11.SetMaxFrameLatency(1);//see declaration for better description, I wrote in the .h --brian
@@ -106,7 +108,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		ovrHmd_BeginFrame(HMD, 0);
 
 		// Handle key toggles for re-centering
-		NecessaryFeatures(&speed, &timesToRenderScene, useHmdToEyeViewOffset);
+		NecessaryFeatures();
 
 		// Keyboard inputs to adjust player orientation
 		if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
@@ -215,7 +217,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 }
 
 //-----------------------------------------------------------------------------------------------------
-void NecessaryFeatures(float * pSpeed, int * pTimesToRenderScene, ovrVector3f * useHmdToEyeViewOffset)
+void NecessaryFeatures()
 {
 	// Update the clock, used by some of the features
 	clock++;

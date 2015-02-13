@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp" />
+    <ClCompile Include="Source\controlpanel.cpp" />
     <ClCompile Include="source\desktop.cpp" />
     <ClCompile Include="source\scene.cpp" />
     <ClCompile Include="source\model.cpp" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXTex\DDSTextureLoader\DDSTextureLoader.h" />
+    <ClInclude Include="Source\controlPanel.h" />
     <ClInclude Include="source\desktop.h" />
     <ClInclude Include="source\model.h" />
     <ClInclude Include="source\scene.h" />

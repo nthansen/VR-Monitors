@@ -2,7 +2,7 @@
 #define WIN32_DX11APPUTIL 
 
 #include "Kernel/OVR_Math.h"
-#include <d3d11.h>
+#include <d3d11_2.h>
 #include <d3dcompiler.h>
 
 using namespace OVR;
@@ -21,7 +21,7 @@ struct DirectX11
     ID3D11RenderTargetView * BackBufferRT;
     struct DataBuffer      * UniformBufferGen;
 
-    bool InitWindowAndDevice(HINSTANCE hinst, Recti vp,  bool windowed);
+    bool InitWindowAndDevice(HINSTANCE hinst, Recti vp,  bool windowed, HWND & controlPanel);
     void ClearAndSetRenderTarget(ID3D11RenderTargetView * rendertarget, ImageBuffer * depthbuffer, Recti vp);
     void Render(struct ShaderFill* fill, DataBuffer* vertices, DataBuffer* indices,UINT stride, int count);
 

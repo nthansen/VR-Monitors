@@ -74,18 +74,19 @@ LRESULT CALLBACK SystemWindowProc(HWND arg_hwnd, UINT msg, WPARAM wp, LPARAM lp)
 	case(WM_NCCREATE) : DX11.Window = arg_hwnd;                     break;
 	case WM_KEYDOWN:    DX11.Key[(unsigned)wp] = true;              break;
 	case WM_KEYUP:      DX11.Key[(unsigned)wp] = false;             break;
-	case WM_SETFOCUS:   SetCapture(DX11.Window); ShowCursor(FALSE); break;
+	case WM_SETFOCUS:   SetCapture(DX11.Window); ShowCursor(TRUE);	break;
 	case WM_KILLFOCUS:  ReleaseCapture(); ShowCursor(TRUE);         break;
 	}
 	return DefWindowProc(DX11.Window, msg, wp, lp);
 }
 
 //-----------------------------------------------------------------------
-bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed)
+bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed, HWND & controlPanel)
 {
 	WNDCLASSW wc; memset(&wc, 0, sizeof(wc));
 	wc.lpszClassName = L"OVRAppWindow";
 	wc.style = CS_OWNDC;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.lpfnWndProc = SystemWindowProc;
 	wc.cbWndExtra = NULL;
 	RegisterClassW(&wc);
@@ -100,7 +101,11 @@ bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed)
 
 	RECT winSize = { 0, 0, vp.w / sizeDivisor, vp.h / sizeDivisor };
 	AdjustWindowRect(&winSize, wsStyle, false);
-	Window = CreateWindowW(L"OVRAppWindow", L"OculusRoomTiny", wsStyle | WS_VISIBLE,
+	controlPanel = CreateWindowW(L"OVRAppWindow", L"VR-Monitors Control Panel", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		winSize.right - winSize.left + 200, 400, 500, 200, NULL, NULL, hinst, NULL);
+
+
+	Window = CreateWindowW(L"OVRAppWindow", L"VR-Monitors", wsStyle | WS_VISIBLE,
 		vp.x, vp.y, winSize.right - winSize.left, winSize.bottom - winSize.top,
 		NULL, NULL, hinst, NULL);
 
