@@ -21,7 +21,6 @@ float            YawAtRender[2];		// Useful to remember where the rendered eye o
 float            Yaw(3.141592f);		// Horizontal rotation of the player
 Vector3f         Pos(0.0f,0.0f,0.0f);	// Position of player
 int				 clock;
-ControlPanel	 controlPanel;
 
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
@@ -56,8 +55,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     bool windowed = (HMD->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;    
     if (!DX11.InitWindowAndDevice(hinst, Recti(HMD->WindowsPos, HMD->Resolution), windowed))
         return(0);
-
-	controlPanel.setupControlPanel();
 
     DX11.SetMaxFrameLatency(1);//see declaration for better description, I wrote in the .h --brian
     ovrHmd_AttachToWindow(HMD, DX11.Window, NULL, NULL);
@@ -100,7 +97,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // MAIN LOOP
     // =========
-	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE])
+	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
 	{
 		DX11.HandleMessages();
 

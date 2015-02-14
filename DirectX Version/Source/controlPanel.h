@@ -11,8 +11,18 @@ public:
 
 	void createControlPanel(HINSTANCE hinst);
 
-	void setupControlPanel();
+	bool getCloseApp();
+
+
+private:
 
 	HWND window;
 
+	bool closeApp;
+
+	void setupControlPanel();
+
+
 };
+
+extern ControlPanel controlPanel;
