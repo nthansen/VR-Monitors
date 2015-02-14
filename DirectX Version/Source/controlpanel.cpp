@@ -7,6 +7,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	switch (msg)
 	{
+
 	case WM_COMMAND:
 		// if the quit button is clicked then destroy this window
 		if (LOWORD(wParam) == 1) {
@@ -28,6 +29,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
+		// must do to color all the static text to the background color
+	case WM_CTLCOLORSTATIC:
+		HDC hdcStatic = (HDC)wParam;
+
+		SetTextColor(hdcStatic, RGB(0, 0, 0));
+		SetBkMode(hdcStatic, COLOR_BACKGROUND);
+
+		return (LRESULT)GetStockObject(GRAY_BRUSH);
 	}
 	return 0;
 }
@@ -83,11 +92,20 @@ void ControlPanel::setupControlPanel() {
 			window,     // Parent window
 			(HMENU)1,       // used for the wndProc to know what button is pressed
 			(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
-		NULL);      // Pointer not needed.
+			NULL);      // Pointer not needed.
 		
-		HWND hComboBox = CreateWindow(L"COMBOBOX", L"Select Background",
+		CreateWindow(L"STATIC", L"Background:",
+			SS_LEFT | WS_VISIBLE | WS_CHILD, 
+			11, 5, 
+			85, 20, 
+			window, 
+			NULL, 
+			(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+			NULL);
+
+		HWND hComboBox = CreateWindow(L"COMBOBOX", NULL,
 			CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
-			10, 10, 100, 120, window, (HMENU)2, (HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+			10, 25, 100, 120, window, (HMENU)2, (HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 			NULL);
 
 
