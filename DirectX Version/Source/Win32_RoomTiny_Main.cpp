@@ -33,6 +33,8 @@ void NecessaryFeatures();
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
+	controlPanel.createControlPanel(hinst);
+
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
     HMD = ovrHmd_Create(0);
@@ -52,8 +54,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Setup Window and Graphics - use window frame if relying on Oculus driver
     bool windowed = (HMD->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;    
-    if (!DX11.InitWindowAndDevice(hinst, Recti(HMD->WindowsPos, HMD->Resolution), windowed, controlPanel.window))
+    if (!DX11.InitWindowAndDevice(hinst, Recti(HMD->WindowsPos, HMD->Resolution), windowed))
         return(0);
+
+	controlPanel.setupControlPanel();
 
     DX11.SetMaxFrameLatency(1);//see declaration for better description, I wrote in the .h --brian
     ovrHmd_AttachToWindow(HMD, DX11.Window, NULL, NULL);
@@ -149,7 +153,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (DX11.Key['5']) {
 			roomScene.Models[1]->Fill = roomScene.generated_texture[8];
 		}
-
+		// figuring out how model rotation works
+		if (DX11.Key['T']) {
+			roomScene.Models[0]->Rot.y += .1;
+		}
 		// shows how to select a model and mess with it
 		/*
 		// Animate the cube
@@ -212,6 +219,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     ovrHmd_Destroy(HMD);
     ovr_Shutdown();
 	DX11.ReleaseWindow(hinst);
+	controlPanel.~ControlPanel();
 
     return(0);
 }

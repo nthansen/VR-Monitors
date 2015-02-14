@@ -71,17 +71,18 @@ LRESULT CALLBACK SystemWindowProc(HWND arg_hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
-	case(WM_NCCREATE) : DX11.Window = arg_hwnd;                     break;
+	case WM_SETCURSOR:	SetCursor(LoadCursor(NULL, IDC_ARROW));		break;
+	case(WM_NCCREATE):  DX11.Window = arg_hwnd;                     break;
 	case WM_KEYDOWN:    DX11.Key[(unsigned)wp] = true;              break;
 	case WM_KEYUP:      DX11.Key[(unsigned)wp] = false;             break;
-	case WM_SETFOCUS:   SetCapture(DX11.Window); ShowCursor(TRUE);	break;
+	case WM_SETFOCUS:   SetCapture(DX11.Window); ShowCursor(false);	break;
 	case WM_KILLFOCUS:  ReleaseCapture(); ShowCursor(TRUE);         break;
 	}
 	return DefWindowProc(DX11.Window, msg, wp, lp);
 }
 
 //-----------------------------------------------------------------------
-bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed, HWND & controlPanel)
+bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed)
 {
 	WNDCLASSW wc; memset(&wc, 0, sizeof(wc));
 	wc.lpszClassName = L"OVRAppWindow";
@@ -91,7 +92,7 @@ bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed, HW
 	wc.cbWndExtra = NULL;
 	RegisterClassW(&wc);
 
-	DWORD wsStyle = WS_POPUP;
+	DWORD wsStyle = WS_CAPTION;
 	DWORD sizeDivisor = 1;
 
 	if (windowed)
@@ -101,9 +102,6 @@ bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed, HW
 
 	RECT winSize = { 0, 0, vp.w / sizeDivisor, vp.h / sizeDivisor };
 	AdjustWindowRect(&winSize, wsStyle, false);
-	controlPanel = CreateWindowW(L"OVRAppWindow", L"VR-Monitors Control Panel", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		winSize.right - winSize.left + 200, 400, 500, 200, NULL, NULL, hinst, NULL);
-
 
 	Window = CreateWindowW(L"OVRAppWindow", L"VR-Monitors", wsStyle | WS_VISIBLE,
 		vp.x, vp.y, winSize.right - winSize.left, winSize.bottom - winSize.top,

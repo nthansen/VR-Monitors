@@ -21,7 +21,7 @@ struct DirectX11
     ID3D11RenderTargetView * BackBufferRT;
     struct DataBuffer      * UniformBufferGen;
 
-    bool InitWindowAndDevice(HINSTANCE hinst, Recti vp,  bool windowed, HWND & controlPanel);
+    bool InitWindowAndDevice(HINSTANCE hinst, Recti vp,  bool windowed);
     void ClearAndSetRenderTarget(ID3D11RenderTargetView * rendertarget, ImageBuffer * depthbuffer, Recti vp);
     void Render(struct ShaderFill* fill, DataBuffer* vertices, DataBuffer* indices,UINT stride, int count);
 
