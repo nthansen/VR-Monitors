@@ -32,7 +32,6 @@ void NecessaryFeatures();
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
-	controlPanel.createControlPanel(hinst);
 
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
@@ -95,6 +94,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
 
+	controlPanel.createControlPanel(hinst, roomScene);
+
     // MAIN LOOP
     // =========
 	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
@@ -131,24 +132,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
 			// accesses the actual texture in the shaderfill and switches them out
 			//roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
-		}
-
-		// these buttons to allow the user to change the skybox
-		if (DX11.Key['1']) {
-			roomScene.Models[1]->Fill = roomScene.generated_texture[4];
-		}
-
-		if (DX11.Key['2']) {
-			roomScene.Models[1]->Fill = roomScene.generated_texture[5];
-		}
-		if (DX11.Key['3']) {
-			roomScene.Models[1]->Fill = roomScene.generated_texture[6];
-		}
-		if (DX11.Key['4']) {
-			roomScene.Models[1]->Fill = roomScene.generated_texture[7];
-		}
-		if (DX11.Key['5']) {
-			roomScene.Models[1]->Fill = roomScene.generated_texture[8];
 		}
 		// figuring out how model rotation works
 		if (DX11.Key['T']) {

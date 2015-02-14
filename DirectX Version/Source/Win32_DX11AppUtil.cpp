@@ -71,12 +71,9 @@ LRESULT CALLBACK SystemWindowProc(HWND arg_hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
 	switch (msg)
 	{
-	case WM_SETCURSOR:	SetCursor(LoadCursor(NULL, IDC_ARROW));		break;
 	case(WM_NCCREATE):  DX11.Window = arg_hwnd;                     break;
 	case WM_KEYDOWN:    DX11.Key[(unsigned)wp] = true;              break;
 	case WM_KEYUP:      DX11.Key[(unsigned)wp] = false;             break;
-	case WM_SETFOCUS:   SetCapture(DX11.Window); ShowCursor(false);	break;
-	case WM_KILLFOCUS:  ReleaseCapture(); ShowCursor(TRUE);         break;
 	}
 	return DefWindowProc(DX11.Window, msg, wp, lp);
 }

@@ -4,12 +4,20 @@ ControlPanel controlPanel;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+
 	switch (msg)
 	{
 	case WM_COMMAND:
 		// if the quit button is clicked then destroy this window
 		if (LOWORD(wParam) == 1) {
 			controlPanel.~ControlPanel();
+		}
+		if (HIWORD(wParam) == CBN_SELCHANGE) {
+			// If the user makes a selection from the list:
+			//   Send CB_GETCURSEL message to get the index of the selected list item.
+			int ItemIndex = SendMessage((HWND)lParam, (UINT)CB_GETCURSEL,
+				(WPARAM)0, (LPARAM)0);
+			controlPanel.changeBackground(ItemIndex);
 		}
 		break;
 	case WM_CLOSE:
@@ -25,10 +33,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 }
 ControlPanel::ControlPanel() {
 	window = nullptr;
+	currScene = NULL;
 	closeApp = false;
 }
 
-void ControlPanel::createControlPanel(HINSTANCE hinst) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene & roomScene) {
+
+	currScene = &roomScene;
 
 	WNDCLASSW wc; 
 	memset(&wc, 0, sizeof(wc));
@@ -60,6 +71,7 @@ bool ControlPanel::getCloseApp() {
 void ControlPanel::setupControlPanel() {
 
 	if (window != nullptr) {
+		// for the exit
 		CreateWindow(
 			L"BUTTON",  // Predefined class; Unicode assumed 
 			L"Quit VR-Monitors",      // Button text 
@@ -73,5 +85,50 @@ void ControlPanel::setupControlPanel() {
 			(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 		
+		HWND hComboBox = CreateWindow(L"COMBOBOX", L"Select Background",
+			CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+			10, 10, 100, 120, window, (HMENU)2, (HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+			NULL);
+
+
+		TCHAR Backgrounds[5][16] =
+		{
+			TEXT("Evening"), TEXT("Sunny"), TEXT("Pier"), TEXT("Beach"), TEXT("Beach2"),
+		};
+
+		TCHAR A[16];
+		int  k = 0;
+
+		memset(&A, 0, sizeof(A));
+		for (k = 0; k <= 4; k += 1)
+		{
+			wcscpy_s(A, sizeof(A) / sizeof(TCHAR), (TCHAR*)Backgrounds[k]);
+
+			// Add string to combobox.
+			SendMessage(hComboBox, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)A);
+		}
+
+		// Send the CB_SETCURSEL message to display an initial item 
+		//  in the selection field  
+		SendMessage(hComboBox, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
 	}
+}
+
+void ControlPanel::changeBackground(int background){
+		if (background == 0) {
+			currScene->Models[1]->Fill = currScene->generated_texture[4];
+		}
+		else if (background == 1){
+			currScene->Models[1]->Fill = currScene->generated_texture[5];
+		}
+		else if (background == 2) {
+			currScene->Models[1]->Fill = currScene->generated_texture[6];
+		}
+		else if (background == 3){
+			currScene->Models[1]->Fill = currScene->generated_texture[7];
+		}
+		else if (background == 4) {
+			currScene->Models[1]->Fill = currScene->generated_texture[8];
+		}
+	
 }
