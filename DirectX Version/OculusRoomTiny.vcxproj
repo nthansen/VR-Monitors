@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp" />
+    <ClCompile Include="3rdParty\DDSTextureLoader\DDSTextureLoader.cpp" />
     <ClCompile Include="Source\controlpanel.cpp" />
     <ClCompile Include="source\desktop.cpp" />
     <ClCompile Include="source\scene.cpp" />
@@ -28,17 +28,12 @@
     <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DirectXTex\DDSTextureLoader\DDSTextureLoader.h" />
+    <ClInclude Include="3rdParty\DDSTextureLoader\DDSTextureLoader.h" />
     <ClInclude Include="Source\controlPanel.h" />
     <ClInclude Include="source\desktop.h" />
     <ClInclude Include="source\model.h" />
     <ClInclude Include="source\scene.h" />
     <ClInclude Include="source\Win32_DX11AppUtil.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="DirectXTex\DirectXTex\DirectXTex_Desktop_2013.vcxproj">
-      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\PixelShaderBox.hlsl">
@@ -146,7 +141,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>OVR_BUILD_DEBUG;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>DirectXTex;LibOVR/Include;LibOVR/Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>LibOVR/Include;LibOVR/Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>

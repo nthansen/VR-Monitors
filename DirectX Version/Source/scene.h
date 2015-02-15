@@ -3,8 +3,7 @@
 
 #include "Win32_DX11AppUtil.h"
 #include "model.h"
-#include "DDSTextureLoader\DDSTextureLoader.h"
-#include "DirectXTex\DirectXTex.h"
+#include "../3rdParty/DDSTextureLoader/DDSTextureLoader.h"
 
 using namespace DirectX;
 

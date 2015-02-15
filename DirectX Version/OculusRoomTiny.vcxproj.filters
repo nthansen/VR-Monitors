@@ -13,10 +13,10 @@
     <ClInclude Include="source\desktop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXTex\DDSTextureLoader\DDSTextureLoader.h">
+    <ClInclude Include="Source\controlPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\controlPanel.h">
+    <ClInclude Include="3rdParty\DDSTextureLoader\DDSTextureLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -34,10 +34,10 @@
     <ClCompile Include="source\desktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXTex\DDSTextureLoader\DDSTextureLoader.cpp">
+    <ClCompile Include="Source\controlpanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\controlpanel.cpp">
+    <ClCompile Include="3rdParty\DDSTextureLoader\DDSTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
