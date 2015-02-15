@@ -89,96 +89,117 @@ bool ControlPanel::getCloseApp() {
 void ControlPanel::setupControlPanel() {
 
 	if (window != nullptr) {
-		// for the exit
-		CreateWindow(
-			L"BUTTON",  // Predefined class; Unicode assumed 
-			L"Quit VR-Monitors",      // Button text 
-			WS_VISIBLE | WS_CHILD,  // Styles 
-			10,         // x position 
-			130,         // y position 
-			125,        // Button width
-			25,        // Button height
-			window,     // Parent window
-			(HMENU)1,       // used for the wndProc to know what button is pressed
-			(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
-			NULL);      // Pointer not needed.
-
-		// create the text for the combox box
-		CreateWindow(L"STATIC", L"Background:",
-			SS_LEFT | WS_VISIBLE | WS_CHILD,
-			11, 5,
-			85, 20,
-			window,
-			NULL,
-			(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
-			NULL);
-
-
-		// create the combo box for all the different options
-		backgroundCombobox = CreateWindow(L"COMBOBOX", NULL,
-			CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
-			10, 25, 100, 120, window, (HMENU)2, (HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
-			NULL);
-
-		// all the different options for the combo box
-		TCHAR Backgrounds[5][16] =
-		{
-			TEXT("Evening"), TEXT("Sunny"), TEXT("Pier"), TEXT("Beach"), TEXT("Beach2"),
-		};
-
-
-		TCHAR A[16];
-		memset(&A, 0, sizeof(A));
-		for (int k = 0; k <= 4; k += 1)
-		{
-			wcscpy_s(A, sizeof(A) / sizeof(TCHAR), (TCHAR*)Backgrounds[k]);
-
-			// Add string to combobox.
-			SendMessage(backgroundCombobox, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)A);
-		}
-
-		// Send the CB_SETCURSEL message to display an initial item 
-		//  in the selection field  
-		SendMessage(backgroundCombobox, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
-
-
-		FLOAT iMin = -4;     // minimum value in trackbar range 
-		FLOAT iMax = 4;     // maximum value in trackbar range 
-		FLOAT iSelMin = -4;  // minimum value in trackbar selection 
-		FLOAT iSelMax = 4;  // maximum value in trackbar selection 
-
-		cameraPositionTrackbar = CreateWindowEx(
-			0,                               // no extended styles 
-			TRACKBAR_CLASS,                  // class name 
-			L"Trackbar Control",              // title (caption) 
-			WS_CHILD |
-			WS_VISIBLE |
-			TBS_AUTOTICKS |
-			TBS_ENABLESELRANGE,              // style 
-			5, 60,                          // position 
-			200, 30,                         // size 
-			window,                         // parent window 
-			(HMENU)3,                     // control identifier 
-			(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),                         // instance 
-			NULL                             // no WM_CREATE parameter 
-			);
-
-		SendMessage(cameraPositionTrackbar, TBM_SETRANGE,
-			(WPARAM)TRUE,                   // redraw flag 
-			(LPARAM)MAKELONG(iMin, iMax));  // min. & max. positions
-
-		SendMessage(cameraPositionTrackbar, TBM_SETPAGESIZE,
-			0, (LPARAM)4);                  // new page size 
-
-		SendMessage(cameraPositionTrackbar, TBM_SETSEL,
-			(WPARAM)FALSE,                  // redraw flag 
-			(LPARAM)MAKELONG(iSelMin, iSelMax));
-
-		SendMessage(cameraPositionTrackbar, TBM_SETPOS,
-			(WPARAM)TRUE,                   // redraw flag 
-			(LPARAM)0);
-
+		createText();
+		createButtons();
+		createSliders();
+		createDropDowns();
 	}
+}
+
+void ControlPanel::createButtons() {
+	// for the exit
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"Quit VR-Monitors",      // Button text 
+		WS_VISIBLE | WS_CHILD,  // Styles 
+		10,         // x position 
+		130,         // y position 
+		125,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)1,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
+}
+
+void ControlPanel::createDropDowns(){
+
+	// create the combo box for all the different options
+	backgroundCombobox = CreateWindow(L"COMBOBOX", NULL,
+		CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+		10, 25, 100, 120, window, (HMENU)2, (HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);
+
+	// all the different options for the combo box
+	TCHAR Backgrounds[5][16] =
+	{
+		TEXT("Evening"), TEXT("Sunny"), TEXT("Pier"), TEXT("Beach"), TEXT("Beach2"),
+	};
+
+
+	TCHAR A[16];
+	memset(&A, 0, sizeof(A));
+	for (int k = 0; k <= 4; k += 1)
+	{
+		wcscpy_s(A, sizeof(A) / sizeof(TCHAR), (TCHAR*)Backgrounds[k]);
+
+		// Add string to combobox.
+		SendMessage(backgroundCombobox, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)A);
+	}
+
+	// Send the CB_SETCURSEL message to display an initial item 
+	//  in the selection field  
+	SendMessage(backgroundCombobox, CB_SETCURSEL, (WPARAM)0, (LPARAM)0);
+}
+
+void ControlPanel::createSliders() {
+	FLOAT iMin = -4;     // minimum value in trackbar range 
+	FLOAT iMax = 4;     // maximum value in trackbar range 
+	FLOAT iSelMin = -4;  // minimum value in trackbar selection 
+	FLOAT iSelMax = 4;  // maximum value in trackbar selection 
+
+	cameraPositionTrackbar = CreateWindowEx(
+		0,                               // no extended styles 
+		TRACKBAR_CLASS,                  // class name 
+		L"Trackbar Control",              // title (caption) 
+		WS_CHILD |
+		WS_VISIBLE |
+		TBS_AUTOTICKS |
+		TBS_ENABLESELRANGE,              // style 
+		5, 75,                          // position 
+		200, 30,                         // size 
+		window,                         // parent window 
+		(HMENU)3,                     // control identifier 
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),                         // instance 
+		NULL                             // no WM_CREATE parameter 
+		);
+
+	SendMessage(cameraPositionTrackbar, TBM_SETRANGE,
+		(WPARAM)TRUE,                   // redraw flag 
+		(LPARAM)MAKELONG(iMin, iMax));  // min. & max. positions
+
+	SendMessage(cameraPositionTrackbar, TBM_SETPAGESIZE,
+		0, (LPARAM)4);                  // new page size 
+
+	SendMessage(cameraPositionTrackbar, TBM_SETSEL,
+		(WPARAM)FALSE,                  // redraw flag 
+		(LPARAM)MAKELONG(iSelMin, iSelMax));
+
+	SendMessage(cameraPositionTrackbar, TBM_SETPOS,
+		(WPARAM)TRUE,                   // redraw flag 
+		(LPARAM)0);
+}
+
+void ControlPanel::createText() {
+	// create the text for the background drop down
+	CreateWindow(L"STATIC", L"Background:",
+		SS_LEFT | WS_VISIBLE | WS_CHILD,
+		11, 5,
+		85, 20,
+		window,
+		NULL,
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);
+
+	// create text for camera slider
+	CreateWindow(L"STATIC", L"Move Camera:",
+		SS_LEFT | WS_VISIBLE | WS_CHILD,
+		11, 55,
+		120, 20,
+		window,
+		NULL,
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);
 }
 
 void ControlPanel::moveCameraZ(float zValue, HWND identifier) {

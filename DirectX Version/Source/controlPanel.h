@@ -36,7 +36,13 @@ private:
 
 	void setupControlPanel();
 
+	void createText();
 
+	void createButtons();
+
+	void createDropDowns();
+
+	void createSliders();
 
 };
 
