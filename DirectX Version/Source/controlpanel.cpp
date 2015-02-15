@@ -46,9 +46,10 @@ ControlPanel::ControlPanel() {
 	closeApp = false;
 }
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene & roomScene) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos) {
 
-	currScene = &roomScene;
+	currScene = roomScene;
+	cameraPos = pos;
 
 	WNDCLASSW wc; 
 	memset(&wc, 0, sizeof(wc));

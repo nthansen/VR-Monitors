@@ -10,7 +10,7 @@ public:
 	
 	~ControlPanel();
 
-	void createControlPanel(HINSTANCE hinst, Scene &roomScene);
+	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos);
 
 	void changeBackground(int itemNumber);
 
@@ -21,7 +21,9 @@ private:
 
 	HWND window;
 
-	Scene * currScene;
+	Scene *currScene;
+
+	Vector3f *cameraPos;
 
 	bool closeApp;
 

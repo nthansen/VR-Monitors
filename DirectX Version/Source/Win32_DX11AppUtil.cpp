@@ -83,13 +83,13 @@ bool DirectX11::InitWindowAndDevice(HINSTANCE hinst, Recti vp, bool windowed)
 {
 	WNDCLASSW wc; memset(&wc, 0, sizeof(wc));
 	wc.lpszClassName = L"OVRAppWindow";
-	wc.style = CS_OWNDC;
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.style = CS_OWNDC;
 	wc.lpfnWndProc = SystemWindowProc;
 	wc.cbWndExtra = NULL;
 	RegisterClassW(&wc);
 
-	DWORD wsStyle = WS_CAPTION;
+	DWORD wsStyle = WS_POPUP;
 	DWORD sizeDivisor = 1;
 
 	if (windowed)

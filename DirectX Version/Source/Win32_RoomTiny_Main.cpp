@@ -94,7 +94,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
 
-	controlPanel.createControlPanel(hinst, roomScene);
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos);
 
     // MAIN LOOP
     // =========
