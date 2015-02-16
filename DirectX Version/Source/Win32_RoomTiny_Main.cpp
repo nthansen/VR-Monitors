@@ -18,7 +18,7 @@ ImageBuffer    * pEyeRenderTexture[2];	// Where the eye buffers will be rendered
 ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
-float            Yaw(3.141592f);		// Horizontal rotation of the player
+float            Yaw(0);		// Horizontal rotation of the player
 Vector3f         Pos(0.0f,0.0f,0.0f);	// Position of player
 int				 clock;
 
@@ -34,6 +34,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     ovr_Initialize();
     HMD = ovrHmd_Create(0);
 	clock = 0;
+	static const float PI = 3.1415972f;
 
 	if (!HMD)
 	{
@@ -102,7 +103,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		// remove the health/warning display
 		ovrHmd_DismissHSWDisplay(HMD);
 
-		float       speed = 1.0f; // Can adjust the movement speed. 
+		float       speed = 3.0f; // Can adjust the movement speed. 
 		int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
 		ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
 			EyeRenderDesc[1].HmdToEyeViewOffset };
@@ -113,8 +114,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		clock++;
 
 		// Keyboard inputs to adjust player orientation
-		if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
-		if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
+		if (DX11.Key[VK_LEFT])  Yaw += 0.08f;
+		if (DX11.Key[VK_RIGHT]) Yaw -= 0.08f;
 
 		// Keyboard inputs to adjust player position
 		if (DX11.Key['W'] || DX11.Key[VK_UP])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, -speed*0.05f));
@@ -135,7 +136,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		}
 		// figuring out how model rotation works
 		if (DX11.Key['T']) {
-			roomScene.Models[0]->Rot.y += .1;
+			//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
+			//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
+			//we must offset this to rotate negative pi radians so the object will be in front of us
+			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.z == 0 ? .001 : Pos.z, 0), -PI + Yaw);
 		}
 		// shows how to select a model and mess with it
 		/*
