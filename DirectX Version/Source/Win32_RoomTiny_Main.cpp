@@ -9,7 +9,7 @@
 #include "Win32_DX11AppUtil.h"			// Include Non-SDK supporting utilities
 #include "scene.h"
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
-//#include "controlPanel.h"
+#include "controlPanel.h"
 
 ovrHmd           HMD;					// The handle of the headset
 ovrEyeRenderDesc EyeRenderDesc[2];		// Description of the VR.
@@ -92,15 +92,15 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
 
-	//controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
 
     // MAIN LOOP
     // =========
-	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE])// && !controlPanel.getCloseApp())
+	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
 	{
 		DX11.HandleMessages();
 
-	//	controlPanel.updateControlPanel();
+		controlPanel.updateControlPanel();
 
 		// remove the health/warning display
 		ovrHmd_DismissHSWDisplay(HMD);
@@ -206,7 +206,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     ovrHmd_Destroy(HMD);
     ovr_Shutdown();
 	DX11.ReleaseWindow(hinst);
-	//controlPanel.~ControlPanel();
+	controlPanel.~ControlPanel();
 
     return(0);
 }
