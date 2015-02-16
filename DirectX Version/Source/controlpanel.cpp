@@ -19,6 +19,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		if (controlPanel.checkIfCameraPositionTrackbar(handle)) {
 			dwPos = SendMessage(handle, TBM_GETPOS, 0, 0);
 			controlPanel.moveCameraZ(dwPos);
+		} 
+		else if (controlPanel.checkIfResizeMonitorTrackbar(handle)) {
+			dwPos = SendMessage(handle, TBM_GETPOS, 0, 0);
+			controlPanel.resizeMonitor(dwPos);
 		}
 		break;
 	case WM_COMMAND:
@@ -27,7 +31,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			controlPanel.~ControlPanel();
 		}
 		// if the user changes the background in the drop down menu
-		if (HIWORD(wParam) == CBN_SELCHANGE) {
+		else if (HIWORD(wParam) == CBN_SELCHANGE) {
 			handle = (HWND)lParam;
 			if (controlPanel.checkIfBackgroundCombobox(handle)) {
 				// If the user makes a selection from the list:
@@ -38,11 +42,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		// user clicked the recenter oculus button
-		if (LOWORD(wParam) == 4) {
+		else if (LOWORD(wParam) == 4) {
 			controlPanel.recenterOculus();
 		}
 		// user clicked the move monitor button
-		if (LOWORD(wParam) == 5) {
+		else if (LOWORD(wParam) == 5) {
 			handle = (HWND)lParam;
 			if (controlPanel.movingMonitor) {
 				controlPanel.movingMonitor = false;
@@ -54,7 +58,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		// user clicked the move monitor button
-		if (LOWORD(wParam) == 6) {
+		else if (LOWORD(wParam) == 6) {
 			controlPanel.resetMonitors();
 		}
 		break;
@@ -145,6 +149,11 @@ bool ControlPanel::checkIfBackgroundCombobox(HWND check) {
 // returns true if the hwnd is the camera position trackbar
 bool ControlPanel::checkIfCameraPositionTrackbar(HWND check) {
 	return cameraPositionTrackbar == check;
+}
+
+// returns true if the hwnd is the resize monitor trackbar
+bool ControlPanel::checkIfResizeMonitorTrackbar(HWND check) {
+	return monitorSizeTrackbar == check;
 }
 
 // calls all the helper functions for creating each part of the window
@@ -359,8 +368,12 @@ void ControlPanel::moveCameraZ(float zValue) {
 		currScene->Models[1]->Pos.z = zValue *.2;
 }
 
-void ControlPanel::resizeMonitor(int resizeValue){
+void ControlPanel::resizeMonitor(float resizeValue){
 	currScene->Models[0]->size = resizeValue;
+	resizeValue *= .5;
+	Vector3f pos = currScene->Models[0]->Pos;
+	currScene->Models[0]->AddSolidColorBox(pos.x - resizeValue, pos.y - resizeValue, pos.z, pos.x + resizeValue, pos.y + resizeValue, pos.z, Model::Color(128, 128, 128));
+	currScene->Models[0]->AllocateBuffers();
 }
 
 void ControlPanel::updateControlPanel() {

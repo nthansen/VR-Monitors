@@ -21,7 +21,7 @@ public:
 	// moves the camera around 
 	void moveCameraZ(float zValue);
 
-	void resizeMonitor(int resizeValue);
+	void resizeMonitor(float resizeValue);
 
 	// find out if we need to close the app or not, used when user clicks the quit button
 	bool getCloseApp();
@@ -33,6 +33,8 @@ public:
 	// check if the message given about a trackbar is for the camera position
 	// needed if we add more trackbars
 	bool checkIfCameraPositionTrackbar(HWND check);
+
+	bool checkIfResizeMonitorTrackbar(HWND check);
 
 	// Check to make sure we aren't currently moving the monitor
 	bool movingMonitor;
