@@ -5,27 +5,6 @@ D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 { "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 { "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex,U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
 
-/*
-D3D11_INPUT_ELEMENT_DESC layout[] =
-{
-	{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-};
-*/
-
-
-/*
-char* VertexShaderSphere =
-"float4x4 WVP;"
-"void main(in float3 Position : POSITION, in float3 normal : NORMAL, in float2 inTexCoord : TEXCOORD,"
-"	out float4 Pos : SV_POSITION, out float3 texCoord : TEXCOORD)"
-" { Pos = mul(float4(Position, 1.0f), WVP).xyww; texCoord = Position;} ";
-char* PixelShaderSphere =
-"TextureCube textureCube : register(t0); SamplerState ObjSamplerState : register(s0);"
-"float4 main(in float4 Pos : SV_POSITION, in float3 texCoord : TEXCOORD) : SV_Target"
-"{ return textureCube.Sample(ObjSamplerState, texCoord); }";
-*/
 
 //used in addmonitor and initialization just below here for the first "screen"
 startFloat startingPoint(-0.5, -0.5, 0.8, 0.5, 0.5, 0.8, Model::Color(128, 128, 128));
@@ -76,7 +55,6 @@ Scene::Scene() : num_models(0) // Main world
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
 	m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
 	m->AllocateBuffers();
-	//m->CreateSphere(10,10);
 	Add(m);
 }
 
@@ -87,37 +65,11 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 		Matrix4f modelmat = Models[i]->GetMatrix();
 		Matrix4f mat = (view * modelmat).Transposed();
 
-		/*
-		// use only if using the sphere
-		if (i == 0) {
-			Matrix4f sphereWorld = sphereWorld.Identity();
-
-			//Define sphereWorld's world space matrix
-			Matrix4f Scale = Scale.Scaling(5.0f, 5.0f, 5.0f);
-			//Make sure the sphere is always centered around camera
-			Matrix4f Trans = Matrix4f();
-			
-			Trans.SetTranslation(view.GetTranslation());
-
-			//Set sphereWorld's world space using the transformations
-			sphereWorld = Scale * Trans;
-
-			Matrix4f WVP = sphereWorld * view * proj;
-			WVP = WVP.Transposed();
-			Models[i]->Fill->VShader->SetUniform("WVP", 16, (float *)&WVP);
-			DX11.Render(Models[i]->Fill, Models[i]->VertexBuffer, Models[i]->IndexBuffer,
-				sizeof(Model::SkyboxVertex), Models[i]->NumSphereFaces * 3);
-		} 
-		else {
-		*/
-			Models[i]->Fill->VShader->SetUniform("View", 16, (float *)&mat);
-			Models[i]->Fill->VShader->SetUniform("Proj", 16, (float *)&proj);
-			DX11.Render(Models[i]->Fill, Models[i]->VertexBuffer, Models[i]->IndexBuffer,
-				sizeof(Model::Vertex), Models[i]->numIndices);
-		
-			//}
-	
-}
+		Models[i]->Fill->VShader->SetUniform("View", 16, (float *)&mat);
+		Models[i]->Fill->VShader->SetUniform("Proj", 16, (float *)&proj);
+		DX11.Render(Models[i]->Fill, Models[i]->VertexBuffer, Models[i]->IndexBuffer,
+			sizeof(Model::Vertex), Models[i]->numIndices);
+	}
 
 }
 Vector3f Scene::getLastMonitorPosition(){
@@ -162,6 +114,7 @@ void Scene::addMonitor(){
 	m->AllocateBuffers(); Add(m);
 }
 
+// loads the skyboxes into the image buffers to be used with the dropdown menu and allow users to change skybox images
 void Scene::loadSkyboxes() {
 
 	ID3D11Resource* resource;

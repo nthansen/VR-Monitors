@@ -2,17 +2,24 @@
 
 ControlPanel controlPanel;
 
+
+// used to process all the system messages sent for everything in this window
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	// used to compare what item is being called when wParam can't
 	HWND handle = nullptr;
+	// used to get the position of the trackbar
 	float dwPos = NULL;
 
 	switch (msg)
 	{
 	case WM_HSCROLL:
 		handle = (HWND)lParam;
+		// see if it's the camera postion trackbar, if so then get the trackbar value and move the camera
+		if (controlPanel.checkIfCameraPositionTrackbar(handle)) {
 			dwPos = SendMessage(handle, TBM_GETPOS, 0, 0);
-			controlPanel.moveCameraZ((float)dwPos, handle);
+			controlPanel.moveCameraZ(dwPos);
+		}
 		break;
 	case WM_COMMAND:
 		// if the quit button is clicked then destroy this window
@@ -22,11 +29,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// if the user changes the background in the drop down menu
 		if (HIWORD(wParam) == CBN_SELCHANGE) {
 			handle = (HWND)lParam;
-			// If the user makes a selection from the list:
-			//   Send CB_GETCURSEL message to get the index of the selected list item.
-			int ItemIndex = SendMessage(handle, (UINT)CB_GETCURSEL,
-				(WPARAM)0, (LPARAM)0);
-			controlPanel.changeBackground(ItemIndex, handle);
+			if (controlPanel.checkIfBackgroundCombobox(handle)) {
+				// If the user makes a selection from the list:
+				//   Send CB_GETCURSEL message to get the index of the selected list item.
+				int ItemIndex = SendMessage(handle, (UINT)CB_GETCURSEL,
+					(WPARAM)0, (LPARAM)0);
+				controlPanel.changeBackground(ItemIndex);
+			}
 		}
 		break;
 	case WM_CLOSE:
@@ -48,17 +57,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+
+// default constructor
 ControlPanel::ControlPanel() {
+	
+	// set everything to null
 	window = nullptr;
+	backgroundCombobox = nullptr;
+	cameraPositionTrackbar = nullptr;
+	cameraPos = nullptr;
 	currScene = NULL;
 	closeApp = false;
 }
 
+// actually creates the control panel window
+// is given all the extra information necessary to process everything as well
+
 void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos) {
 
+	// now we have access to the information we need
 	currScene = roomScene;
 	cameraPos = pos;
 
+	// used to have a class for the window with the styles we want
 	WNDCLASSW wc; 
 	memset(&wc, 0, sizeof(wc));
 	wc.lpszClassName = L"Control Panel";
@@ -69,25 +90,42 @@ void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector
 	wc.cbWndExtra = NULL;
 	RegisterClassW(&wc);
 
+	// create the window and store it in our window object in the class
 	window = CreateWindowW(L"Control Panel", L"VR-Monitors Control Panel", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		1000, 400, 500, 200, NULL, NULL, hinst, NULL);
 
+	// now setup everything necessary for this
 	setupControlPanel();
 }
 
 ControlPanel::~ControlPanel() {
+	// make sure the parent class exists before trying to destroy it
 	if (window != nullptr){
-		closeApp = true;
+		// only need to call on the parent since the function takes care of destroying the children
 		DestroyWindow(window);
 	}
+	// now we can notify the main to close the app
+	closeApp = true;
 }
 
+// used in the main loop to see if we need to close the app or not
 bool ControlPanel::getCloseApp() {
 	return closeApp;
 }
 
-void ControlPanel::setupControlPanel() {
+// returns true if the hwnd is the background combobox
+bool ControlPanel::checkIfBackgroundCombobox(HWND check) {
+	return backgroundCombobox == check;
+}
 
+// returns true if the hwnd is the camera position trackbar
+bool ControlPanel::checkIfCameraPositionTrackbar(HWND check) {
+	return cameraPositionTrackbar == check;
+}
+
+// calls all the helper functions for creating each part of the window
+void ControlPanel::setupControlPanel() {
+	// makes sure the window exists before trying to create stuff for it
 	if (window != nullptr) {
 		createText();
 		createButtons();
@@ -96,8 +134,9 @@ void ControlPanel::setupControlPanel() {
 	}
 }
 
+// creates all the buttons for the user to click on
 void ControlPanel::createButtons() {
-	// for the exit
+	// create the quit button
 	CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"Quit VR-Monitors",      // Button text 
@@ -202,15 +241,14 @@ void ControlPanel::createText() {
 		NULL);
 }
 
-void ControlPanel::moveCameraZ(float zValue, HWND identifier) {
-	if (cameraPositionTrackbar == identifier){
+// move the camera on the z coordinates
+void ControlPanel::moveCameraZ(float zValue) {
 		cameraPos->z = zValue * .2;
 		currScene->Models[1]->Pos.z = zValue *.2;
-	}
 }
 
-void ControlPanel::changeBackground(int background, HWND identifier){
-	if (backgroundCombobox == identifier) {
+// change the background based on the value given
+void ControlPanel::changeBackground(int background){
 		if (background == 0) {
 			currScene->Models[1]->Fill = currScene->generated_texture[4];
 		}
@@ -226,5 +264,4 @@ void ControlPanel::changeBackground(int background, HWND identifier){
 		else if (background == 4) {
 			currScene->Models[1]->Fill = currScene->generated_texture[8];
 		}
-	}
 }
