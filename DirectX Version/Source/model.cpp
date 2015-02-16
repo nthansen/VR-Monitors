@@ -4,6 +4,7 @@ Model::Model(Vector3f arg_pos, ShaderFill * arg_Fill)
 { 
 	numVertices = 0; numIndices = 0; 
 	Pos = arg_pos; 
+	OriginalPos = Pos;
 	Fill = arg_Fill; 
 }
 
@@ -23,6 +24,11 @@ void Model::AddIndex(uint16_t a)
 { 
 	Indices[numIndices++] = a;   
 	OVR_ASSERT(numIndices<2000); 
+}
+
+void Model::setOriginalPos() {
+	Pos = OriginalPos;
+	Rot = Quatf();
 }
 
 void Model::AllocateBuffers()

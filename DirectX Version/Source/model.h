@@ -29,29 +29,8 @@ struct Model
 		float     U, V;
 	};
 
-	/*
-	struct SkyboxVertex	//Overloaded SkyboxVertex Structure
-	{
-		SkyboxVertex(){}
-		SkyboxVertex(float x, float y, float z,
-			float u, float v,
-			float nx, float ny, float nz)
-			: pos(x, y, z), texCoord(u, v), normal(nx, ny, nz){}
-
-		XMFLOAT3 pos;
-		XMFLOAT2 texCoord;
-		XMFLOAT3 normal;
-	};
-
-	int NumSphereVertices;
-	int NumSphereFaces;
-
-	XMMATRIX Rotationx;
-	XMMATRIX Rotationy;
-	XMMATRIX Rotationz;
-	*/
-
 	Vector3f     Pos;
+	Vector3f	 OriginalPos;
 	Quatf        Rot;
 	Matrix4f     Mat;
 	int          numVertices, numIndices;
@@ -62,14 +41,16 @@ struct Model
 
 	Model(Vector3f arg_pos, ShaderFill * arg_Fill);
 	Matrix4f& GetMatrix();
+	
+	void setOriginalPos();
+
 	void AddVertex(const Vertex& v);
+	
 	void AddIndex(uint16_t a);
 
 	void AllocateBuffers();
 
 	void AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
-
-	void CreateSphere(int LatLines, int LongLines);
 };
 
 #endif

@@ -40,6 +40,9 @@ public:
 
 	void recenterOculus();
 
+	// used to restore monitors in their original positions
+	void resetMonitors();
+
 private:
 
 	// holds the handle to each part of the control panel window
@@ -59,6 +62,7 @@ private:
 
 	// the function to actually move the monitor
 	void moveMonitor();
+
 
 	// sets up the control panel by calling the helper functions below
 	void setupControlPanel();

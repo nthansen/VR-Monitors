@@ -53,6 +53,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				Button_SetText(handle, L"Place Monitor");
 			}
 		}
+		// user clicked the move monitor button
+		if (LOWORD(wParam) == 6) {
+			controlPanel.resetMonitors();
+		}
 		break;
 	case WM_CLOSE:
 		controlPanel.~ControlPanel();
@@ -184,17 +188,31 @@ void ControlPanel::createButtons() {
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
-	// create the recenter oculus button
+	// create the move monitor button
 	CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"Move Monitor",      // Button text 
 		WS_VISIBLE | WS_CHILD,  // Styles 
-		350,         // x position 
+		370,         // x position 
 		26,         // y position 
-		125,        // Button width
+		100,        // Button width
 		25,        // Button height
 		window,     // Parent window
 		(HMENU)5,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
+
+	// create the reset monitors
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"Reset Monitors",      // Button text 
+		WS_VISIBLE | WS_CHILD,  // Styles 
+		240,         // x position 
+		26,         // y position 
+		110,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)6,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 }
@@ -307,6 +325,11 @@ void ControlPanel::updateControlPanel() {
 void ControlPanel::moveMonitor() {
 	currScene->Models[0]->Pos = *cameraPos;
 	currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
+}
+
+void ControlPanel::resetMonitors() {
+	// eventualyl will be a for loop
+	currScene->Models[0]->setOriginalPos();
 }
 
 // recenters the oculus
