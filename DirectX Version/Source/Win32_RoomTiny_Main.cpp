@@ -127,7 +127,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		//spawn a new monitor
 		if (DX11.Key['M'] && clock % 6 == 0){//restricts multiple monitors being made
 			//could probably fix this by adding a splash screen to confirm add monitor
-			roomScene.addMonitor();
+			roomScene.addMonitor(Yaw, Pos);
 		}
 		// just so it'd give some time before switching between each texture
 		if (clock % 24 == 0) {
@@ -142,6 +142,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			//we must offset this to rotate negative pi radians so the object will be in front of us
 			roomScene.Models[0]->Pos = Pos;
 			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
+			
 		}
 		// shows how to select a model and mess with it
 		/*
