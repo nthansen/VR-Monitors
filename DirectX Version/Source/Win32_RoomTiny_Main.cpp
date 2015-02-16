@@ -34,6 +34,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     ovr_Initialize();
     HMD = ovrHmd_Create(0);
 	clock = 0;
+	const float PI = 3.1415972f;
 
 	if (!HMD)
 	{
@@ -134,6 +135,13 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
 			// accesses the actual texture in the shaderfill and switches them out
 			//roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
+		}	// figuring out how model rotation works
+		if (DX11.Key['T']) {
+			//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
+			//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
+			//we must offset this to rotate negative pi radians so the object will be in front of us
+			roomScene.Models[0]->Pos = Pos;
+			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
 		}
 		// shows how to select a model and mess with it
 		/*
