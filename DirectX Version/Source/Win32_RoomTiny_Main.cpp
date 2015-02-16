@@ -96,7 +96,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // MAIN LOOP
     // =========
-	while (!controlPanel.getCloseApp())
+	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
 	{
 		DX11.HandleMessages();
 
