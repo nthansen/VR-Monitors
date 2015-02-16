@@ -119,6 +119,15 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 		//temp.z = startingPoint.z1;//and reset z so when we get the last monitor position it doesnt start pushing them back
 		//tempVect = temp;//reset tempVect to this one since we had to reposition
 	}
+	else if (num_monitors == 3){
+		Monitors[0]->Pos = _pos;
+		Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw );
+		Monitors[1]->Pos = _pos;
+		Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 4);
+		Monitors[2]->Pos = _pos;
+		Monitors[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 4);
+
+	}
 	
 	////set the new model with the repositioned ones above
 	//Model* m = new Model(Vector3f(0,0,startingPoint.z1), generated_texture);
