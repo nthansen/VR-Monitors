@@ -370,10 +370,10 @@ void ControlPanel::moveCameraZ(float zValue) {
 
 void ControlPanel::resizeMonitor(float resizeValue){
 	currScene->Models[0]->size = resizeValue;
-	resizeValue *= .5;
-	Vector3f pos = currScene->Models[0]->Pos;
-	currScene->Models[0]->AddSolidColorBox(pos.x - resizeValue, pos.y - resizeValue, pos.z, pos.x + resizeValue, pos.y + resizeValue, pos.z, Model::Color(128, 128, 128));
-	currScene->Models[0]->AllocateBuffers();
+	//resizeValue *= .5;
+	//Vector3f pos = currScene->Models[0]->Pos;
+	//currScene->Models[0]->AddSolidColorBox(pos.x - resizeValue, pos.y - resizeValue, pos.z, pos.x + resizeValue, pos.y + resizeValue, pos.z, Model::Color(128, 128, 128));
+	//currScene->Models[0]->AllocateBuffers();
 }
 
 void ControlPanel::updateControlPanel() {
