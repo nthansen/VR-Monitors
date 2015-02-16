@@ -91,12 +91,13 @@ ControlPanel::ControlPanel() {
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw) {
 
 	// now we have access to the information we need
 	currScene = roomScene;
 	cameraPos = pos;
 	oculus = theOculus;
+	this->yaw = yaw;
 
 	// used to have a class for the window with the styles we want
 	WNDCLASSW wc; 
@@ -292,6 +293,20 @@ void ControlPanel::createText() {
 void ControlPanel::moveCameraZ(float zValue) {
 		cameraPos->z = zValue * .2;
 		currScene->Models[1]->Pos.z = zValue *.2;
+}
+
+void ControlPanel::updateControlPanel() {
+	if (movingMonitor) {
+		moveMonitor();
+	}
+}
+
+//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
+//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
+//we must offset this to rotate negative pi radians so the object will be in front of us
+void ControlPanel::moveMonitor() {
+	currScene->Models[0]->Pos = *cameraPos;
+	currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
 }
 
 // recenters the oculus
