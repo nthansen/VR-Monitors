@@ -37,8 +37,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				controlPanel.changeBackground(ItemIndex);
 			}
 		}
+		// user clicked the recenter oculus button
 		if (LOWORD(wParam) == 4) {
 			controlPanel.recenterOculus();
+		}
+		// user clicked the move monitor button
+		if (LOWORD(wParam) == 5) {
+			handle = (HWND)lParam;
+			if (controlPanel.movingMonitor) {
+				controlPanel.movingMonitor = false;
+				Button_SetText(handle, L"Move Monitor");
+			}
+			else {
+				controlPanel.movingMonitor = true;
+				Button_SetText(handle, L"Place Monitor");
+			}
 		}
 		break;
 	case WM_CLOSE:
@@ -72,6 +85,7 @@ ControlPanel::ControlPanel() {
 	currScene = NULL;
 	oculus = nullptr;
 	closeApp = false;
+	movingMonitor = false;
 }
 
 // actually creates the control panel window
@@ -166,6 +180,20 @@ void ControlPanel::createButtons() {
 		25,        // Button height
 		window,     // Parent window
 		(HMENU)4,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
+
+	// create the recenter oculus button
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"Move Monitor",      // Button text 
+		WS_VISIBLE | WS_CHILD,  // Styles 
+		350,         // x position 
+		26,         // y position 
+		125,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)5,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 }

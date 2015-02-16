@@ -32,6 +32,9 @@ public:
 	// needed if we add more trackbars
 	bool checkIfCameraPositionTrackbar(HWND check);
 
+	// Check to make sure we aren't currently moving the monitor
+	bool movingMonitor;
+
 	void recenterOculus();
 
 private:
