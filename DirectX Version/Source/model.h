@@ -38,6 +38,7 @@ struct Model
 	uint16_t     Indices[2000];
 	ShaderFill * Fill;
 	DataBuffer * VertexBuffer, *IndexBuffer;
+	int size;
 
 	Model(Vector3f arg_pos, ShaderFill * arg_Fill);
 	Matrix4f& GetMatrix();

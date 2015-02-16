@@ -6,6 +6,7 @@ Model::Model(Vector3f arg_pos, ShaderFill * arg_Fill)
 	Pos = arg_pos; 
 	OriginalPos = Pos;
 	Fill = arg_Fill; 
+	size = 1;
 }
 
 Matrix4f& Model::GetMatrix()	
@@ -76,7 +77,10 @@ void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, f
 
 	for (int v = 0; v < 24; v++)
 	{
-		Vertex vvv; vvv.Pos = Vert[v][0]; vvv.U = Vert[v][1].x; vvv.V = Vert[v][1].y;
+		Vertex vvv; 
+		vvv.Pos = Vert[v][0]; 
+		vvv.U = Vert[v][1].x; 
+		vvv.V = Vert[v][1].y;
 		float dist1 = (vvv.Pos - Vector3f(-2, 4, -2)).Length();
 		float dist2 = (vvv.Pos - Vector3f(3, 4, -3)).Length();
 		float dist3 = (vvv.Pos - Vector3f(-4, 3, 25)).Length();

@@ -193,7 +193,7 @@ void ControlPanel::createButtons() {
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"Move Monitor",      // Button text 
 		WS_VISIBLE | WS_CHILD,  // Styles 
-		370,         // x position 
+		375,         // x position 
 		26,         // y position 
 		100,        // Button width
 		25,        // Button height
@@ -283,6 +283,42 @@ void ControlPanel::createSliders() {
 	SendMessage(cameraPositionTrackbar, TBM_SETPOS,
 		(WPARAM)TRUE,                   // redraw flag 
 		(LPARAM)0);
+
+	iMin = -1;     // minimum value in trackbar range 
+	iMax = 3;     // maximum value in trackbar range 
+	iSelMin = -1;  // minimum value in trackbar selection 
+	iSelMax = 3;  // maximum value in trackbar selection 
+
+	monitorSizeTrackbar = CreateWindowEx(
+		0,                               // no extended styles 
+		TRACKBAR_CLASS,                  // class name 
+		L"Trackbar Control",              // title (caption) 
+		WS_CHILD |
+		WS_VISIBLE |
+		TBS_AUTOTICKS |
+		TBS_ENABLESELRANGE,              // style 
+		230, 75,                          // position 
+		130, 30,                         // size 
+		window,                         // parent window 
+		(HMENU)7,                     // control identifier 
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),      // instance 
+		NULL                             // no WM_CREATE parameter 
+		);
+
+	SendMessage(monitorSizeTrackbar, TBM_SETRANGE,
+		(WPARAM)TRUE,                   // redraw flag 
+		(LPARAM)MAKELONG(iMin, iMax));  // min. & max. positions
+
+	SendMessage(monitorSizeTrackbar, TBM_SETPAGESIZE,
+		0, (LPARAM)4);                  // new page size 
+
+	SendMessage(monitorSizeTrackbar, TBM_SETSEL,
+		(WPARAM)FALSE,                  // redraw flag 
+		(LPARAM)MAKELONG(iSelMin, iSelMax));
+
+	SendMessage(monitorSizeTrackbar, TBM_SETPOS,
+		(WPARAM)TRUE,                   // redraw flag 
+		(LPARAM)1);
 }
 
 void ControlPanel::createText() {
@@ -305,12 +341,26 @@ void ControlPanel::createText() {
 		NULL,
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);
+
+	// create text for camera slider
+	CreateWindow(L"STATIC", L"Resize Monitor:",
+		SS_LEFT | WS_VISIBLE | WS_CHILD,
+		241, 55,
+		120, 20,
+		window,
+		NULL,
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);
 }
 
 // move the camera on the z coordinates
 void ControlPanel::moveCameraZ(float zValue) {
 		cameraPos->z = zValue * .2;
 		currScene->Models[1]->Pos.z = zValue *.2;
+}
+
+void ControlPanel::resizeMonitor(int resizeValue){
+	currScene->Models[0]->size = resizeValue;
 }
 
 void ControlPanel::updateControlPanel() {

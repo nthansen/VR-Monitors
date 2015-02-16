@@ -21,6 +21,8 @@ public:
 	// moves the camera around 
 	void moveCameraZ(float zValue);
 
+	void resizeMonitor(int resizeValue);
+
 	// find out if we need to close the app or not, used when user clicks the quit button
 	bool getCloseApp();
 
@@ -49,6 +51,7 @@ private:
 	HWND window;
 	HWND backgroundCombobox;
 	HWND cameraPositionTrackbar;
+	HWND monitorSizeTrackbar;
 	ovrHmd * oculus;
 	float * yaw;
 	const float PI = 3.1415972f;
