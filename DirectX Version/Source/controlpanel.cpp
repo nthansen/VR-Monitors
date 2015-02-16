@@ -45,7 +45,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		controlPanel.~ControlPanel();
 		break;
 	case WM_DESTROY:
-		PostQuitMessage(0);
+		controlPanel.~ControlPanel();
 		break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
@@ -155,6 +155,7 @@ void ControlPanel::createButtons() {
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
+	// create the recenter oculus button
 	CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"Recenter Oculus",      // Button text 
