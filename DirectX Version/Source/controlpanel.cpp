@@ -217,7 +217,7 @@ void ControlPanel::createSliders() {
 		200, 30,                         // size 
 		window,                         // parent window 
 		(HMENU)3,                     // control identifier 
-		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),                         // instance 
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),      // instance 
 		NULL                             // no WM_CREATE parameter 
 		);
 

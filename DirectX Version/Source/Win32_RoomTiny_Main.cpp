@@ -18,7 +18,7 @@ ImageBuffer    * pEyeRenderTexture[2];	// Where the eye buffers will be rendered
 ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
-float            Yaw(0);		// Horizontal rotation of the player
+float			Yaw(3.141592f);			// Horizontal rotation of the player
 Vector3f         Pos(0.0f,0.0f,0.0f);	// Position of player
 int				 clock;
 
@@ -103,7 +103,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		// remove the health/warning display
 		ovrHmd_DismissHSWDisplay(HMD);
 
-		float       speed = 3.0f; // Can adjust the movement speed. 
+		float       speed = 1.0f; // Can adjust the movement speed. 
 		int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
 		ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
 			EyeRenderDesc[1].HmdToEyeViewOffset };
@@ -114,8 +114,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		clock++;
 
 		// Keyboard inputs to adjust player orientation
-		if (DX11.Key[VK_LEFT])  Yaw += 0.08f;
-		if (DX11.Key[VK_RIGHT]) Yaw -= 0.08f;
+		if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
+		if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
 
 		// Keyboard inputs to adjust player position
 		if (DX11.Key['W'] || DX11.Key[VK_UP])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, -speed*0.05f));
