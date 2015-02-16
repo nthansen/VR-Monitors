@@ -37,6 +37,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				controlPanel.changeBackground(ItemIndex);
 			}
 		}
+		if (LOWORD(wParam) == 4) {
+			controlPanel.recenterOculus();
+		}
 		break;
 	case WM_CLOSE:
 		controlPanel.~ControlPanel();
@@ -67,17 +70,19 @@ ControlPanel::ControlPanel() {
 	cameraPositionTrackbar = nullptr;
 	cameraPos = nullptr;
 	currScene = NULL;
+	oculus = nullptr;
 	closeApp = false;
 }
 
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus) {
 
 	// now we have access to the information we need
 	currScene = roomScene;
 	cameraPos = pos;
+	oculus = theOculus;
 
 	// used to have a class for the window with the styles we want
 	WNDCLASSW wc; 
@@ -141,12 +146,25 @@ void ControlPanel::createButtons() {
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"Quit VR-Monitors",      // Button text 
 		WS_VISIBLE | WS_CHILD,  // Styles 
-		10,         // x position 
+		350,         // x position 
 		130,         // y position 
 		125,        // Button width
 		25,        // Button height
 		window,     // Parent window
 		(HMENU)1,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
+
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"Recenter Oculus",      // Button text 
+		WS_VISIBLE | WS_CHILD,  // Styles 
+		10,         // x position 
+		130,         // y position 
+		125,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)4,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 }
@@ -245,6 +263,11 @@ void ControlPanel::createText() {
 void ControlPanel::moveCameraZ(float zValue) {
 		cameraPos->z = zValue * .2;
 		currScene->Models[1]->Pos.z = zValue *.2;
+}
+
+// recenters the oculus
+void ControlPanel::recenterOculus() {
+	ovrHmd_RecenterPose(*oculus);
 }
 
 // change the background based on the value given

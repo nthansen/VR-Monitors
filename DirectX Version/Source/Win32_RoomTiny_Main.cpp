@@ -26,9 +26,6 @@ int				 clock;
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
 
-
-void NecessaryFeatures();
-
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
@@ -94,13 +91,16 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
 
-	controlPanel.createControlPanel(hinst, &roomScene, &Pos);
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD);
 
     // MAIN LOOP
     // =========
 	while (!controlPanel.getCloseApp())
 	{
 		DX11.HandleMessages();
+
+		// remove the health/warning display
+		ovrHmd_DismissHSWDisplay(HMD);
 
 		float       speed = 1.0f; // Can adjust the movement speed. 
 		int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
@@ -109,8 +109,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		// Start timing
 		ovrHmd_BeginFrame(HMD, 0);
 
-		// Handle key toggles for re-centering
-		NecessaryFeatures();
+		// Update the clock, used by some of the features
+		clock++;
 
 		// Keyboard inputs to adjust player orientation
 		if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
@@ -202,22 +202,5 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	controlPanel.~ControlPanel();
 
     return(0);
-}
-
-//-----------------------------------------------------------------------------------------------------
-void NecessaryFeatures()
-{
-	// Update the clock, used by some of the features
-	clock++;
-
-	// Recenter the Rift by pressing 'R'
-	if (DX11.Key['R'])
-		ovrHmd_RecenterPose(HMD);
-
-	// Dismiss the Health and Safety message by pressing any key
-	if (DX11.IsAnyKeyPressed())
-		ovrHmd_DismissHSWDisplay(HMD);
-
-
 }
 

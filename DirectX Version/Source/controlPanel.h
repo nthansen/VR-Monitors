@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <CommCtrl.h>
+#include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "scene.h"
 
 class ControlPanel{
@@ -12,7 +13,7 @@ public:
 	~ControlPanel();
 
 	// creates the actual window and recieves the scene and pos to use for later
-	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos);
+	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD);
 
 	// changes the background based on the int given
 	void changeBackground(int background);
@@ -31,6 +32,7 @@ public:
 	// needed if we add more trackbars
 	bool checkIfCameraPositionTrackbar(HWND check);
 
+	void recenterOculus();
 
 private:
 
@@ -38,6 +40,7 @@ private:
 	HWND window;
 	HWND backgroundCombobox;
 	HWND cameraPositionTrackbar;
+	ovrHmd * oculus;
 
 	// used so we can manipulate the stuff inside the scene and the camera
 	Scene *currScene;
