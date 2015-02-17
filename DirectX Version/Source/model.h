@@ -32,6 +32,7 @@ struct Model
 	Vector3f     Pos;
 	Vector3f	 OriginalPos;
 	Quatf        Rot;
+	Quatf		 OriginalRot;
 	Matrix4f     Mat;
 	int          numVertices, numIndices;
 	Vertex       Vertices[2000]; //Note fixed maximum

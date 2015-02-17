@@ -108,11 +108,14 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 	//Vector3f tempVect = getOffset() + getLastMonitorPosition();//initialize in case we change in loop below
 	if (num_monitors == 2){//change position of first monitor
 		Monitors[0]->Pos = _pos;
+		Monitors[0]->OriginalPos = _pos;
 		//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
 		Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw -PI/5.5);
-
+		Monitors[0]->OriginalRot = Monitors[0]->Rot;
 		Monitors[1]->Pos = _pos;
+		Monitors[1]->OriginalPos = _pos;
 		Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 5.5);
+		Monitors[1]->OriginalRot = Monitors[1]->Rot;
 		//so go back to the initial point on x, add an offset to put them on top 
 		//temp.x = startingPoint.x1;
 		//temp.y = startingPoint.y1 + monitorHeight/2;
@@ -121,12 +124,17 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 	}
 	else if (num_monitors == 3){
 		Monitors[0]->Pos = _pos;
+		Monitors[0]->OriginalPos = _pos;
 		Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw );
+		Monitors[0]->OriginalRot = Monitors[0]->Rot;
 		Monitors[1]->Pos = _pos;
+		Monitors[1]->OriginalPos = _pos;
 		Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 4);
+		Monitors[1]->OriginalRot = Monitors[1]->Rot;
 		Monitors[2]->Pos = _pos;
+		Monitors[2]->OriginalPos = _pos;
 		Monitors[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 4);
-
+		Monitors[2]->OriginalRot = Monitors[2]->Rot;
 	}
 	
 	////set the new model with the repositioned ones above
