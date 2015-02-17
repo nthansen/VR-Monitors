@@ -315,10 +315,10 @@ void ControlPanel::createSliders() {
 		(WPARAM)TRUE,                   // redraw flag 
 		(LPARAM)0);
 
-	iMin = -1;     // minimum value in trackbar range 
-	iMax = 3;     // maximum value in trackbar range 
-	iSelMin = -1;  // minimum value in trackbar selection 
-	iSelMax = 3;  // maximum value in trackbar selection 
+	iMin = 2;     // minimum value in trackbar range 
+	iMax = 6;     // maximum value in trackbar range 
+	iSelMin = 2;  // minimum value in trackbar selection 
+	iSelMax = 6;  // maximum value in trackbar selection 
 
 	monitorSizeTrackbar = CreateWindowEx(
 		0,                               // no extended styles 
@@ -349,7 +349,7 @@ void ControlPanel::createSliders() {
 
 	SendMessage(monitorSizeTrackbar, TBM_SETPOS,
 		(WPARAM)TRUE,                   // redraw flag 
-		(LPARAM)1);
+		(LPARAM)4);
 }
 
 void ControlPanel::createText() {
@@ -391,11 +391,17 @@ void ControlPanel::moveCameraZ(float zValue) {
 }
 
 void ControlPanel::resizeMonitor(float resizeValue){
-	currScene->Models[0]->scale = resizeValue;
-	//resizeValue *= .8;
-	//Vector3f pos = currScene->Models[0]->Pos;
-	//currScene->Models[0]->AddSolidColorBox(pos.x - resizeValue, pos.y - resizeValue, pos.z, pos.x + resizeValue, pos.y + resizeValue, pos.z, Model::Color(128, 128, 128));
-	//currScene->Models[0]->AllocateBuffers();
+	resizeValue *= .25;
+	Model * m = new Model(Vector3f(0, 0, 0.8), currScene->generated_texture[1]); // eventually will be the monitor
+	m->scale = resizeValue;
+	
+	m->AddSolidColorBox(0 - resizeValue, 0 - resizeValue, 0.8, 
+		resizeValue, resizeValue, 0.8, Model::Color(128, 128, 128));
+	m->OriginalPos = currScene->Models[0]->OriginalPos;
+	m->Rot = currScene->Models[0]->Rot;
+	m->OriginalRot = currScene->Models[0]->OriginalRot;
+	m->AllocateBuffers();
+	currScene->Models[0] = m;
 }
 
 void ControlPanel::updateControlPanel() {
