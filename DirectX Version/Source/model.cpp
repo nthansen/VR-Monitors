@@ -7,7 +7,7 @@ Model::Model(Vector3f arg_pos, ShaderFill * arg_Fill)
 	OriginalPos = Pos;
 	OriginalRot = Quatf();
 	Fill = arg_Fill; 
-	size = 1;
+	scale = 1;
 }
 
 Matrix4f& Model::GetMatrix()	
