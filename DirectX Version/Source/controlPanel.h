@@ -43,7 +43,7 @@ public:
 	void updateControlPanel();
 
 	// adds a monitor to the scene
-	void addMonitor();
+	bool addMonitor();
 
 	void recenterOculus();
 
