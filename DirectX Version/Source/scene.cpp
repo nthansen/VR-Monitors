@@ -7,14 +7,19 @@ D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 const float PI = 3.1415927f;
 
 //used in addmonitor and initialization just below here for the first "screen"
-startFloat startingPoint(-0.5, -0.5, 0.8, 0.5, 0.5, 0.8, Model::Color(128, 128, 128));
+//startFloat startingPoint(-0.5, -0.5, 0.8, 0.5, 0.5, 0.8, Model::Color(128, 128, 128));
 
 void Scene::Add(Model * n)
 {
 	Models[num_models++] = n;
 }
 
-Scene::Scene() : num_models(0), num_monitors(0) // Main world
+// Main world
+Scene::Scene() :
+num_models(0), num_monitors(0), monitorHeight(1), monitorWidth(1), monitorDepth(0.8f),
+
+startingPoint(0-monitorWidth/2,0-monitorHeight/2,monitorDepth,monitorWidth/2,monitorHeight/2,monitorDepth,
+Model::Color(128, 128, 128))
 {
 	
 	Vector3f monitorOffset = Vector3f(0, 0, 0);
@@ -74,7 +79,7 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 
 }
 Vector3f Scene::getLastMonitorPosition(){
-	return Models[num_monitors-1]->Pos;
+	return Monitors[num_monitors-1]->Pos;
 }
 
 
@@ -129,10 +134,13 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 		Monitors[0]->OriginalRot = Monitors[0]->Rot;
 		Monitors[1]->Pos = _pos;
 		Monitors[1]->OriginalPos = _pos;
+		Monitors[1]->Pos += Vector3f(monitorWidth/4, 0, 0);//move left monitor out by a factor of width
 		Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 4);
 		Monitors[1]->OriginalRot = Monitors[1]->Rot;
 		Monitors[2]->Pos = _pos;
 		Monitors[2]->OriginalPos = _pos;
+		Monitors[2]->Pos += Vector3f(-monitorWidth / 4, 0, 0);//move left monitor out by a factor of width
+
 		Monitors[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 4);
 		Monitors[2]->OriginalRot = Monitors[2]->Rot;
 	}
