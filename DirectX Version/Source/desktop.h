@@ -22,6 +22,8 @@ typedef struct FRAME_DATA
 class Desktop {
 public :
     ID3D11Texture2D* desktopImage;
+    ID3D11Texture2D* masterImage;
+
     ID3D11Device* Device;
     ID3D11DeviceContext* deviceContext;
 

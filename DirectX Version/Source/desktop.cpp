@@ -41,6 +41,7 @@ Desktop::Desktop() : desktop(nullptr),
     {
         //could not create
     }
+
 }
 
 int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {

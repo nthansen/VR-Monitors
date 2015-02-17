@@ -75,7 +75,7 @@ Scene::Scene() : num_models(0) // Main world
 				if (k == 3) tex_pixels[3][j * 256 + i] = Model::Color(128, 128, 128, 255);// blank
 			}
 		// load the finished texture pixels into the image buffer
-		ImageBuffer * t = new ImageBuffer(false, false, Sizei(256, 256), 8, (unsigned char *)tex_pixels[k]);
+		ImageBuffer * t = new ImageBuffer(false, false, Sizei(256, 256), 1, (unsigned char *)tex_pixels[k]);
 		// then create these textures into shaders
 		generated_texture[k] = new ShaderFill(ModelVertexDesc, 3, VertexShaderSrc, PixelShaderSrc, t);
 	}
@@ -94,9 +94,6 @@ Scene::Scene() : num_models(0) // Main world
 	
 	generated_texture[4] = new ShaderFill(layout, 3, VertexShaderSphere, PixelShaderSphere, t);
 
-    //TODO: add desktop duplication
-
-
 	// skybox
 	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[4]); 
 	m->CreateSphere(10,10);
@@ -111,20 +108,7 @@ Scene::Scene() : num_models(0) // Main world
     if (timed) { // desktop timed out could not get image
         return;
     }
-
-    // The way the final prototype will work is that there will be one master surface that is rendered
-    // and then a second disposable surface which will map dirty bits onto the new one. 
-
-    D3D11_TEXTURE2D_DESC DeskTexD;
-    data.Frame->GetDesc(&DeskTexD);
-    DeskTexD.SampleDesc.Count = 1;
-    DeskTexD.SampleDesc.Quality = 0;
-    DeskTexD.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-   // ID3D11Texture2D* masterTex = generated_texture[1]->OneTexture->Tex;
-    //generated_texture[1]->OneTexture->Tex = data.Frame;
-
-    DX11.Context->CopyResource(generated_texture[1]->OneTexture->Tex, data.Frame);
-
+   
     //set the new model with the repositioned ones above
     m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]);
     //everything is added based on the first monitor the startingpoint monitor
@@ -189,7 +173,7 @@ void Scene::setOffset(Vector3f _Voffset){
 }
 
 void Scene::addMonitor(){
-
+    // every time we add a desktop we'll want to start a new thread with a new desktop.
     Desktop * desktop = new Desktop();
     desktop->init();
     FRAME_DATA data; //frame data contains the image as well as metadata for dirty regions 
