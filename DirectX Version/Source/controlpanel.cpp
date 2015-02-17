@@ -315,10 +315,10 @@ void ControlPanel::createSliders() {
 		(WPARAM)TRUE,                   // redraw flag 
 		(LPARAM)0);
 
-	iMin = 2;     // minimum value in trackbar range 
-	iMax = 6;     // maximum value in trackbar range 
-	iSelMin = 2;  // minimum value in trackbar selection 
-	iSelMax = 6;  // maximum value in trackbar selection 
+	iMin = 1;     // minimum value in trackbar range 
+	iMax = 3;     // maximum value in trackbar range 
+	iSelMin = 1;  // minimum value in trackbar selection 
+	iSelMax = 3;  // maximum value in trackbar selection 
 
 	monitorSizeTrackbar = CreateWindowEx(
 		0,                               // no extended styles 
@@ -349,7 +349,7 @@ void ControlPanel::createSliders() {
 
 	SendMessage(monitorSizeTrackbar, TBM_SETPOS,
 		(WPARAM)TRUE,                   // redraw flag 
-		(LPARAM)4);
+		(LPARAM)2);
 }
 
 void ControlPanel::createText() {
