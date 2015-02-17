@@ -42,6 +42,9 @@ public:
 	// used whenever we move the monitor since it needs to be constantly updating
 	void updateControlPanel();
 
+	// adds a monitor to the scene
+	void addMonitor();
+
 	void recenterOculus();
 
 	// used to restore monitors in their original positions

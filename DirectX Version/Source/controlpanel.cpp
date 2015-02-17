@@ -61,6 +61,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		else if (LOWORD(wParam) == 6) {
 			controlPanel.resetMonitors();
 		}
+		// user clicked the add monitor button
+		else if (LOWORD(wParam) == 8) {
+			controlPanel.addMonitor();
+		}
 		break;
 	case WM_CLOSE:
 		controlPanel.~ControlPanel();
@@ -224,6 +228,20 @@ void ControlPanel::createButtons() {
 		(HMENU)6,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
+
+	// create the adding monitor button
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"Add Monitor",      // Button text 
+		WS_VISIBLE | WS_CHILD,  // Styles 
+		375,         // x position 
+		75,         // y position 
+		100,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)8,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
 }
 
 void ControlPanel::createDropDowns(){
@@ -369,8 +387,8 @@ void ControlPanel::moveCameraZ(float zValue) {
 }
 
 void ControlPanel::resizeMonitor(float resizeValue){
-	currScene->Models[0]->size = resizeValue;
-	//resizeValue *= .5;
+	currScene->Models[0]->scale = resizeValue;
+	//resizeValue *= .8;
 	//Vector3f pos = currScene->Models[0]->Pos;
 	//currScene->Models[0]->AddSolidColorBox(pos.x - resizeValue, pos.y - resizeValue, pos.z, pos.x + resizeValue, pos.y + resizeValue, pos.z, Model::Color(128, 128, 128));
 	//currScene->Models[0]->AllocateBuffers();
@@ -393,6 +411,10 @@ void ControlPanel::moveMonitor() {
 void ControlPanel::resetMonitors() {
 	// eventualyl will be a for loop
 	currScene->Models[0]->setOriginalPos();
+}
+
+void ControlPanel::addMonitor() {
+	currScene->addMonitor(*yaw, *cameraPos);
 }
 
 // recenters the oculus
