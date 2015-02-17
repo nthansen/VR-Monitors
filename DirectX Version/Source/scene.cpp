@@ -134,14 +134,14 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 		Monitors[0]->OriginalRot = Monitors[0]->Rot;
 		Monitors[1]->Pos = _pos;
 		Monitors[1]->OriginalPos = _pos;
-		Monitors[1]->Pos += Vector3f(monitorWidth/4, 0, 0);//move left monitor out by a factor of width
-		Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 4);
+		Monitors[1]->Pos += Vector3f(monitorWidth/5, 0, -monitorDepth/6);//move left monitor out by a factor of width
+		Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 3.5);
 		Monitors[1]->OriginalRot = Monitors[1]->Rot;
 		Monitors[2]->Pos = _pos;
 		Monitors[2]->OriginalPos = _pos;
-		Monitors[2]->Pos += Vector3f(-monitorWidth / 4, 0, 0);//move left monitor out by a factor of width
+		Monitors[2]->Pos += Vector3f(-monitorWidth / 5, 0, -monitorDepth/6);//move left monitor out by a factor of width
 
-		Monitors[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 4);
+		Monitors[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 3.5);
 		Monitors[2]->OriginalRot = Monitors[2]->Rot;
 	}
 	
