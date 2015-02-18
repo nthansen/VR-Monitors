@@ -48,7 +48,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     DXGI_OUTDUPL_FRAME_INFO frameData;
     HRESULT hr;
 
-    hr = desktop->AcquireNextFrame(10, &frameData, &desktopResource);
+    hr = desktop->AcquireNextFrame(0, &frameData, &desktopResource);
     if (hr == DXGI_ERROR_WAIT_TIMEOUT)
     {
         *timedout = true;
