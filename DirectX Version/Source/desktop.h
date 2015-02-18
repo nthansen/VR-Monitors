@@ -9,6 +9,8 @@
 #include <new>
 #include <warning.h>
 #include <DirectXMath.h>
+#include "Win32_DX11AppUtil.h"
+
 // FRAME_DATA holds information about an acquired frame
 //
 typedef struct FRAME_DATA
@@ -38,9 +40,9 @@ public:
     int relaseFrame();
 private:
     IDXGIOutputDuplication* desktop; //desktop object to get frame data from
-    _Field_size_bytes_(MetaDataSize) BYTE* MetaDataBuffer;
-    UINT MetaDataSize;
-    UINT OutputNumber;
+    _Field_size_bytes_(MetaDataSize) BYTE* metaDataBuffer;
+    UINT metaDataSize;
+    UINT outputNumber;
     DXGI_OUTPUT_DESC OutputDesc;
     static int const timeout = 500; //desktop image grab timoute in ms
 };

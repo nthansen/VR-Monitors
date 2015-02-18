@@ -2,9 +2,8 @@
 
 Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
-MetaDataBuffer(nullptr),
-MetaDataSize(0),
-OutputNumber(0),
+metaDataBuffer(nullptr),
+metaDataSize(0),
 Device(nullptr)
 {
     //initilize the desktpp
@@ -73,8 +72,57 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     hr = desktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&desktopImage));
     data->Frame = desktopImage;
 
-    desktopResource->Release();
-    desktopResource = nullptr;
+
+    //get metadata for dirty count
+    // Get metadata
+    if (frameData.TotalMetadataBufferSize)
+    {
+        // Old buffer too small
+        if (frameData.TotalMetadataBufferSize > metaDataSize)
+        {
+            if (metaDataBuffer) // wipe out old buffer
+            {
+                delete[] metaDataBuffer;
+                metaDataBuffer = nullptr;
+            }
+            metaDataBuffer = new (std::nothrow) BYTE[frameData.TotalMetadataBufferSize];
+            if (!metaDataBuffer)
+            {
+                metaDataBuffer = 0;
+                data->MoveCount = 0;
+                data->DirtyCount = 0;
+                return -1; //failed to allocate buffer
+            }
+            metaDataSize = frameData.TotalMetadataBufferSize;
+        }
+
+        UINT BufSize = frameData.TotalMetadataBufferSize;
+
+        // Get move rectangles
+        hr = desktop->GetFrameMoveRects(BufSize, reinterpret_cast<DXGI_OUTDUPL_MOVE_RECT*>(metaDataBuffer), &BufSize);
+        if (FAILED(hr))
+        {
+            data->MoveCount = 0;
+            data->DirtyCount = 0;
+            return -1;
+        }
+        data->MoveCount = BufSize / sizeof(DXGI_OUTDUPL_MOVE_RECT);
+
+        BYTE* DirtyRects = metaDataBuffer + BufSize;
+        BufSize = frameData.TotalMetadataBufferSize - BufSize;
+
+        // Get dirty rectangles
+        hr = desktop->GetFrameDirtyRects(BufSize, reinterpret_cast<RECT*>(DirtyRects), &BufSize);
+        if (FAILED(hr))
+        {
+            data->MoveCount = 0;
+            data->DirtyCount = 0;
+            return -1; //failed to get dirty rects
+        }
+        data->DirtyCount = BufSize / sizeof(RECT);
+        data->MetaData = metaDataBuffer;
+    }
+
     return 0;
 }
 
@@ -114,7 +162,7 @@ void Desktop::init() {
 
     // Get DXGI device
     IDXGIDevice* DxgiDevice = nullptr;
-    hr = Device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&DxgiDevice));
+    hr = DX11.Device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&DxgiDevice));
     if (FAILED(hr))
     {
     }

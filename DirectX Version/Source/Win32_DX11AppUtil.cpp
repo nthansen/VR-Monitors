@@ -333,7 +333,10 @@ ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
         break;
     }
     VShader = new Shader(vertextBlobData, 0);
-    DX11.Device->CreateInputLayout(VertexDesc, numVertexDesc,
+    HRESULT hr;
+    const void * gpb =  vertextBlobData->GetBufferPointer();
+    SIZE_T s = vertextBlobData->GetBufferSize();
+    hr = DX11.Device->CreateInputLayout(VertexDesc, numVertexDesc,
         vertextBlobData->GetBufferPointer(), vertextBlobData->GetBufferSize(), &InputLayout);
     PShader = new Shader(pixelBlobData, 1);
 
