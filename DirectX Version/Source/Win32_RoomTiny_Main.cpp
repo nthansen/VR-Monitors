@@ -10,6 +10,7 @@
 #include "scene.h"
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "controlPanel.h"
+#include "desktop.h"
 
 ovrHmd           HMD;					// The handle of the headset
 ovrEyeRenderDesc EyeRenderDesc[2];		// Description of the VR.
@@ -96,6 +97,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // MAIN LOOP
     // =========
+    Desktop * desktop = new Desktop();
+    desktop->init();
+    FRAME_DATA frame;
+    
 	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
 	{
 		DX11.HandleMessages();
@@ -132,7 +137,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		// just so it'd give some time before switching between each texture
 		if (clock % 24 == 0) {
 			// replaces the shader fill to the new shaderfill
-			roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
+            bool timedout;
+            desktop->getFrame(&frame, &timedout);
+            if (!timedout) {
+                roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
+            }
 			// accesses the actual texture in the shaderfill and switches them out
 			//roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
 		}	// figuring out how model rotation works
