@@ -1,5 +1,11 @@
 #include "desktop.h"
 
+//forward declaration
+D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
+    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+};
+
 Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
 metaDataBuffer(nullptr),
@@ -198,4 +204,33 @@ void Desktop::init() {
     hr = DxgiOutput1->DuplicateOutput(Device, &desktop);
     DxgiOutput1->Release();
     DxgiOutput1 = nullptr;
+
+    FRAME_DATA data;
+    bool timedout = true;
+    do{
+        this->getFrame(&data, &timedout);
+    } while (timedout);
+
+    D3D11_TEXTURE2D_DESC frameDesc;
+    data.Frame->GetDesc(&frameDesc);
+
+    D3D11_TEXTURE2D_DESC dsDesc;
+    dsDesc.Width = frameDesc.Width;
+    dsDesc.Height = frameDesc.Height;
+    dsDesc.MipLevels = frameDesc.MipLevels;
+    dsDesc.ArraySize = 1;
+    dsDesc.Format = frameDesc.Format;
+    dsDesc.SampleDesc.Count = 1;
+    dsDesc.SampleDesc.Quality = 0;
+    dsDesc.Usage = D3D11_USAGE_DEFAULT;
+    dsDesc.CPUAccessFlags = 0;
+    dsDesc.MiscFlags = 0;
+    dsDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    
+    dsDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
+    
+    DX11.Device->CreateTexture2D(&dsDesc, NULL, &masterImage);
+    DX11.Device->CreateShaderResourceView(masterImage, NULL, &masterView);
+    masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), masterImage, masterView);
+    masterFill = new ShaderFill(ModelVertexDescMon, 3, 0, masterBuffer);
 }

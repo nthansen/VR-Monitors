@@ -10,6 +10,7 @@
 #include <warning.h>
 #include <DirectXMath.h>
 #include "Win32_DX11AppUtil.h"
+#include "scene.h"
 
 // FRAME_DATA holds information about an acquired frame
 //
@@ -26,9 +27,11 @@ class Desktop {
 public:
     ID3D11Texture2D* desktopImage;
     ID3D11Texture2D* masterImage;
-
+    ID3D11ShaderResourceView* masterView;
     ID3D11Device* Device;
     ID3D11DeviceContext* deviceContext;
+    ShaderFill* masterFill;
+    ImageBuffer * masterBuffer;
 
 
     Desktop();

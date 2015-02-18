@@ -141,6 +141,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
         // replaces the shader fill to the new shaderfill
         bool timedout;
         FRAME_DATA frame;
+        desktop->relaseFrame();
+
         desktop->getFrame(&frame, &timedout);
         if (!timedout) {
 
@@ -154,7 +156,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
             ShaderDesc.Texture2D.MipLevels = frameDesc.MipLevels;
 
             // Create new shader resource view
+            ID3D11Texture2D* masterImage;
+
             ID3D11ShaderResourceView* ShaderResource = nullptr;
+            DX11.Context->CopyResource(desktop->masterImage, frame.Frame);
             DX11.Device->CreateShaderResourceView(frame.Frame, &ShaderDesc, &ShaderResource);
             ImageBuffer *tmp = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), frame.Frame, ShaderResource);
             roomScene.Models[0]->Fill = new ShaderFill(ModelVertexDesc, 3, 0, tmp);
@@ -162,7 +167,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
             // roomScene.Models[0]->Fill->OneTexture->TexSv = ShaderResource;
 //               roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
         }
-        desktop->relaseFrame();
         // accesses the actual texture in the shaderfill and switches them out
         //roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
 
