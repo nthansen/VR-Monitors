@@ -107,7 +107,7 @@ struct ShaderFill
 	// allows us to know what type of model we need to grab a shader for
 	enum modelTypes
 	{
-		Box, Skybox
+		Box, Skybox, Monitor
 	};
 
 	ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,

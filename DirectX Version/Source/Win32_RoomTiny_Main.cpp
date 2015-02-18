@@ -26,6 +26,10 @@ int				 clock;
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
+D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] =
+{ { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+{ "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex, U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
 
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
@@ -99,7 +103,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // =========
     Desktop * desktop = new Desktop();
     desktop->init();
-    FRAME_DATA frame;
     
 	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
 	{
@@ -138,9 +141,28 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (clock % 24 == 0) {
 			// replaces the shader fill to the new shaderfill
             bool timedout;
+            FRAME_DATA frame;
             desktop->getFrame(&frame, &timedout);
             if (!timedout) {
-                roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
+
+                D3D11_TEXTURE2D_DESC FrameDesc;
+                frame.Frame->GetDesc(&FrameDesc);
+
+                D3D11_SHADER_RESOURCE_VIEW_DESC ShaderDesc;
+                ShaderDesc.Format = FrameDesc.Format;
+                ShaderDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+                ShaderDesc.Texture2D.MostDetailedMip = FrameDesc.MipLevels - 1;
+                ShaderDesc.Texture2D.MipLevels = FrameDesc.MipLevels;
+
+                // Create new shader resource view
+                ID3D11ShaderResourceView* ShaderResource = nullptr;
+                DX11.Device->CreateShaderResourceView(frame.Frame, &ShaderDesc, &ShaderResource);
+                ImageBuffer *tmp = new ImageBuffer(false, false, Sizei(256, 256), frame.Frame, ShaderResource);
+
+                roomScene.Models[0]->Fill = new ShaderFill(ModelVertexDescMon, 3, 2, tmp);
+               // roomScene.Models[0]->Fill->OneTexture->Tex = frame.Frame;
+               // roomScene.Models[0]->Fill->OneTexture->TexSv = ShaderResource;
+                // = roomScene.generated_texture[clock % 5];
             }
 			// accesses the actual texture in the shaderfill and switches them out
 			//roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
