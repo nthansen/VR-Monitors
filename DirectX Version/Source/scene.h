@@ -49,7 +49,6 @@ struct Scene
 	Vector3f getOffset();//sets position of new monitor based on offset //TODO
 	void setOffset(Vector3f);//sets monitor offset
 	void addMonitor(const float,const Vector3f);//adds monitor to scene uses position of last monitor
-	Scene(int reducedVersion); // Main world
 
 	// Simple latency box (keep similar vertex format and shader params same, for ease of code)
 	Scene();

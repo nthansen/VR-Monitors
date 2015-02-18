@@ -63,7 +63,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		// user clicked the add monitor button
 		else if (LOWORD(wParam) == 8) {
-			controlPanel.addMonitor();
+			if (!controlPanel.addMonitor()) {
+				handle = (HWND)lParam;
+				EnableWindow(handle, false);
+				
+			}
 		}
 		break;
 	case WM_CLOSE:
@@ -413,8 +417,15 @@ void ControlPanel::resetMonitors() {
 	currScene->Models[0]->setOriginalPos();
 }
 
-void ControlPanel::addMonitor() {
+bool ControlPanel::addMonitor() {
 	currScene->addMonitor(*yaw, *cameraPos);
+	if (currScene->num_monitors < 3) {
+		return true;
+	}
+	else{
+		return false;
+	}
+
 }
 
 // recenters the oculus
