@@ -298,9 +298,9 @@ ImageBuffer::ImageBuffer(bool rendertarget, bool depth, Sizei size, ID3D11Textur
     Tex = newTex;
 
     TexSv = newResource;
-    HRESULT hr; //hook for debugger
-    if (rendertarget &&  depth) hr = DX11.Device->CreateDepthStencilView(Tex, NULL, &TexDsv);
-    if (rendertarget && !depth) hr = DX11.Device->CreateRenderTargetView(Tex, NULL, &TexRtv);
+
+    if (rendertarget &&  depth) DX11.Device->CreateDepthStencilView(Tex, NULL, &TexDsv);
+    if (rendertarget && !depth) DX11.Device->CreateRenderTargetView(Tex, NULL, &TexRtv);
 
 }
 
@@ -318,7 +318,6 @@ ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
     // 0 means it's a box
     switch (type) {
     case Box:
-        //TODO: there doesn't seem to be a reason to continue to compile these from file if they're already made
         D3DCompileFromFile(L"Source/VertexShaderBox.hlsl", NULL, NULL, "main", "vs_5_0", 0, 0, &vertextBlobData, NULL);
         D3DCompileFromFile(L"Source/PixelShaderBox.hlsl", NULL, NULL, "main", "ps_5_0", 0, 0, &pixelBlobData, NULL);
         break;
@@ -326,11 +325,17 @@ ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
         D3DCompileFromFile(L"Source/VertexShaderSkybox.hlsl", NULL, NULL, "main", "vs_5_0", 0, 0, &vertextBlobData, NULL);
         D3DCompileFromFile(L"Source/PixelShaderSkybox.hlsl", NULL, NULL, "main", "ps_5_0", 0, 0, &pixelBlobData, NULL);
         break;
+    case Monitor:
+        D3DCompileFromFile(L"Source/VertexShaderMonitor.hlsl", NULL, NULL, "VS", "vs_5_0", 0, 0, &vertextBlobData, NULL);
+        D3DCompileFromFile(L"Source/PixelShaderMonitor.hlsl", NULL, NULL, "PS", "ps_5_0", 0, 0, &pixelBlobData, &errors);
+        break;
     default:
         break;
     }
     VShader = new Shader(vertextBlobData, 0);
     HRESULT hr;
+    const void * gpb =  vertextBlobData->GetBufferPointer();
+    SIZE_T s = vertextBlobData->GetBufferSize();
     hr = DX11.Device->CreateInputLayout(VertexDesc, numVertexDesc,
         vertextBlobData->GetBufferPointer(), vertextBlobData->GetBufferSize(), &InputLayout);
     PShader = new Shader(pixelBlobData, 1);
@@ -341,7 +346,7 @@ ShaderFill::ShaderFill(D3D11_INPUT_ELEMENT_DESC * VertexDesc, int numVertexDesc,
     ss.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
     ss.MinLOD = 0;
     ss.MaxLOD = D3D11_FLOAT32_MAX;
-    hr = DX11.Device->CreateSamplerState(&ss, &SamplerState);
+    DX11.Device->CreateSamplerState(&ss, &SamplerState);
 }
 
 DataBuffer::DataBuffer(D3D11_BIND_FLAG use, const void* buffer, size_t size) : Size(size)

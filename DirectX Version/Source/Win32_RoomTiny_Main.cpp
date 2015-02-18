@@ -27,9 +27,8 @@ int				 clock;
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
-    { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "Color", 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex, U), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[];
 //-------------------------------------------------------------------------------------
@@ -153,36 +152,15 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
             ShaderDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
             ShaderDesc.Texture2D.MostDetailedMip = frameDesc.MipLevels; //frame has a mip level on 1
             ShaderDesc.Texture2D.MipLevels = frameDesc.MipLevels;
-            D3D11_TEXTURE2D_DESC dsDesc;
-            dsDesc.Width = frameDesc.Width;
-            dsDesc.Height = frameDesc.Height;
-            dsDesc.MipLevels = 1;
-            dsDesc.ArraySize = 1;
-            dsDesc.Format = frameDesc.Format;//if depth was specified make format 32 bit color or else 
-            dsDesc.SampleDesc.Count = 1;
-            dsDesc.SampleDesc.Quality = 0;
-            dsDesc.Usage = D3D11_USAGE_DEFAULT;
-            dsDesc.CPUAccessFlags = 0;
-            dsDesc.MiscFlags = 0;
-            dsDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-
-            dsDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
-
-            ID3D11ShaderResourceView* ShaderResource = nullptr;
-            ID3D11Texture2D* Tex;
-
-            DX11.Device->CreateTexture2D(&dsDesc, NULL, &Tex);
-            DX11.Device->CreateShaderResourceView(Tex, NULL, &ShaderResource);
 
             // Create new shader resource view
-            HRESULT hr = DX11.Device->CreateShaderResourceView(frame.Frame, NULL, &ShaderResource);
-            ImageBuffer *tmp = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), Tex, ShaderResource);
-            D3D11_MAPPED_SUBRESOURCE map;
-            DX11.Context->Map(Tex, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
-            //memcpy((void *)map.pData, frame.Frame, frame.);
-            DX11.Context->Unmap(Tex, 0);
-            roomScene.Models[0]->Fill = new ShaderFill(ModelVertexDescMon, 3, 0, tmp);
-            //roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
+            ID3D11ShaderResourceView* ShaderResource = nullptr;
+            DX11.Device->CreateShaderResourceView(frame.Frame, &ShaderDesc, &ShaderResource);
+            ImageBuffer *tmp = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), frame.Frame, ShaderResource);
+            roomScene.Models[0]->Fill = new ShaderFill(ModelVertexDesc, 3, 0, tmp);
+            // roomScene.Models[0]->Fill->OneTexture->Tex = frame.Frame;
+            // roomScene.Models[0]->Fill->OneTexture->TexSv = ShaderResource;
+//               roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
         }
         desktop->relaseFrame();
         // accesses the actual texture in the shaderfill and switches them out
