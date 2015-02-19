@@ -102,18 +102,22 @@ ControlPanel::ControlPanel() {
 	oculus = nullptr;
 	closeApp = false;
 	movingMonitor = false;
+	view;
+	proj;
 }
 
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw, Matrix4f * _view, Matrix4f * _proj) {
 
 	// now we have access to the information we need
 	currScene = roomScene;
 	cameraPos = pos;
 	oculus = theOculus;
 	this->yaw = yaw;
+	this->view = _view;//view matrix
+	this->proj = _proj;//projection matrix
 
 	// used to have a class for the window with the styles we want
 	WNDCLASSW wc; 
@@ -408,8 +412,8 @@ void ControlPanel::updateControlPanel() {
 //since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 //we must offset this to rotate negative pi radians so the object will be in front of us
 void ControlPanel::moveMonitor() {
-	currScene->Models[0]->Pos = *cameraPos;
-	currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
+	currScene->Models[0]->Pos = currScene->Models[0]->Pos.Lerp(*cameraPos, 0.6);
+	currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0,.001, 0), -PI + *yaw), .6);
 }
 
 void ControlPanel::resetMonitors() {
