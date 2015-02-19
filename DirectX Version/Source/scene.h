@@ -30,7 +30,7 @@ struct Scene
 	{
 		Box, Skybox
 	};
-
+	Model* selected;
 	int     num_models;
 	int		num_monitors;
 	Model * Models[20];

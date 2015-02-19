@@ -91,8 +91,12 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
-
-	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
+	Matrix4f view;
+	Matrix4f proj;
+	Vector3f finalForward;
+	Vector3f shiftedEyePos;
+	Vector3f at = shiftedEyePos + finalForward;
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw, &view, &proj);
 
     // MAIN LOOP
     // =========
@@ -105,7 +109,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		// remove the health/warning display
 		ovrHmd_DismissHSWDisplay(HMD);
 
-		float       speed = 1.0f; // Can adjust the movement speed. 
+		float       speed = 4.0f; // Can adjust the movement speed. 
 		int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
 		ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
 			EyeRenderDesc[1].HmdToEyeViewOffset };
@@ -116,8 +120,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		clock++;
 
 		// Keyboard inputs to adjust player orientation
-		if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
-		if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
+		if (DX11.Key[VK_LEFT])  Yaw += 0.08f;
+		if (DX11.Key[VK_RIGHT]) Yaw -= 0.08f;
 
 		// Keyboard inputs to adjust player position
 		if (DX11.Key['W'] || DX11.Key[VK_UP])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, -speed*0.05f));
@@ -140,9 +144,32 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
 			//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 			//we must offset this to rotate negative pi radians so the object will be in front of us
-			roomScene.Models[0]->Pos = Pos;
-			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
+			//roomScene.Models[0]->Pos = Pos;
+			//roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
+			Model *asdf = roomScene.Monitors[0];
+			//Vector3f xnorm = Vector3f(view.M[0][3], view.M[1][3], view.M[2][3]);
+			//Vector3f ynorm = Vector3f(view.M[2][1], view.M[2][2], view.M[2][3]);
+			//Vector3f znorm = xnorm.Cross(ynorm);
+			//Matrix4f onorm = 			
+			//Vector3f normal = xnorm.Normalized();
+			//at;
+			//shiftedEyePos;
+			//int jk = 1;
+			Matrix4f scale = Matrix4f::Scaling(2);
+			asdf->GetMatrix();
+			asdf->Pos = (asdf->Mat).Transform(Vector3f(0, .1, 0));
+
+//			Vector3f inverseviewproj = (view * proj).Transform;
+			//Vector3f rayorigin = 
+			//asdf->Pos = proj.Transform(Vector3f(-1,0,.5));
 			
+
+			//currScene->Models[0]->Mat = asdf.GetMatrix.proj;
+			
+		}
+		if (DX11.Key['R']) {
+			roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(Pos,.6);
+			roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw), .7);
 		}
 		// shows how to select a model and mess with it
 		/*
@@ -180,8 +207,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 				Vector3f finalForward =			finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
 				Vector3f shiftedEyePos =		Pos + rollPitchYaw.Transform(useEyePose->Position);
 
-				Matrix4f view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
-				Matrix4f proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
+				view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
+				proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
 
 				// Render the scene
 				for (int t = 0; t < timesToRenderScene; t++)

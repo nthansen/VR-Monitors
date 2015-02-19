@@ -55,7 +55,7 @@ Model::Color(128, 128, 128))
 	Model * m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // eventually will be the monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
-	m->AllocateBuffers(); Add(m); Monitors[num_monitors++]=m;
+	m->AllocateBuffers(); Add(m); Monitors[num_monitors++] = m; selected = m;
 
 	// skybox
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);

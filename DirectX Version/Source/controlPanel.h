@@ -13,7 +13,7 @@ public:
 	~ControlPanel();
 
 	// creates the actual window and recieves the scene and pos to use for later
-	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw);
+	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw, Matrix4f * _view, Matrix4f * _proj);
 
 	// changes the background based on the int given
 	void changeBackground(int background);
@@ -64,6 +64,8 @@ private:
 	// used so we can manipulate the stuff inside the scene and the camera
 	Scene *currScene;
 	Vector3f *cameraPos;
+	Matrix4f *view;
+	Matrix4f *proj;
 
 	// Value used to know if we need to close the application or not
 	bool closeApp;

@@ -55,8 +55,9 @@ void Model::AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, f
 		Vector3f(x2, y2, z1), Vector3f(x2, y2), Vector3f(x1, y2, z1), Vector3f(x1, y2),
 		Vector3f(x1, y1, z2), Vector3f(x1, y1), Vector3f(x2, y1, z2), Vector3f(x2, y1), // side 6
 		Vector3f(x2, y2, z2), Vector3f(x2, y2), Vector3f(x1, y2, z2), Vector3f(x1, y2),
+		
 	};
-
+	//see page 153 game programming book for definition of vertex and indices
 	// each number is the SkyboxVertex number
 	uint16_t CubeIndices[] = {
 		0, 1, 3, // side 1
