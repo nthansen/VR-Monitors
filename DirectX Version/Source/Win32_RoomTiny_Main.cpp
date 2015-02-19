@@ -91,8 +91,9 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
-
-	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
+	Matrix4f view;
+	Matrix4f proj;
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw,&view,&proj);
 
     // MAIN LOOP
     // =========
@@ -140,8 +141,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
 			//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 			//we must offset this to rotate negative pi radians so the object will be in front of us
-			roomScene.Models[0]->Pos = Pos;
-			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
+			roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(Pos,0.6);
+			roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw),.6);
 			
 		}
 		// shows how to select a model and mess with it
