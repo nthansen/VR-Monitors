@@ -14,6 +14,40 @@ void Scene::Add(Model * n)
 	Models[num_models++] = n;
 }
 
+int Scene::pickMonitor(Vector3f Pos, float Yaw){
+	bool hit = true;//stores whether we hit something
+	//Model *target = nullptr;//model we will find
+	//save the direction to cast in dir and position to start from in dpos
+	SimpleMath::Vector3 dPos = SimpleMath::Vector3(Pos.x, Pos.y, Pos.z);//position for simplemath
+	SimpleMath::Vector3 dir = SimpleMath::Vector3(sinf(Yaw), 0, cosf(Yaw - PI));
+	//ray is really only a container holding the origin and direction to cast
+	SimpleMath::Ray cast = SimpleMath::Ray(dPos, dir);
+	//crate a bounding box around each monitor to see if we hit one
+	//as of now the second parameter is simply the distance from the center of the box to each edge x,y,z,w
+	//magic number .4f is the distance from the center in x,y,z boxes center will be different
+	//DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(0, 0, 1), XMFLOAT3(.4f, .4f, 0.0f), XMFLOAT4(sinf(Yaw), 0, cosf(Yaw - PI), 0));
+	int i = 0;
+	float _dist = 0.0f;
+	for (i; i < num_monitors; i++){
+		Model *temp = Monitors[i];
+		DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(temp->Pos.x+monitorWidth/2, temp->Pos.y+monitorHeight/2, temp->Pos.z+monitorDepth/2), XMFLOAT3(.4f, .4f, 0.0f), XMFLOAT4(sinf(Yaw), 0, cosf(Yaw - PI), 0));
+
+		if (mbox.Intersects(cast.position, cast.direction, _dist)){
+			//					*target = *temp; //causes error but may want to save reference
+			//loop causes freeze need to get a reference and keep moving the monitor someplace
+			//while (controlPanel.movingMonitor){
+				/*temp->Pos = Pos;
+				temp->Rot = Quatf(Vector3f(0, .001, 0), -PI + Yaw);*/
+			//}
+			//so for now well just return the model
+			/*return temp;*/
+			return i;
+		}
+	}
+	return i;
+
+}
+
 // Main world
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(1), monitorWidth(1), monitorDepth(0.8f),

@@ -3,11 +3,15 @@
 #include <CommCtrl.h>
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "scene.h"
+#include <DirectXMath.h>
+//#include <DirectXColors.h>
+#include <DirectXCollision.h>
+#include "../3rdParty/SimpleMath.h"
 
 class ControlPanel{
 	
 public:
-
+	int pickedMonitor = 0;
 	ControlPanel();
 	
 	~ControlPanel();
@@ -71,7 +75,7 @@ private:
 	bool closeApp;
 
 	// the function to actually move the monitor
-	void moveMonitor();
+	void moveMonitor(const int);
 
 
 	// sets up the control panel by calling the helper functions below
