@@ -15,7 +15,7 @@ void Scene::Add(Model * n)
 }
 
 int Scene::pickMonitor(Vector3f Pos, float Yaw){
-	bool hit = true;//stores whether we hit something
+	bool hit = false;//stores whether we hit something
 	//Model *target = nullptr;//model we will find
 	//save the direction to cast in dir and position to start from in dpos
 	SimpleMath::Vector3 dPos = SimpleMath::Vector3(Pos.x, Pos.y, Pos.z);//position for simplemath
@@ -30,21 +30,30 @@ int Scene::pickMonitor(Vector3f Pos, float Yaw){
 	float _dist = 0.0f;
 	for (i; i < num_monitors; i++){
 		Model *temp = Monitors[i];
-		DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(temp->Pos.x+monitorWidth/2, temp->Pos.y+monitorHeight/2, temp->Pos.z+monitorDepth/2), XMFLOAT3(.4f, .4f, 0.0f), XMFLOAT4(sinf(Yaw), 0, cosf(Yaw - PI), 0));
-
-		if (mbox.Intersects(cast.position, cast.direction, _dist)){
+		DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(temp->Pos.x, temp->Pos.y, temp->Pos.z), XMFLOAT3(.4f, .4f, 0.0f), XMFLOAT4(sinf(Yaw), 0, cosf(Yaw - PI), 0));
+		DirectX::BoundingSphere mSphere = BoundingSphere(XMFLOAT3(temp->Pos.x, temp->Pos.y, temp->Pos.z), monitorHeight);
+		//Model * m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // for bounding box
+		//m->AddSolidColorBox(temp->Pos.x, temp->Pos.y, temp->Pos.z, temp->Pos.x + monitorWidth ,
+		//	temp->Pos.y + monitorHeight, temp->Pos.z + monitorDepth, Model::Color(0,128,128,1));//to visualize the selected monitor
+		//m->AllocateBuffers(); Add(m); selected = m;
+		if (mSphere.Intersects(cast.position, cast.direction, _dist)){
 			//					*target = *temp; //causes error but may want to save reference
 			//loop causes freeze need to get a reference and keep moving the monitor someplace
 			//while (controlPanel.movingMonitor){
-				/*temp->Pos = Pos;
-				temp->Rot = Quatf(Vector3f(0, .001, 0), -PI + Yaw);*/
+			/*temp->Pos = Pos;
+			temp->Rot = Quatf(Vector3f(0, .001, 0), -PI + Yaw);*/
 			//}
 			//so for now well just return the model
 			/*return temp;*/
+			hit = true;
 			return i;
 		}
+		if (hit){
+			int j = 0; //just checking for testing
+		}
 	}
-	return i;
+	return 0;//return default first monitor
+
 
 }
 

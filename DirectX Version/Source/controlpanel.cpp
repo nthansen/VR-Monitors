@@ -448,6 +448,7 @@ void ControlPanel::resetMonitors() {
 	currScene->Models[0]->setOriginalPos();
 }
 
+
 bool ControlPanel::addMonitor() {
 	currScene->addMonitor(*yaw, *cameraPos);
 	if (currScene->num_monitors < 3) {
