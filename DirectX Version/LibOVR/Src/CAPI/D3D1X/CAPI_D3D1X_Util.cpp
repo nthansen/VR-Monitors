@@ -27,6 +27,7 @@ limitations under the License.
 #include "CAPI_D3D1X_Util.h"
 
 #include <d3dcompiler.h>
+#include <D3D11.h>
 
 namespace OVR { namespace CAPI { namespace D3D_NS {
 
@@ -172,6 +173,7 @@ bool Buffer::Data(int use, const void *buffer, size_t size, int computeBufferStr
     }
     else
     {
+        HRESULT Shr = pParams->pDevice->GetDeviceRemovedReason();
         OVR_ASSERT ( false );
         return false;
     }

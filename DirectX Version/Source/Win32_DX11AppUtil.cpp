@@ -365,7 +365,7 @@ DataBuffer::DataBuffer(D3D11_BIND_FLAG use, const void* buffer, size_t size) : S
 void DataBuffer::Refresh(const void* buffer, size_t size)
 {
     D3D11_MAPPED_SUBRESOURCE map;
-    DX11.Context->Map(D3DBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
+    HRESULT hr = DX11.Context->Map(D3DBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
     memcpy((void *)map.pData, buffer, size);
     DX11.Context->Unmap(D3DBuffer, 0);
 }

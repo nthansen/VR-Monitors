@@ -3,6 +3,7 @@
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "Color", 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
@@ -73,10 +74,14 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
         desktopImage->Release();
         desktopImage = nullptr;
     }
-
-    // QI for IDXGIResource
-    hr = desktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&desktopImage));
-    data->Frame = desktopImage;
+    if (frameData.LastPresentTime.QuadPart == 0) { //frame has not been updated since the last pull, set to nulll
+        data->Frame = nullptr;
+    }
+    else {
+        // QI for IDXGIResource
+        hr = desktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&desktopImage));
+        data->Frame = desktopImage;
+    }
 
 
     //get metadata for dirty count
@@ -133,7 +138,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
 }
 
 int Desktop::relaseFrame(){
-    HRESULT hr = desktop->ReleaseFrame();
+    HRESULT hr = desktop-> ReleaseFrame();
     if (FAILED(hr))
     {
         return -1;
@@ -151,20 +156,6 @@ void Desktop::init() {
     HDESK CurrentDesktop = nullptr;
     UINT Output = 0;
     HRESULT hr;
-    CurrentDesktop = OpenInputDesktop(0, FALSE, GENERIC_ALL);
-    if (!CurrentDesktop)
-    {
-        // We do not have access to the desktop so request a retry
-    }
-
-    // Attach desktop to this thread
-    bool DesktopAttached = SetThreadDesktop(CurrentDesktop) != 0;
-    CloseDesktop(CurrentDesktop);
-    CurrentDesktop = nullptr;
-    if (!DesktopAttached)
-    {
-        // We do not have access to the desktop so request a retry
-    }
 
     // Get DXGI device
     IDXGIDevice* DxgiDevice = nullptr;
@@ -207,14 +198,28 @@ void Desktop::init() {
 
     FRAME_DATA data;
     bool timedout = true;
+    //capture the frame to get the full description of the output
     do{
+        this->relaseFrame();
         this->getFrame(&data, &timedout);
-    } while (timedout);
+    } while (timedout || data.Frame == NULL);   
+    this->relaseFrame();
+
+    data.Frame = nullptr; // reset
+    do{
+        this->relaseFrame();
+        this->getFrame(&data, &timedout);
+    } while (timedout || data.Frame == NULL);
 
     D3D11_TEXTURE2D_DESC frameDesc;
     data.Frame->GetDesc(&frameDesc);
 
     D3D11_TEXTURE2D_DESC dsDesc;
+
+    RtlZeroMemory(&dsDesc, sizeof(D3D11_TEXTURE2D_DESC));
+    dsDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    dsDesc.CPUAccessFlags = 0;
+    dsDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
     dsDesc.Width = frameDesc.Width;
     dsDesc.Height = frameDesc.Height;
     dsDesc.MipLevels = frameDesc.MipLevels;
@@ -223,14 +228,26 @@ void Desktop::init() {
     dsDesc.SampleDesc.Count = 1;
     dsDesc.SampleDesc.Quality = 0;
     dsDesc.Usage = D3D11_USAGE_DEFAULT;
-    dsDesc.CPUAccessFlags = 0;
-    dsDesc.MiscFlags = 0;
-    dsDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
     
-    dsDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
-    
-    DX11.Device->CreateTexture2D(&dsDesc, NULL, &masterImage);
+    hr = DX11.Device->CreateTexture2D(&dsDesc, nullptr, &masterImage);
+    HANDLE Hnd = nullptr;
+    IDXGIResource* DXGIResource = nullptr;
+     hr = data.Frame->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+    DXGIResource->GetSharedHandle(&Hnd);
+    DXGIResource->Release();
+    DXGIResource = nullptr;
+    ID3D11Texture2D* tmp;
+    hr = Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
+
+    //DX11.Context->CopySubresourceRegion(masterImage, 0,)
+    DX11.Context->CopyResource(masterImage, tmp);
+
     DX11.Device->CreateShaderResourceView(masterImage, NULL, &masterView);
     masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), masterImage, masterView);
     masterFill = new ShaderFill(ModelVertexDescMon, 3, 0, masterBuffer);
+
+    D3D11_TEXTURE2D_DESC ff;
+    masterImage->GetDesc(&ff);
+    this->relaseFrame();
+
 }

@@ -48,22 +48,28 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{974bf83c-60ee-4998-a25e-e1b173ad3752}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shader Files">
+    <Filter Include="Header Files\Shader Files">
       <UniqueIdentifier>{ea490b21-132c-422b-95c1-8cda60c5d12c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\PixelShaderBox.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Header Files\Shader Files</Filter>
     </FxCompile>
     <FxCompile Include="Source\PixelShaderSkybox.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Header Files\Shader Files</Filter>
     </FxCompile>
     <FxCompile Include="Source\VertexShaderBox.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Header Files\Shader Files</Filter>
     </FxCompile>
     <FxCompile Include="Source\VertexShaderSkybox.hlsl">
-      <Filter>Shader Files</Filter>
+      <Filter>Header Files\Shader Files</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\PixelShaderMonitor.hlsl">
+      <Filter>Header Files\Shader Files</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\VertexShaderMonitor.hlsl">
+      <Filter>Header Files\Shader Files</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
