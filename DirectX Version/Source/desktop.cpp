@@ -1,5 +1,4 @@
 #include "desktop.h"
-#include "../3rdParty/ScreenGrab/ScreenGrab.h"
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -55,7 +54,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     DXGI_OUTDUPL_FRAME_INFO frameData;
     HRESULT hr;
 
-    hr = desktop->AcquireNextFrame(10, &frameData, &desktopResource);
+    hr = desktop->AcquireNextFrame(1, &frameData, &desktopResource);
     if (hr == DXGI_ERROR_WAIT_TIMEOUT)
     {
         *timedout = true;
@@ -203,14 +202,6 @@ void Desktop::init() {
         this->relaseFrame();
         this->getFrame(&data, &timedout);
     } while (timedout || data.Frame == NULL);
-    this->relaseFrame();
-
-    data.Frame = nullptr; // reset
-    do{
-        this->relaseFrame();
-        this->getFrame(&data, &timedout);
-    } while (timedout || data.Frame == NULL);
-
     D3D11_TEXTURE2D_DESC frameDesc;
     data.Frame->GetDesc(&frameDesc);
 
@@ -229,19 +220,8 @@ void Desktop::init() {
     dsDesc.SampleDesc.Quality = 0;
     dsDesc.Usage = D3D11_USAGE_DEFAULT;
 
-    hr = Device->CreateTexture2D(&dsDesc, nullptr, &masterImage);
-    //HANDLE Hnd = nullptr;
-    //IDXGIResource* DXGIResource = nullptr;
-    // hr = data.Frame->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource)); 
-    //DXGIResource->GetSharedHandle(&Hnd);
-    //DXGIResource->Release();
-    //DXGIResource = nullptr;
-    //ID3D11Texture2D* tmp;
-    //hr = Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
-
-    //DX11.Context->CopySubresourceRegion(masterImage, 0,)
-
-    deviceContext->CopyResource(masterImage, data.Frame);  //we save the data to an intermediary 
+    hr = Device->CreateTexture2D(&dsDesc, nullptr, &stage);
+    deviceContext->CopyResource(stage, data.Frame);  //we save the data to an intermediary 
     
     D3D11_TEXTURE2D_DESC dsDesc2;
 
@@ -260,25 +240,18 @@ void Desktop::init() {
     
     HANDLE Hnd(NULL);
     IDXGIResource* DXGIResource = nullptr;
-    hr = masterImage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+    hr = stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
     DXGIResource->GetSharedHandle(&Hnd);
     DXGIResource->Release();
     DXGIResource = nullptr;
     ID3D11Texture2D* tmp;
     hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
 
-    ID3D11Texture2D* stage;
-    hr = DX11.Device->CreateTexture2D(&dsDesc2, nullptr, &stage);
-
-    DX11.Context->CopyResource(stage, tmp);
-
-    //SaveDDSTextureToFile(deviceContext, data.Frame, L"test-dekstopTexture.dds");
-    SaveDDSTextureToFile(deviceContext, masterImage, L"test-duplicationTexture.dds");
-    //SaveDDSTextureToFile(DX11.Context, masterImage, L"test-displayTexture.dds");
-    SaveDDSTextureToFile(DX11.Context, stage, L"test-stageTexture.dds");
-
-    DX11.Device->CreateShaderResourceView(stage, NULL, &masterView);
-    masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), stage, masterView);
+    hr = DX11.Device->CreateTexture2D(&dsDesc2, nullptr, &masterImage);
+    
+    DX11.Context->CopyResource(masterImage, tmp);
+    DX11.Device->CreateShaderResourceView(masterImage, NULL, &masterView);
+    masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), masterImage, masterView);
     masterFill = new ShaderFill(ModelVertexDescMon, 3, 0, masterBuffer);
     this->relaseFrame();
 

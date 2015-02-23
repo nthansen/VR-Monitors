@@ -11,6 +11,8 @@
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "controlPanel.h"
 #include "desktop.h"
+#include "../3rdParty/ScreenGrab/ScreenGrab.h"
+
 
 ovrHmd           HMD;					// The handle of the headset
 ovrEyeRenderDesc EyeRenderDesc[2];		// Description of the VR.
@@ -26,7 +28,7 @@ int				 clock;
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
-
+D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[];
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[];
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
@@ -101,6 +103,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     Desktop * desktop = new Desktop();
     desktop->init();
     roomScene.Models[0]->Fill = desktop->masterFill;
+
     while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
     {
         DX11.HandleMessages();
@@ -141,27 +144,27 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
         desktop->relaseFrame();
 
         desktop->getFrame(&frame, &timedout);
-        if (false) {
+        if (frame.Frame != nullptr && !timedout) {
 
+            // the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
             D3D11_TEXTURE2D_DESC frameDesc;
             frame.Frame->GetDesc(&frameDesc);
+            HRESULT hr;
+            desktop->deviceContext->CopyResource(desktop->stage, frame.Frame);
 
-            D3D11_SHADER_RESOURCE_VIEW_DESC ShaderDesc;
-            ShaderDesc.Format = frameDesc.Format;
-            ShaderDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-            ShaderDesc.Texture2D.MostDetailedMip = frameDesc.MipLevels; //frame has a mip level on 1
-            ShaderDesc.Texture2D.MipLevels = frameDesc.MipLevels;
+            // we capture a shared handle from the staging resource 
+            HANDLE Hnd(NULL);
+            IDXGIResource* DXGIResource = nullptr;
+            hr = desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+            DXGIResource->GetSharedHandle(&Hnd);
+            DXGIResource->Release();
+            DXGIResource = nullptr;
+            ID3D11Texture2D* tmp;
+            hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
+            //SaveDDSTextureToFile(DX11.Context, desktop->masterImage, L"mytexture.dds");
 
-            // Create new shader resource view
-            ID3D11Texture2D* masterImage;
-
-            ID3D11ShaderResourceView* ShaderResource = nullptr;
-            DX11.Device->CreateShaderResourceView(frame.Frame, &ShaderDesc, &ShaderResource);
-            ImageBuffer *tmp = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), frame.Frame, ShaderResource);
-           // roomScene.Models[0]->Fill = new ShaderFill(ModelVertexDesc, 3, 0, tmp);
-            // roomScene.Models[0]->Fill->OneTexture->Tex = frame.Frame;
-            // roomScene.Models[0]->Fill->OneTexture->TexSv = ShaderResource;
-            //roomScene.Models[0]->Fill = roomScene.generated_texture[clock % 5];
+            // using the shared handle we copy the data to the image bound to the render view
+            DX11.Context->CopyResource(desktop->masterImage, tmp);
         }
         desktop->relaseFrame();
 

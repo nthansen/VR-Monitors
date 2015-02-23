@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "desktop.h"
 
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 { { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -98,11 +99,11 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 	
 	static Model::Color tex_pixels[4][256 * 256];
 	//we would probably fill this tex with pixels from desktop dup here
-	ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, (unsigned char *)tex_pixels); // eventually will be the monitor
-	ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, Box, t);
-	
+    Desktop*  d = new Desktop();
+    d->init();
+
 	num_monitors++;//add one to monitors here to determine how to group them below
-	Model* m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture);
+	Model* m = new Model(Vector3f(0, 0, startingPoint.z1), d->masterFill);
 	//everything is added based on the first monitor the startingpoint monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);
