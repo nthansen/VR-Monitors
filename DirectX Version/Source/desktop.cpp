@@ -1,5 +1,5 @@
 #include "desktop.h"
-
+#include "ScreenGrab.h"
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -241,7 +241,8 @@ void Desktop::init() {
 
     //DX11.Context->CopySubresourceRegion(masterImage, 0,)
     DX11.Context->CopyResource(masterImage, tmp);
-
+    LPCWSTR fileName = L"desktopTexture";
+    SaveDDSTextureToFile(DX11.Context, masterImage, fileName);
     DX11.Device->CreateShaderResourceView(masterImage, NULL, &masterView);
     masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), masterImage, masterView);
     masterFill = new ShaderFill(ModelVertexDescMon, 3, 0, masterBuffer);
