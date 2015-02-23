@@ -1,5 +1,5 @@
 #include "desktop.h"
-#include "ScreenGrab.h"
+#include "../3rdParty/ScreenGrab/ScreenGrab.h"
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -138,7 +138,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
 }
 
 int Desktop::relaseFrame(){
-    HRESULT hr = desktop-> ReleaseFrame();
+    HRESULT hr = desktop->ReleaseFrame();
     if (FAILED(hr))
     {
         return -1;
@@ -202,7 +202,7 @@ void Desktop::init() {
     do{
         this->relaseFrame();
         this->getFrame(&data, &timedout);
-    } while (timedout || data.Frame == NULL);   
+    } while (timedout || data.Frame == NULL);
     this->relaseFrame();
 
     data.Frame = nullptr; // reset
@@ -228,27 +228,58 @@ void Desktop::init() {
     dsDesc.SampleDesc.Count = 1;
     dsDesc.SampleDesc.Quality = 0;
     dsDesc.Usage = D3D11_USAGE_DEFAULT;
+
+    hr = Device->CreateTexture2D(&dsDesc, nullptr, &masterImage);
+    //HANDLE Hnd = nullptr;
+    //IDXGIResource* DXGIResource = nullptr;
+    // hr = data.Frame->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource)); 
+    //DXGIResource->GetSharedHandle(&Hnd);
+    //DXGIResource->Release();
+    //DXGIResource = nullptr;
+    //ID3D11Texture2D* tmp;
+    //hr = Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
+
+    //DX11.Context->CopySubresourceRegion(masterImage, 0,)
+
+    deviceContext->CopyResource(masterImage, data.Frame);  //we save the data to an intermediary 
     
-    hr = DX11.Device->CreateTexture2D(&dsDesc, nullptr, &masterImage);
-    HANDLE Hnd = nullptr;
+    D3D11_TEXTURE2D_DESC dsDesc2;
+
+    RtlZeroMemory(&dsDesc, sizeof(D3D11_TEXTURE2D_DESC));
+    dsDesc2.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+    dsDesc2.CPUAccessFlags = 0;
+    dsDesc2.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+    dsDesc2.Width = frameDesc.Width;
+    dsDesc2.Height = frameDesc.Height;
+    dsDesc2.MipLevels = frameDesc.MipLevels;
+    dsDesc2.ArraySize = 1;
+    dsDesc2.Format = frameDesc.Format;
+    dsDesc2.SampleDesc.Count = 1;
+    dsDesc2.SampleDesc.Quality = 0;
+    dsDesc2.Usage = D3D11_USAGE_DEFAULT;
+    
+    HANDLE Hnd(NULL);
     IDXGIResource* DXGIResource = nullptr;
-     hr = data.Frame->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+    hr = masterImage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
     DXGIResource->GetSharedHandle(&Hnd);
     DXGIResource->Release();
     DXGIResource = nullptr;
     ID3D11Texture2D* tmp;
-    hr = Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
+    hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
 
-    //DX11.Context->CopySubresourceRegion(masterImage, 0,)
-    DX11.Context->CopyResource(masterImage, tmp);
-    LPCWSTR fileName = L"desktopTexture";
-    SaveDDSTextureToFile(DX11.Context, masterImage, fileName);
-    DX11.Device->CreateShaderResourceView(masterImage, NULL, &masterView);
-    masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), masterImage, masterView);
+    ID3D11Texture2D* stage;
+    hr = DX11.Device->CreateTexture2D(&dsDesc2, nullptr, &stage);
+
+    DX11.Context->CopyResource(stage, tmp);
+
+    //SaveDDSTextureToFile(deviceContext, data.Frame, L"test-dekstopTexture.dds");
+    SaveDDSTextureToFile(deviceContext, masterImage, L"test-duplicationTexture.dds");
+    //SaveDDSTextureToFile(DX11.Context, masterImage, L"test-displayTexture.dds");
+    SaveDDSTextureToFile(DX11.Context, stage, L"test-stageTexture.dds");
+
+    DX11.Device->CreateShaderResourceView(stage, NULL, &masterView);
+    masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), stage, masterView);
     masterFill = new ShaderFill(ModelVertexDescMon, 3, 0, masterBuffer);
-
-    D3D11_TEXTURE2D_DESC ff;
-    masterImage->GetDesc(&ff);
     this->relaseFrame();
 
 }

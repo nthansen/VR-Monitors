@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rdParty\DDSTextureLoader\DDSTextureLoader.cpp" />
+    <ClCompile Include="3rdParty\ScreenGrab\pch.cpp" />
+    <ClCompile Include="3rdParty\ScreenGrab\ScreenGrab.cpp" />
     <ClCompile Include="Source\controlpanel.cpp" />
     <ClCompile Include="source\desktop.cpp" />
     <ClCompile Include="source\scene.cpp" />
@@ -29,6 +31,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\DDSTextureLoader\DDSTextureLoader.h" />
+    <ClInclude Include="3rdParty\ScreenGrab\dds.h" />
+    <ClInclude Include="3rdParty\ScreenGrab\pch.h" />
+    <ClInclude Include="3rdParty\ScreenGrab\PlatformHelpers.h" />
+    <ClInclude Include="3rdParty\ScreenGrab\ScreenGrab.h" />
     <ClInclude Include="Source\controlPanel.h" />
     <ClInclude Include="source\desktop.h" />
     <ClInclude Include="source\model.h" />

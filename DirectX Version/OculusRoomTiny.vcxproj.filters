@@ -19,6 +19,18 @@
     <ClInclude Include="3rdParty\DDSTextureLoader\DDSTextureLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="3rdParty\ScreenGrab\ScreenGrab.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\ScreenGrab\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\ScreenGrab\dds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdParty\ScreenGrab\PlatformHelpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
@@ -38,6 +50,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="3rdParty\DDSTextureLoader\DDSTextureLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\ScreenGrab\ScreenGrab.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdParty\ScreenGrab\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
