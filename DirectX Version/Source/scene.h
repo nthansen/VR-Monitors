@@ -5,7 +5,6 @@
 #include "model.h"
 #include "../3rdParty/DDSTextureLoader/DDSTextureLoader.h"
 #include <DirectXMath.h>
-//#include <DirectXColors.h>
 #include <DirectXCollision.h>
 #include "../3rdParty/SimpleMath.h"
 

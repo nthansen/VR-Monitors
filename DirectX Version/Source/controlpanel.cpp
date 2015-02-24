@@ -53,6 +53,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				Button_SetText(handle, L"Move Monitor");
 			}
 			else {
+				controlPanel.initPick();
 				controlPanel.movingMonitor = true;
 				Button_SetText(handle, L"Place Monitor");
 			}
@@ -90,6 +91,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+//initiate monitor pick from panel
+void ControlPanel::initPick(){
+	pickedMonitor = currScene->pickMonitor(*cameraPos, *yaw);
+}
+
 // default constructor
 ControlPanel::ControlPanel() {
 	
@@ -108,7 +114,7 @@ ControlPanel::ControlPanel() {
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw, Matrix4f *view, Matrix4f *proj) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw) {
 
 	// now we have access to the information we need
 	currScene = roomScene;

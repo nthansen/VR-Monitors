@@ -3,21 +3,18 @@
 #include <CommCtrl.h>
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "scene.h"
-#include <DirectXMath.h>
-//#include <DirectXColors.h>
-#include <DirectXCollision.h>
-#include "../3rdParty/SimpleMath.h"
+
 
 class ControlPanel{
 	
 public:
-	int pickedMonitor = 0;
+	
 	ControlPanel();
 	
 	~ControlPanel();
 
 	// creates the actual window and recieves the scene and pos to use for later
-	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw, Matrix4f * _view, Matrix4f * _proj);
+	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw);
 
 	// changes the background based on the int given
 	void changeBackground(int background);
@@ -54,6 +51,9 @@ public:
 	// used to restore monitors in their original positions
 	void resetMonitors();
 
+	//used to initiate a monitor pick calls private function of the currScene pickMonitor
+	//to set the pickedMonitor of the controlPanel
+	void initPick();
 private:
 
 	// holds the handle to each part of the control panel window
@@ -68,15 +68,15 @@ private:
 	// used so we can manipulate the stuff inside the scene and the camera
 	Scene *currScene;
 	Vector3f *cameraPos;
-	Matrix4f *view;
-	Matrix4f *proj;
+
+	//used to set the monitor to move
+	int pickedMonitor = 0;
 
 	// Value used to know if we need to close the application or not
 	bool closeApp;
 
 	// the function to actually move the monitor
 	void moveMonitor(const int);
-
 
 	// sets up the control panel by calling the helper functions below
 	void setupControlPanel();
