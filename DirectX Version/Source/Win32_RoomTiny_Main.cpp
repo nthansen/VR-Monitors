@@ -21,8 +21,8 @@ ImageBuffer    * pEyeRenderTexture[2];	// Where the eye buffers will be rendered
 ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
-float			Yaw(3.141592f);			// Horizontal rotation of the player
-Vector3f         Pos(0.0f, 0.0f, 0.0f);	// Position of player
+float			 Yaw(3.141592f);		// Horizontal rotation of the player
+Vector3f         Pos(1.0f, 1.0f, -0.5f);	// Position of player
 int				 clock;
 
 #define   OVR_D3D_VERSION 11

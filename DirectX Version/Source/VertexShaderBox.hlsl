@@ -6,7 +6,7 @@ void main(in  float4 Position  : POSITION, in  float4 Color : COLOR0, in  float2
 {
     //float4 tmp = mul(-1, Position);
    // float4 shift
-    oTexCoord = mul(-1 , Position);
+    oTexCoord = mul(-0.5f , Position);
 	oPosition = mul(Proj, mul(View, Position));
 	oColor = Color;
 }
