@@ -101,7 +101,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // MAIN LOOP
     // =========
     Desktop * desktop = new Desktop();
-    desktop->init();
+	// to signal that we are doing this for the main monitor
+    desktop->init(false);
     roomScene.Models[0]->Fill = desktop->masterFill;
 
     while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())

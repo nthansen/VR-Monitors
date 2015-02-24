@@ -23,6 +23,33 @@ typedef struct FRAME_DATA
     UINT MoveCount;
 };
 
+//
+// Holds info about the pointer/cursor
+//
+typedef struct _PTR_INFO
+{
+	_Field_size_bytes_(BufferSize) BYTE* PtrShapeBuffer;
+	DXGI_OUTDUPL_POINTER_SHAPE_INFO ShapeInfo;
+	POINT Position;
+	bool Visible;
+	UINT BufferSize;
+	UINT WhoUpdatedPositionLast;
+	LARGE_INTEGER LastTimeStamp;
+} PTR_INFO;
+
+typedef struct _THREAD_DATA
+{
+	UINT Output;
+	INT OffsetX;
+	INT OffsetY;
+	PTR_INFO* PtrInfo;
+} THREAD_DATA;
+
+
+
+//
+// FRA
+
 class Desktop {
 public:
     ID3D11Texture2D* desktopImage;
@@ -34,11 +61,12 @@ public:
     ShaderFill* masterFill;
     ImageBuffer * masterBuffer;
 
+	PTR_INFO ptrInfo;
 
     Desktop();
     ~Desktop();
 
-    void init(); // binds the desktop to the current thread
+    void init(boolean newMonitor); // binds the desktop to the current thread
     //TODO: change return type to an enum
     _Success_(*Timeout == false && return == 0) int getFrame(_Out_ FRAME_DATA* Data, _Out_ bool* Timeout);
     int relaseFrame();
@@ -49,6 +77,7 @@ private:
     UINT outputNumber;
     DXGI_OUTPUT_DESC OutputDesc;
     static int const timeout = 500; //desktop image grab timoute in ms
+	HANDLE thread;
 };
 
 

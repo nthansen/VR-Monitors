@@ -151,10 +151,28 @@ int Desktop::relaseFrame(){
     return 0;
 }
 
-void Desktop::init() {
-    HDESK CurrentDesktop = nullptr;
+
+void Desktop::init(boolean newMonitor) {
+
+	HDESK CurrentDesktop = nullptr;
+	thread = nullptr;
+
+	if (newMonitor) {
+		_THREAD_DATA * threadData = new _THREAD_DATA;
+		threadData->OffsetX = 1920;
+		threadData->OffsetY = 1080;
+		threadData->PtrInfo = &ptrInfo;
+
+		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, NULL, GENERIC_ALL, NULL);
+		thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
+
+		SetThreadDesktop(CurrentDesktop);
+		SwitchDesktop(CurrentDesktop);
+	}
+
     UINT Output = 0;
     HRESULT hr;
+
 
     // Get DXGI device
     IDXGIDevice* DxgiDevice = nullptr;

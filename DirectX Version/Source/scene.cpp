@@ -100,8 +100,8 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 	if (num_monitors < 3) {
 		static Model::Color tex_pixels[4][256 * 256];
 		//we would probably fill this tex with pixels from desktop dup here
-		//Desktop*  d = new Desktop();
-		//d->init();
+		Desktop*  d = new Desktop();
+		d->init(true);
 
 		_pos = Vector3f(0, 0, 0);
 
