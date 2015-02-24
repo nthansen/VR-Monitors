@@ -14,7 +14,7 @@ public:
 	~ControlPanel();
 
 	// creates the actual window and recieves the scene and pos to use for later
-	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw, Matrix4f *view, Matrix4f *proj);
+	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw);
 
 	// changes the background based on the int given
 	void changeBackground(int background);

@@ -154,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			//we must offset this to rotate negative pi radians so the object will be in front of us
 			roomScene.Models[0]->Pos = Pos;
 			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
-			
+		}
 		//moves a monitor
 		if (DX11.Key['R']) {
 			roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(Pos, .6);

@@ -114,7 +114,7 @@ ControlPanel::ControlPanel() {
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw, Matrix4f * _view, Matrix4f * _proj) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw) {
 
 	// now we have access to the information we need
 	currScene = roomScene;
@@ -414,40 +414,7 @@ void ControlPanel::updateControlPanel() {
 //rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
 //since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 //we must offset this to rotate negative pi radians so the object will be in front of us
-void ControlPanel::moveMonitor() {
-	currScene->Models[0]->Pos = currScene->Models[0]->Pos.Lerp(*cameraPos, 0.6);
-	currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0,.001, 0), -PI + *yaw), .6);
 void ControlPanel::moveMonitor(int monitorNum) {
-	//bool hit = true;//stores whether we hit something
-	//Model *target = nullptr;//model we will find
-	////save the direction to cast in dir and position to start from in dpos
-	//SimpleMath::Vector3 dPos = SimpleMath::Vector3(cameraPos->x, cameraPos->y, cameraPos->z);//position for simplemath
-	//SimpleMath::Vector3 dir = SimpleMath::Vector3(sinf(*yaw), 0, cosf(*yaw - PI));
-	////ray is really only a container holding the origin and direction to cast
-	//SimpleMath::Ray cast = SimpleMath::Ray(dPos, dir);
-	////crate a bounding box around each monitor to see if we hit one
-	////as of now the second parameter is simply the distance from the center of the box to each edge x,y,z,w
-	////magic number .4f is the distance from the center in x,y,z boxes center will be different
-	//DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(0, 0, 1), XMFLOAT3(.4f, .4f, 0.0f), XMFLOAT4(sinf(*yaw), 0, cosf(*yaw - PI), 0));
-	//float _dist = 0.0f;
-	//for (int i = 0; i < currScene->num_monitors; i++){
-	//	Model *temp = currScene->Monitors[i];
-	//	DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(temp->Pos.x, temp->Pos.y, temp->Pos.z), XMFLOAT3(.4f, .4f, 0.0f), XMFLOAT4(sinf(*yaw), 0, cosf(*yaw - PI), 0));
-
-	//	if (mbox.Intersects(cast.position, cast.direction, _dist)){
-	//		*target = *temp;
-	//		while (movingMonitor){
-	//			temp->Pos = *cameraPos;
-	//			temp->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
-	//		}
-	//	}
-	//}
-	//currScene->Models[0]->Pos = *cameraPos;
-	//currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
-
-	//picked needs to be separate from this like a public thing, idk its late
-	//but if picked is executed in the loop it will crash duh
-	//Model *picked = currScene->pickMonitor(*cameraPos, *yaw);
 	currScene->Monitors[monitorNum] -> Pos = *cameraPos;
 	currScene->Monitors[monitorNum]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
 }
