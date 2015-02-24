@@ -4,10 +4,11 @@
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "scene.h"
 
+
 class ControlPanel{
 	
 public:
-
+	
 	ControlPanel();
 	
 	~ControlPanel();
@@ -50,6 +51,9 @@ public:
 	// used to restore monitors in their original positions
 	void resetMonitors();
 
+	//used to initiate a monitor pick calls private function of the currScene pickMonitor
+	//to set the pickedMonitor of the controlPanel
+	void initPick();
 private:
 
 	// holds the handle to each part of the control panel window
@@ -67,12 +71,14 @@ private:
 	Scene *currScene;
 	Vector3f *cameraPos;
 
+	//used to set the monitor to move
+	int pickedMonitor = 0;
+
 	// Value used to know if we need to close the application or not
 	bool closeApp;
 
 	// the function to actually move the monitor
-	void moveMonitor();
-
+	void moveMonitor(const int);
 
 	// sets up the control panel by calling the helper functions below
 	void setupControlPanel();

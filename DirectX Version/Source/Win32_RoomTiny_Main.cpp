@@ -10,6 +10,7 @@
 #include "scene.h"
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "controlPanel.h"
+//using namespace DirectX;
 
 ovrHmd           HMD;					// The handle of the headset
 ovrEyeRenderDesc EyeRenderDesc[2];		// Description of the VR.
@@ -29,6 +30,15 @@ int				 clock;
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
+	// DirectXMath uses SSE/SSE2 instructions on Windows. We should verify the CPU supports these instructions
+	// as early in the program as possible
+	// this is support for directxMath SMID 
+	if (!XMVerifyCPUSupport())
+	{
+		MessageBox(NULL, TEXT("This application requires the processor support SSE2 instructions."),
+			TEXT("Collision"), MB_OK | MB_ICONEXCLAMATION);
+		return -1;
+	}
 
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
@@ -91,9 +101,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
-	Matrix4f view;
-	Matrix4f proj;
-	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw,&view,&proj);
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
 
     // MAIN LOOP
     // =========
@@ -125,11 +133,14 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (DX11.Key['S'] || DX11.Key[VK_DOWN])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, +speed*0.05f));
 		if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
 		if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
+
 		//spawn a new monitor
 		if (DX11.Key['M'] && clock % 6 == 0){//restricts multiple monitors being made
 			//could probably fix this by adding a splash screen to confirm add monitor
 			roomScene.addMonitor(Yaw, Pos);
 		}
+
+		//changes face of first monitor
 		// just so it'd give some time before switching between each texture
 		if (clock % 24 == 0) {
 			// replaces the shader fill to the new shaderfill
@@ -141,16 +152,27 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
 			//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 			//we must offset this to rotate negative pi radians so the object will be in front of us
-			roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(Pos,0.6);
-			roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw),.6);
+			roomScene.Models[0]->Pos = Pos;
+			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
 			
+		//moves a monitor
+		if (DX11.Key['R']) {
+			roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(Pos, .6);
+			roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw), .7);
 		}
+		//moves 90 degrees CCW
+		if (DX11.Key['C'] && clock % 12 == 0) {
+			Yaw += PI / 2;
+		}
+		
+	
 		// shows how to select a model and mess with it
 		/*
 		// Animate the cube
 		if (speed)
 			roomScene.Models[0]->Pos = Vector3f(9 * sin(0.01f*clock), 3, 9 * cos(0.01f*clock));
 			*/
+
 
 		// Get both eye poses simultaneously, with IPD offset already included. 
 		ovrPosef temp_EyeRenderPose[2];
@@ -183,7 +205,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
 				Matrix4f view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
 				Matrix4f proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
-
 				// Render the scene
 				for (int t = 0; t < timesToRenderScene; t++)
 					roomScene.Render(view, proj.Transposed());

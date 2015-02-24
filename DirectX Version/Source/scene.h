@@ -4,6 +4,9 @@
 #include "Win32_DX11AppUtil.h"
 #include "model.h"
 #include "../3rdParty/DDSTextureLoader/DDSTextureLoader.h"
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
+#include "../3rdParty/SimpleMath.h"
 
 using namespace DirectX;
 //used in scene to define the size of the monitors
@@ -30,7 +33,7 @@ struct Scene
 	{
 		Box, Skybox
 	};
-
+	Model* selected;
 	int     num_models;
 	int		num_monitors;
 	Model * Models[20];
@@ -38,6 +41,7 @@ struct Scene
 	// used to change textures
 	ShaderFill * generated_texture[9];
 	Vector3f monitorOffset = Vector3f(1.2,0,0);//used by getters and setters for adding monitors
+	int pickMonitor(const Vector3f, const float);
 	//float monitorHeight;
 	//startFloat startingPoint;
 	float monitorHeight;

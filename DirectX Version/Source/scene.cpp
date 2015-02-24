@@ -14,6 +14,25 @@ void Scene::Add(Model * n)
 	Models[num_models++] = n;
 }
 
+int Scene::pickMonitor(Vector3f Pos, float Yaw){
+	//save the direction to cast in dir and ray origin in dpos
+	SimpleMath::Vector3 dPos = SimpleMath::Vector3(Pos.x, Pos.y, Pos.z);//position for simplemath
+	SimpleMath::Vector3 dir = SimpleMath::Vector3(sinf(Yaw-PI), 0, cosf(Yaw-PI));
+	//ray is really only a container holding the origin and direction to cast
+	SimpleMath::Ray cast = SimpleMath::Ray(dPos, dir);
+	float _dist = 0.0f;
+	for (int i = 0; i < num_monitors; i++){
+		Model *temp = Monitors[i];
+		DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(temp->Pos.x, temp->Pos.y, temp->Pos.z), XMFLOAT3(.5f, .5f, 0), XMFLOAT4(0, temp->Rot.y, 0, temp->Rot.w));
+		if (mbox.Intersects(cast.position, cast.direction, _dist)){
+			return i;
+		}
+	}
+	return 0;//return default first monitor
+
+
+}
+
 // Main world
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(1), monitorWidth(1), monitorDepth(0.8f),
@@ -55,7 +74,7 @@ Model::Color(128, 128, 128))
 	Model * m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // eventually will be the monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
-	m->AllocateBuffers(); Add(m); Monitors[num_monitors++]=m;
+	m->AllocateBuffers(); Add(m); Monitors[num_monitors++] = m; selected = m;
 
 	// skybox
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
