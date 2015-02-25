@@ -154,23 +154,37 @@ int Desktop::relaseFrame(){
 
 void Desktop::init(boolean newMonitor) {
 
+	HDESK mainDesktop = GetThreadDesktop(GetCurrentThreadId());
+
 	HDESK CurrentDesktop = nullptr;
 	thread = nullptr;
 
 	if (newMonitor) {
+		/*
 		_THREAD_DATA * threadData = new _THREAD_DATA;
 		threadData->OffsetX = 1920;
 		threadData->OffsetY = 1080;
 		threadData->PtrInfo = &ptrInfo;
+		*/
 
-		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, NULL, GENERIC_ALL, NULL);
-		thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
+		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+		//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
 
-		SetThreadDesktop(CurrentDesktop);
+		WCHAR cmd[] = L"explorer";
+		STARTUPINFOW si = { 0 };
+		si.cb = sizeof (si);
+		si.lpDesktop = L"Virtual Desktop";
+		si.wShowWindow = SW_SHOW;
+		PROCESS_INFORMATION pi;
+		CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
+
 		SwitchDesktop(CurrentDesktop);
+		SetThreadDesktop(CurrentDesktop);
 	}
 
-    UINT Output = 0;
+
+	UINT Output = 0;
+
     HRESULT hr;
 
 
@@ -198,7 +212,17 @@ void Desktop::init(boolean newMonitor) {
     {
     }
 
+	if (newMonitor){
+		SwitchDesktop(mainDesktop);
+		SetThreadDesktop(mainDesktop);
+	}
+
     DxgiOutput->GetDesc(&OutputDesc);
+
+	if (newMonitor) {
+		OutputDesc.AttachedToDesktop = 2;
+	}
+
 
     // QI for Output 1
     IDXGIOutput1* DxgiOutput1 = nullptr;
