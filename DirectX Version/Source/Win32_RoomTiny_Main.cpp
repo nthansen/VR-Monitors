@@ -11,7 +11,6 @@
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "controlPanel.h"
 #include "desktop.h"
-#include "../3rdParty/ScreenGrab/ScreenGrab.h"
 
 
 ovrHmd           HMD;					// The handle of the headset
@@ -28,7 +27,6 @@ int				 clock;
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
-D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[];
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[];
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
@@ -100,11 +98,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // MAIN LOOP
     // =========
-    Desktop * desktop = new Desktop();
-	// to signal that we are doing this for the main monitor
-    desktop->init(false);
-	roomScene.Models[0]->desktop = desktop;
-    roomScene.Models[0]->Fill = desktop->masterFill;
 
 	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
 	{

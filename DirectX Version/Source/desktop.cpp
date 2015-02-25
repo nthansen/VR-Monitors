@@ -226,11 +226,6 @@ void Desktop::init(boolean newMonitor) {
 
     DxgiOutput->GetDesc(&OutputDesc);
 
-	/*
-	if (newMonitor) {
-		OutputDesc.AttachedToDesktop = 2;
-	}*/
-
 
     // QI for Output 1
     IDXGIOutput1* DxgiOutput1 = nullptr;

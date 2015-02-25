@@ -10,7 +10,6 @@
 #include <warning.h>
 #include <DirectXMath.h>
 #include "Win32_DX11AppUtil.h"
-#include "../3rdParty/Dexpot/dexpot.h"
 
 // FRAME_DATA holds information about an acquired frame
 //

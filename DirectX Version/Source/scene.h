@@ -4,6 +4,8 @@
 #include "Win32_DX11AppUtil.h"
 #include "model.h"
 #include "../3rdParty/DDSTextureLoader/DDSTextureLoader.h"
+#include "../3rdParty/Dexpot/dexpot.h"
+
 
 using namespace DirectX;
 //used in scene to define the size of the monitors
@@ -57,6 +59,8 @@ struct Scene
 	void Render(Matrix4f view, Matrix4f proj);
 
 	void loadSkyboxes();
+
+	void CaptureAnImage(HWND hWnd);
 };
 
 
