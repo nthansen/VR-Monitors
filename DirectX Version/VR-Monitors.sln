@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VR-Monitors", "OculusRoomTi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibOVR", "LibOVR\Projects\Win32\VS2013\LibOVR.vcxproj", "{EA50E705-5113-49E5-B105-2512EDC8DDC6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DexpotPlugin", "3rdParty\Dexpot\Dexpot.vcxproj", "{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -53,6 +55,18 @@ Global
 		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|Win32.Build.0 = Release|Win32
 		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|x64.ActiveCfg = Release|x64
 		{EA50E705-5113-49E5-B105-2512EDC8DDC6}.Release|x64.Build.0 = Release|x64
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Debug|ARM.ActiveCfg = Debug|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Debug|Win32.Build.0 = Debug|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Debug|x64.ActiveCfg = Debug|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Profile|ARM.ActiveCfg = Release|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Profile|Win32.ActiveCfg = Release|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Profile|Win32.Build.0 = Release|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Profile|x64.ActiveCfg = Release|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Release|ARM.ActiveCfg = Release|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Release|Win32.ActiveCfg = Release|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Release|Win32.Build.0 = Release|Win32
+		{2C9BC6C8-131A-44B7-8337-FCC1E07C7E63}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -103,71 +103,74 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     Desktop * desktop = new Desktop();
 	// to signal that we are doing this for the main monitor
     desktop->init(false);
+	roomScene.Models[0]->desktop = desktop;
     roomScene.Models[0]->Fill = desktop->masterFill;
 
-    while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
-    {
-        DX11.HandleMessages();
+	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
+	{
+		DX11.HandleMessages();
 
-        controlPanel.updateControlPanel();
+		controlPanel.updateControlPanel();
 
-        // remove the health/warning display
-        ovrHmd_DismissHSWDisplay(HMD);
+		// remove the health/warning display
+		ovrHmd_DismissHSWDisplay(HMD);
 
-        float       speed = 1.0f; // Can adjust the movement speed. 
-        int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
-        ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
-            EyeRenderDesc[1].HmdToEyeViewOffset };
-        // Start timing
-        ovrHmd_BeginFrame(HMD, 0);
+		float       speed = 1.0f; // Can adjust the movement speed. 
+		int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
+		ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
+			EyeRenderDesc[1].HmdToEyeViewOffset };
+		// Start timing
+		ovrHmd_BeginFrame(HMD, 0);
 
-        // Update the clock, used by some of the features
-        clock++;
+		// Update the clock, used by some of the features
+		clock++;
 
-        // Keyboard inputs to adjust player orientation
-        if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
-        if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
+		// Keyboard inputs to adjust player orientation
+		if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
+		if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
 
-        // Keyboard inputs to adjust player position
-        if (DX11.Key['W'] || DX11.Key[VK_UP])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, -speed*0.05f));
-        if (DX11.Key['S'] || DX11.Key[VK_DOWN])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, +speed*0.05f));
-        if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
-        if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
-        //spawn a new monitor
-        if (DX11.Key['M'] && clock % 6 == 0){//restricts multiple monitors being made
-            //could probably fix this by adding a splash screen to confirm add monitor
-            roomScene.addMonitor(Yaw, Pos);
-        }
-        // just so it'd give some time before switching between each texture
-        // replaces the shader fill to the new shaderfill
-        bool timedout;
-        FRAME_DATA frame;
-        desktop->relaseFrame();
+		// Keyboard inputs to adjust player position
+		if (DX11.Key['W'] || DX11.Key[VK_UP])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, -speed*0.05f));
+		if (DX11.Key['S'] || DX11.Key[VK_DOWN])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, +speed*0.05f));
+		if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
+		if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
+		//spawn a new monitor
+		if (DX11.Key['M'] && clock % 6 == 0){//restricts multiple monitors being made
+			//could probably fix this by adding a splash screen to confirm add monitor
+			roomScene.addMonitor(Yaw, Pos);
+		}
+		// just so it'd give some time before switching between each texture
+		// replaces the shader fill to the new shaderfill
+		for (int i = 0; i < roomScene.num_monitors; i++){
+			bool timedout;
+			FRAME_DATA frame;
+			roomScene.Monitors[i]->desktop->relaseFrame();
 
-        desktop->getFrame(&frame, &timedout);
-        if (frame.Frame != nullptr && !timedout) {
+			roomScene.Monitors[i]->desktop->getFrame(&frame, &timedout);
+			if (frame.Frame != nullptr && !timedout) {
 
-            // the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
-            D3D11_TEXTURE2D_DESC frameDesc;
-            frame.Frame->GetDesc(&frameDesc);
-            HRESULT hr;
-            desktop->deviceContext->CopyResource(desktop->stage, frame.Frame);
+				// the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
+				D3D11_TEXTURE2D_DESC frameDesc;
+				frame.Frame->GetDesc(&frameDesc);
+				HRESULT hr;
+				roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
 
-            // we capture a shared handle from the staging resource 
-            HANDLE Hnd(NULL);
-            IDXGIResource* DXGIResource = nullptr;
-            hr = desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
-            DXGIResource->GetSharedHandle(&Hnd);
-            DXGIResource->Release();
-            DXGIResource = nullptr;
-            ID3D11Texture2D* tmp;
-            hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
-            //SaveDDSTextureToFile(DX11.Context, desktop->masterImage, L"mytexture.dds");
+				// we capture a shared handle from the staging resource 
+				HANDLE Hnd(NULL);
+				IDXGIResource* DXGIResource = nullptr;
+				hr = roomScene.Monitors[i]->desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+				DXGIResource->GetSharedHandle(&Hnd);
+				DXGIResource->Release();
+				DXGIResource = nullptr;
+				ID3D11Texture2D* tmp;
+				hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
+				//SaveDDSTextureToFile(DX11.Context, desktop->masterImage, L"mytexture.dds");
 
-            // using the shared handle we copy the data to the image bound to the render view
-            DX11.Context->CopyResource(desktop->masterImage, tmp);
-        }
-        desktop->relaseFrame();
+				// using the shared handle we copy the data to the image bound to the render view
+				DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
+			}
+			roomScene.Monitors[i]->desktop->relaseFrame();
+		}
 
         // accesses the actual texture in the shaderfill and switches them out
         //roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;

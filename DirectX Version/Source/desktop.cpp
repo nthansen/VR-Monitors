@@ -2,7 +2,7 @@
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "Color", 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "Color", 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
@@ -159,13 +159,14 @@ void Desktop::init(boolean newMonitor) {
 	HDESK CurrentDesktop = nullptr;
 	thread = nullptr;
 
+	/*
 	if (newMonitor) {
-		/*
+		
 		_THREAD_DATA * threadData = new _THREAD_DATA;
 		threadData->OffsetX = 1920;
 		threadData->OffsetY = 1080;
 		threadData->PtrInfo = &ptrInfo;
-		*/
+		
 
 		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
 		//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
@@ -180,7 +181,7 @@ void Desktop::init(boolean newMonitor) {
 
 		SwitchDesktop(CurrentDesktop);
 		SetThreadDesktop(CurrentDesktop);
-	}
+	}*/
 
 
 	UINT Output = 0;
@@ -203,6 +204,11 @@ void Desktop::init(boolean newMonitor) {
     if (FAILED(hr))
     {
     }
+
+	if (newMonitor) {
+		Output = 1;
+	}
+
     // Get output
     IDXGIOutput* DxgiOutput = nullptr;
     hr = DxgiAdapter->EnumOutputs(Output, &DxgiOutput);
@@ -212,16 +218,18 @@ void Desktop::init(boolean newMonitor) {
     {
     }
 
+	/*
 	if (newMonitor){
 		SwitchDesktop(mainDesktop);
 		SetThreadDesktop(mainDesktop);
-	}
+	}*/
 
     DxgiOutput->GetDesc(&OutputDesc);
 
+	/*
 	if (newMonitor) {
 		OutputDesc.AttachedToDesktop = 2;
-	}
+	}*/
 
 
     // QI for Output 1

@@ -3,7 +3,7 @@
 
 #include "Kernel/OVR_Math.h"
 #include "Win32_DX11AppUtil.h"
-#include <DirectXMath.h>
+#include "desktop.h"
 #include <vector>
 #include <d3d11.h>
 
@@ -37,6 +37,7 @@ struct Model
 	int          numVertices, numIndices;
 	Vertex       Vertices[2000]; //Note fixed maximum
 	uint16_t     Indices[2000];
+	Desktop *		desktop;
 	ShaderFill * Fill;
 	DataBuffer * VertexBuffer, *IndexBuffer;
 	int scale;

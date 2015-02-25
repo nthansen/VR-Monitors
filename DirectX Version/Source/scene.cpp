@@ -106,7 +106,8 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 		_pos = Vector3f(0, 0, 0);
 
 		num_monitors++;//add one to monitors here to determine how to group them below
-		Model* m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[0]);
+		Model* m = new Model(Vector3f(0, 0, startingPoint.z1), d->masterFill);
+		m->desktop = d;
 		//everything is added based on the first monitor the startingpoint monitor
 		m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 			startingPoint.y2, startingPoint.z2, startingPoint.color);
@@ -116,16 +117,16 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 		//Vector3f temp = getLastMonitorPosition();
 		//Vector3f tempVect = getOffset() + getLastMonitorPosition();//initialize in case we change in loop below
 		if (num_monitors == 2){//change position of first monitor
-			Monitors[0]->Pos = _pos;
-			Monitors[0]->OriginalPos = _pos;
-			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
-			Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 5.5);
-			Monitors[0]->OriginalRot = Monitors[0]->Rot;
-			_pos = Vector3f(1, 0, monitorDepth * 2);
 			Monitors[1]->Pos = _pos;
 			Monitors[1]->OriginalPos = _pos;
-			Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 5.5);
+			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
+			Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 5.5);
 			Monitors[1]->OriginalRot = Monitors[1]->Rot;
+			_pos = Vector3f(1, 0, monitorDepth * 2);
+			Monitors[0]->Pos = _pos;
+			Monitors[0]->OriginalPos = _pos;
+			Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 5.5);
+			Monitors[0]->OriginalRot = Monitors[0]->Rot;
 			//so go back to the initial point on x, add an offset to put them on top 
 			//temp.x = startingPoint.x1;
 			//temp.y = startingPoint.y1 + monitorHeight/2;
