@@ -26,24 +26,17 @@ typedef struct FRAME_DATA
 //
 // Holds info about the pointer/cursor
 //
-typedef struct _PTR_INFO
+typedef struct Pointer_Info
 {
 	_Field_size_bytes_(BufferSize) BYTE* PtrShapeBuffer;
 	DXGI_OUTDUPL_POINTER_SHAPE_INFO ShapeInfo;
+    ID3D11Texture2D * pointerImage;
 	POINT Position;
 	bool Visible;
 	UINT BufferSize;
 	UINT WhoUpdatedPositionLast;
 	LARGE_INTEGER LastTimeStamp;
-} PTR_INFO;
-
-typedef struct _THREAD_DATA
-{
-	UINT Output;
-	INT OffsetX;
-	INT OffsetY;
-	PTR_INFO* PtrInfo;
-} THREAD_DATA;
+};
 
 
 
@@ -55,13 +48,13 @@ public:
     ID3D11Texture2D* desktopImage;
     ID3D11Texture2D* stage;
     ID3D11Texture2D* masterImage;
+    ID3D11Texture2D* pointerImage;
     ID3D11ShaderResourceView* masterView;
     ID3D11Device* Device;
     ID3D11DeviceContext* deviceContext;
     ShaderFill* masterFill;
     ImageBuffer * masterBuffer;
-
-	PTR_INFO ptrInfo;
+    Pointer_Info pointer;
 
     Desktop();
     ~Desktop();

@@ -147,28 +147,33 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			roomScene.Monitors[i]->desktop->relaseFrame();
 
 			roomScene.Monitors[i]->desktop->getFrame(&frame, &timedout);
-			if (frame.Frame != nullptr && !timedout) {
+            if (!timedout) {
+                if (frame.Frame != nullptr) {
 
-				// the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
-				D3D11_TEXTURE2D_DESC frameDesc;
-				frame.Frame->GetDesc(&frameDesc);
-				HRESULT hr;
-				roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
+                    // the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
+                    D3D11_TEXTURE2D_DESC frameDesc;
+                    frame.Frame->GetDesc(&frameDesc);
+                    HRESULT hr;
+                    roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
 
-				// we capture a shared handle from the staging resource 
-				HANDLE Hnd(NULL);
-				IDXGIResource* DXGIResource = nullptr;
-				hr = roomScene.Monitors[i]->desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
-				DXGIResource->GetSharedHandle(&Hnd);
-				DXGIResource->Release();
-				DXGIResource = nullptr;
-				ID3D11Texture2D* tmp;
-				hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
-				//SaveDDSTextureToFile(DX11.Context, desktop->masterImage, L"mytexture.dds");
+                    // we capture a shared handle from the staging resource 
+                    HANDLE Hnd(NULL);
+                    IDXGIResource* DXGIResource = nullptr;
+                    hr = roomScene.Monitors[i]->desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+                    DXGIResource->GetSharedHandle(&Hnd);
+                    DXGIResource->Release();
+                    DXGIResource = nullptr;
+                    ID3D11Texture2D* tmp;
+                    hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
+                    //SaveDDSTextureToFile(DX11.Context, desktop->masterImage, L"mytexture.dds");
 
-				// using the shared handle we copy the data to the image bound to the render view
-				DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
-			}
+                    // using the shared handle we copy the data to the image bound to the render view
+                    DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
+                }
+                if (frame.FrameInfo.LastMouseUpdateTime.QuadPart != 0 && frame.FrameInfo.PointerPosition.Visible) {
+                    //frame.FrameInfo.PointerShapeBufferSize
+                }
+            }
 			roomScene.Monitors[i]->desktop->relaseFrame();
 		}
 

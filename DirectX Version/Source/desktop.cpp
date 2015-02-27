@@ -6,12 +6,21 @@ D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
+
 Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
 metaDataBuffer(nullptr),
 metaDataSize(0),
 Device(nullptr)
 {
+    //empty out pointer informmation
+    pointer.BufferSize = 0;
+    pointer.Position.x = 0;
+    pointer.Position.y = 0;
+    pointer.PtrShapeBuffer = nullptr;
+    
+
+
     //initilize the desktpp
     RtlZeroMemory(&OutputDesc, sizeof(OutputDesc));
     HRESULT hr;
@@ -82,8 +91,43 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
         data->Frame = desktopImage;
     }
 
+    pointer.Visible = frameData.PointerPosition.Visible;
+    if (frameData.LastMouseUpdateTime.QuadPart != 0 && frameData.PointerPosition.Visible) { //there is a mouse on the screen capture the buffer
+        if (frameData.PointerShapeBufferSize != 0) {
+            //new shape update the buffer
+            if (pointer.BufferSize != frameData.PointerShapeBufferSize) {
+                pointer.BufferSize = frameData.PointerShapeBufferSize;
+                if (pointer.PtrShapeBuffer) {
+                    //release old buffer
+                    delete[] pointer.PtrShapeBuffer;
+                    pointer.PtrShapeBuffer = nullptr;
+                }
+                //allocate new buffer space
+                pointer.PtrShapeBuffer = new (std::nothrow) BYTE[pointer.BufferSize]; //mouse is not critical, don't throw an error
+                if (pointer.PtrShapeBuffer == nullptr) {
+                    //could not allocate
+                    pointer.BufferSize = 0;
+                }
+                else {
+                    //get the shape
+                    UINT requiredBufferSize;
+                    hr = desktop->GetFramePointerShape(pointer.BufferSize, reinterpret_cast<VOID*>(pointer.PtrShapeBuffer), &requiredBufferSize, &(pointer.ShapeInfo));
+                    //create texture2d
+                    if (!pointer.pointerImage){
 
-    //get metadata for dirty count
+                    }
+                }
+
+            }
+        }
+        //update the position of the mouse
+        //there might need to be an offset for a multiple monitor setup
+        pointer.Position.x = frameData.PointerPosition.Position.x;
+        pointer.Position.y = frameData.PointerPosition.Position.y;
+        pointer.LastTimeStamp = frameData.LastMouseUpdateTime;
+    }
+
+    //get metadata for dirty count -- this stuff doesn't seem to be used, and can be cut
     // Get metadata
     if (frameData.TotalMetadataBufferSize)
     {
