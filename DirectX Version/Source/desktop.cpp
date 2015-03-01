@@ -152,14 +152,14 @@ int Desktop::relaseFrame(){
 }
 
 
-void Desktop::init(boolean newMonitor) {
+void Desktop::init(boolean newMonitor, boolean newDesktop) {
 
 	HDESK mainDesktop = GetThreadDesktop(GetCurrentThreadId());
 
 	HDESK CurrentDesktop = nullptr;
 	thread = nullptr;
 
-	if (newMonitor) {
+	if (newDesktop) {
 		/*
 		_THREAD_DATA * threadData = new _THREAD_DATA;
 		threadData->OffsetX = 1920;
@@ -205,6 +205,15 @@ void Desktop::init(boolean newMonitor) {
     {
     }
 
+	if (newDesktop){
+		SwitchDesktop(mainDesktop);
+		SetThreadDesktop(mainDesktop);
+	}
+
+	if (newMonitor) {
+		Output = 1;
+	}
+
     // Get output
     IDXGIOutput* DxgiOutput = nullptr;
     hr = DxgiAdapter->EnumOutputs(Output, &DxgiOutput);
@@ -213,11 +222,6 @@ void Desktop::init(boolean newMonitor) {
     if (FAILED(hr))
     {
     }
-
-	if (newMonitor){
-		SwitchDesktop(mainDesktop);
-		SetThreadDesktop(mainDesktop);
-	}
 
     DxgiOutput->GetDesc(&OutputDesc);
 

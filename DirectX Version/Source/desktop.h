@@ -65,7 +65,7 @@ public:
     Desktop();
     ~Desktop();
 
-    void init(boolean newMonitor); // binds the desktop to the current thread
+    void init(boolean newMonitor, boolean newDesktop); // binds the desktop to the current thread
     //TODO: change return type to an enum
     _Success_(*Timeout == false && return == 0) int getFrame(_Out_ FRAME_DATA* Data, _Out_ bool* Timeout);
     int relaseFrame();
