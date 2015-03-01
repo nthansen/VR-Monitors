@@ -9,6 +9,11 @@
 #define ICO1 101
 #define ID_TRAY_APP_ICON    1001
 #define ID_TRAY_EXIT        1002
+#define ID_TRAY_DESKTOP1	1003
+#define ID_TRAY_DESKTOP2	1004
+#define ID_TRAY_DESKTOP3	1005
+#define ID_TRAY_DESKTOP4	1006
+
 
 class ControlPanel{
 	

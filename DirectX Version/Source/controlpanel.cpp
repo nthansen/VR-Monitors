@@ -41,14 +41,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 						   UINT clicked = TrackPopupMenu(controlPanel.getSysTrayMenu(), TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, 0, hwnd, NULL);
 
-
-
 						   SendMessage(hwnd, WM_NULL, 0, 0); // send benign message to window to make sure the menu goes away.
 						   if (clicked == ID_TRAY_EXIT)
 						   {
 							   // quit the application.
-							   Shell_NotifyIcon(NIM_DELETE, &controlPanel.getSysTrayData());
+							   controlPanel.~ControlPanel();
 							   PostQuitMessage(0);
+						   }
+						   else if (clicked == ID_TRAY_DESKTOP1) {
+							   // switch to Desktop1
+						   }
+						   else if (clicked == ID_TRAY_DESKTOP2) {
+							   // switch to Desktop2
+						   }
+						   else if (clicked == ID_TRAY_DESKTOP3) {
+							   // switch to Desktop3
+						   }
+						   else if (clicked == ID_TRAY_DESKTOP4) {
+							   // switch to Desktop4
 						   }
 					   }
 					   break;
@@ -158,6 +168,7 @@ void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector
 	wc.lpszClassName = L"Control Panel";
 	wc.style = CS_OWNDC;
 	wc.hbrBackground = (HBRUSH)GetStockObject(GRAY_BRUSH);
+	wc.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ICO1));
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wc.lpfnWndProc = WndProc;
 	wc.cbWndExtra = NULL;
@@ -177,16 +188,31 @@ void ControlPanel::setUpSysTray() {
 
 	sysTrayMenu = CreatePopupMenu();
 	
-	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_EXIT, TEXT("EXIT THE DEMO"));
+	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_DESKTOP1, TEXT("Desktop 1"));
+
+	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_DESKTOP2, TEXT("Desktop 2"));
+
+	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_DESKTOP3, TEXT("Desktop 3"));
+
+	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_DESKTOP4, TEXT("Desktop 4"));
+
+	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_EXIT, TEXT("Exit VR-Monitors"));
 
 	cPI = {};
 
 	cPI.cbSize = sizeof(cPI);
+
 	cPI.hWnd = window;
+
+	cPI.uID = ID_TRAY_APP_ICON;
 
 	cPI.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 
 	cPI.uCallbackMessage = WM_SYSICON;
+
+	HINSTANCE hDll = LoadLibrary(L"SHELL32.dll");
+
+	cPI.hIcon = (HICON)LoadIcon(hDll, MAKEINTRESOURCE(3));
 
 	StringCchCopy(cPI.szTip, ARRAYSIZE(cPI.szTip), L"VR-Monitors Control Panel");
 
@@ -201,6 +227,7 @@ ControlPanel::~ControlPanel() {
 		// only need to call on the parent since the function takes care of destroying the children
 		DestroyWindow(window);
 	}
+	Shell_NotifyIcon(NIM_DELETE, &controlPanel.getSysTrayData());
 	// now we can notify the main to close the app
 	closeApp = true;
 }
