@@ -1,4 +1,5 @@
 #include "desktop.h"
+
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -170,6 +171,9 @@ void Desktop::init(boolean newMonitor, boolean newDesktop) {
 		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
 		//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
 
+		SwitchDesktop(CurrentDesktop);
+		SetThreadDesktop(CurrentDesktop);
+
 		system("start explorer");
 		WCHAR cmd[] = L"explorer";
 		STARTUPINFOW si = { 0 };
@@ -178,9 +182,6 @@ void Desktop::init(boolean newMonitor, boolean newDesktop) {
 		si.wShowWindow = SW_SHOW;
 		PROCESS_INFORMATION pi;
 		CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
-
-		SwitchDesktop(CurrentDesktop);
-		SetThreadDesktop(CurrentDesktop);
 	}
 
 

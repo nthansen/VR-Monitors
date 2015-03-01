@@ -150,6 +150,12 @@ ControlPanel::ControlPanel() {
 	movingMonitor = false;
 }
 
+ControlPanel ControlPanel::createNewControlPanel() {
+	ControlPanel anotherControlPanel;
+	anotherControlPanel.createControlPanel(NULL, currScene, cameraPos, oculus, yaw);
+	return anotherControlPanel;
+}
+
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 

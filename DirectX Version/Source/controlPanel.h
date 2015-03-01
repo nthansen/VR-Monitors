@@ -69,6 +69,8 @@ public:
 
 	HMENU getSysTrayMenu();
 
+	ControlPanel createNewControlPanel();
+
 private:
 
 	// holds the handle to each part of the control panel window
