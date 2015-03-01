@@ -13,13 +13,54 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 	switch (msg)
 	{
+		// Our user defined WM_SYSICON message.
+	case WM_SYSICON:
+	{
+
+					   switch (wParam)
+					   {
+					   case ID_TRAY_APP_ICON:
+						   SetForegroundWindow(controlPanel.getWindow());
+						   break;
+					   }
+
+
+					   if (lParam == WM_LBUTTONUP)
+					   {
+
+						   ShowWindow(controlPanel.getWindow(), SW_SHOW);
+					   }
+					   else if (lParam == WM_RBUTTONDOWN)
+					   {
+						   // Get current mouse position.
+						   POINT curPoint;
+						   GetCursorPos(&curPoint);
+						   SetForegroundWindow(controlPanel.getWindow());
+
+						   // TrackPopupMenu blocks the app until TrackPopupMenu returns
+
+						   UINT clicked = TrackPopupMenu(controlPanel.getSysTrayMenu(), TPM_RETURNCMD | TPM_NONOTIFY, curPoint.x, curPoint.y, 0, hwnd, NULL);
+
+
+
+						   SendMessage(hwnd, WM_NULL, 0, 0); // send benign message to window to make sure the menu goes away.
+						   if (clicked == ID_TRAY_EXIT)
+						   {
+							   // quit the application.
+							   Shell_NotifyIcon(NIM_DELETE, &controlPanel.getSysTrayData());
+							   PostQuitMessage(0);
+						   }
+					   }
+					   break;
+	}
+
 	case WM_HSCROLL:
 		handle = (HWND)lParam;
 		// see if it's the camera postion trackbar, if so then get the trackbar value and move the camera
 		if (controlPanel.checkIfCameraPositionTrackbar(handle)) {
 			dwPos = SendMessage(handle, TBM_GETPOS, 0, 0);
 			controlPanel.moveCameraZ(dwPos);
-		} 
+		}
 		else if (controlPanel.checkIfResizeMonitorTrackbar(handle)) {
 			dwPos = SendMessage(handle, TBM_GETPOS, 0, 0);
 			controlPanel.resizeMonitor(dwPos);
@@ -129,23 +170,29 @@ void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector
 	// now setup everything necessary for this
 	setupControlPanel();
 
-	NOTIFYICONDATA cPI = {};
+	setUpSysTray();
+}
+
+void ControlPanel::setUpSysTray() {
+
+	sysTrayMenu = CreatePopupMenu();
+	
+	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_EXIT, TEXT("EXIT THE DEMO"));
+
+	cPI = {};
 
 	cPI.cbSize = sizeof(cPI);
 	cPI.hWnd = window;
 
-	cPI.uFlags = NIF_SHOWTIP;
+	cPI.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+
+	cPI.uCallbackMessage = WM_SYSICON;
 
 	StringCchCopy(cPI.szTip, ARRAYSIZE(cPI.szTip), L"VR-Monitors Control Panel");
-	
+
 	cPI.dwInfoFlags = NIIF_INFO;
 
-	static const GUID myGUID =
-	{ 0xd22cb9b1, 0x7c69, 0x4f92, 0x83a5, 0xcf026485b589 };
-
-	cPI.guidItem = myGUID;
-
-	bool success = 	Shell_NotifyIcon(NIM_ADD, &cPI);
+	bool success = Shell_NotifyIcon(NIM_ADD, &cPI);
 }
 
 ControlPanel::~ControlPanel() {
@@ -457,4 +504,16 @@ void ControlPanel::changeBackground(int background){
 		else if (background == 4) {
 			currScene->Models[1]->Fill = currScene->generated_texture[8];
 		}
+}
+
+HWND ControlPanel::getWindow() {
+	return window;
+}
+
+NOTIFYICONDATA ControlPanel::getSysTrayData() {
+	return cPI;
+}
+
+HMENU ControlPanel::getSysTrayMenu() {
+	return sysTrayMenu;
 }

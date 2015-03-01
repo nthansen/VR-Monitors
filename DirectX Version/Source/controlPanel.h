@@ -5,6 +5,11 @@
 #include "scene.h"
 #include <strsafe.h>
 
+#define WM_SYSICON          (WM_USER + 1)
+#define ICO1 101
+#define ID_TRAY_APP_ICON    1001
+#define ID_TRAY_EXIT        1002
+
 class ControlPanel{
 	
 public:
@@ -48,8 +53,16 @@ public:
 
 	void recenterOculus();
 
+	void setUpSysTray();
+
 	// used to restore monitors in their original positions
 	void resetMonitors();
+
+	HWND getWindow();
+
+	NOTIFYICONDATA getSysTrayData();
+
+	HMENU getSysTrayMenu();
 
 private:
 
@@ -58,6 +71,7 @@ private:
 	HWND backgroundCombobox;
 	HWND cameraPositionTrackbar;
 	HWND monitorSizeTrackbar;
+	HMENU sysTrayMenu;
 	ovrHmd * oculus;
 	float * yaw;
 	const float PI = 3.1415972f;
@@ -65,6 +79,8 @@ private:
 	// used so we can manipulate the stuff inside the scene and the camera
 	Scene *currScene;
 	Vector3f *cameraPos;
+
+	NOTIFYICONDATA cPI;
 
 	// Value used to know if we need to close the application or not
 	bool closeApp;
