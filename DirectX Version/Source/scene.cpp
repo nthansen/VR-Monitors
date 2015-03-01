@@ -17,9 +17,9 @@ void Scene::Add(Model * n)
 
 // Main world
 Scene::Scene() :
-num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(0.5f),
+num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(2),
 
-startingPoint(0,0,monitorDepth,monitorWidth,monitorHeight,monitorDepth,
+startingPoint(0,0,0,monitorWidth,monitorHeight,monitorDepth,
 Model::Color(128, 128, 128))
 {
 	

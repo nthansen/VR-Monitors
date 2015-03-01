@@ -48,16 +48,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							   PostQuitMessage(0);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP1) {
-							   // switch to Desktop1
+							   /*currScene->Models[0]->Pos = *cameraPos;
+							   currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), 3.1415927);*/
+							   controlPanel.rotate(1.0);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP2) {
 							   // switch to Desktop2
+							   controlPanel.rotate(2.0);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP3) {
 							   // switch to Desktop3
+							   controlPanel.rotate(3.0);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP4) {
 							   // switch to Desktop4
+							   controlPanel.rotate(4.0);
 						   }
 					   }
 					   break;
@@ -135,6 +140,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
+
+//rotate 
+//called from system menu, rotates to the selected monitor
+void ControlPanel::rotate(float monitorNum){
+	// rotate the cube by pi/2 times the monitor side we want
+	//float transition = .9;
+	//int control = 300;
+	//Quatf temp = currScene->Models[0]->Rot;
+	//for (transition; transition < control; transition+=transition){
+		currScene->Models[0]->Rot = Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * monitorNum);
+	//}
+		currScene->Models[0]->Rot = Quatf(Vector3f(0, .000001, 0), PI / 2 * monitorNum);
+		Model *mod = currScene->Models[0];
+		Matrix4f  modmat = mod->GetMatrix();
+		mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+}
+
 
 // default constructor
 ControlPanel::ControlPanel() {
@@ -230,6 +252,7 @@ ControlPanel::~ControlPanel() {
 	// now we can notify the main to close the app
 	closeApp = true;
 }
+
 
 // used in the main loop to see if we need to close the app or not
 bool ControlPanel::getCloseApp() {

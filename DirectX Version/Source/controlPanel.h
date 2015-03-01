@@ -18,7 +18,7 @@
 class ControlPanel{
 	
 public:
-
+	void rotate(const float desktopNum);//rotates to the desktop that called it
 	ControlPanel();
 	
 	~ControlPanel();

@@ -22,8 +22,9 @@ ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
 float			 Yaw(3.141592f);		// Horizontal rotation of the player
-Vector3f         Pos(1.0f, 1.0f, -0.5f);	// Position of player
+Vector3f         Pos(1, 1, -5.0f);	// Position of player
 int				 clock;
+
 
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
@@ -97,7 +98,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
 
     controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
-
+	int				 count = 1;
     // MAIN LOOP
     // =========
     Desktop * desktop = new Desktop();
@@ -181,6 +182,25 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
             roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
 
         }
+
+		if (DX11.Key['Z']&&clock%12==0) {
+			//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
+			//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
+			//we must offset this to rotate negative pi radians so the object will be in front of us
+			//roomScene.Models[0]->Pos = Pos;
+			Vector3f mpos = roomScene.Models[0]->Pos;
+			roomScene.Models[0]->Rot = Quatf(Vector3f(0, .000001, 0), PI/2*count++);
+			Model *mod = roomScene.Models[0];
+			Matrix4f  modmat = mod->GetMatrix();
+			mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+			//mod->Pos = Vector3f(-2, 0, 0);
+
+		}
+		if (DX11.Key['X']) {
+			Model *mod = roomScene.Models[0];
+			Matrix4f  modmat = mod->GetMatrix();
+			mod->Pos = modmat.Transform(Vector3f(0,0,count));
+		}
         // shows how to select a model and mess with it
         /*
         // Animate the cube
