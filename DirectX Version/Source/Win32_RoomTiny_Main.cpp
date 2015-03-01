@@ -18,7 +18,7 @@ ovrRecti         EyeRenderViewport[2];	// Useful to remember when varying resolu
 ImageBuffer    * pEyeRenderTexture[2];	// Where the eye buffers will be rendered
 ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
-float            YawAtRender[2];		// Useful to remember where the rendered eye originated
+float            YawAtRender[2]{3.141592f,3.141592f};		// Useful to remember where the rendered eye originated
 float			Yaw(3.141592f);			// Horizontal rotation of the player
 Vector3f         Pos(0.0f,0.0f,0.0f);	// Position of player
 int				 clock;
@@ -101,7 +101,17 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
-	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
+	Matrix4f rollPitchYaw;// = Matrix4f::RotationY(Yaw);
+	Matrix4f finalRollPitchYaw;// = rollPitchYaw *Matrix4f(useEyePose->Orientation);
+	Vector3f finalUp;// = finalRollPitchYaw.Transform(Vector3f(0, 1, 0));
+	Vector3f finalForward;// = finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
+	Vector3f shiftedEyePos;// = Pos + rollPitchYaw.Transform(useEyePose->Position);
+
+	Vector3f lookat;// = shiftedEyePos + finalForward;
+
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw, &EyeRenderPose[1]);
+
+	Matrix4f view;// = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
 
     // MAIN LOOP
     // =========
@@ -155,10 +165,21 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			roomScene.Models[0]->Pos = Pos;
 			roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
 		}
+		//pick monitor
+		if (DX11.Key['P']) {
+			int pick = roomScene.pickM(shiftedEyePos, lookat );
+			if (pick != 0){
+			roomScene.Models[pick]->Pos = Pos;
+			roomScene.Models[pick]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
+			}
+		}
+
 		//moves a monitor
+
 		if (DX11.Key['R']) {
-			roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(Pos, .6);
-			roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw), .7);
+			roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(EyeRenderPose[1].Position, .6);
+			roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), 
+				EyeRenderPose[1].Orientation.y *3.1415927), .7);
 		}
 		//moves 90 degrees CCW
 		if (DX11.Key['C'] && clock % 12 == 0) {
@@ -195,15 +216,19 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 				// Write in values actually used (becomes significant in Example features)
 				*useEyePose = temp_EyeRenderPose[eye];
 				*useYaw = Yaw;
-
+	//			Yaw = *useYaw;
 				// Get view and projection matrices (note near Z to reduce eye strain)
-				Matrix4f rollPitchYaw =			Matrix4f::RotationY(Yaw);
-				Matrix4f finalRollPitchYaw =	rollPitchYaw *Matrix4f(useEyePose->Orientation);
-				Vector3f finalUp =				finalRollPitchYaw.Transform(Vector3f(0, 1, 0));
-				Vector3f finalForward =			finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
-				Vector3f shiftedEyePos =		Pos + rollPitchYaw.Transform(useEyePose->Position);
+				 rollPitchYaw =			Matrix4f::RotationY(Yaw);
+				 finalRollPitchYaw =	rollPitchYaw *Matrix4f(useEyePose->Orientation);
+				 finalUp =				finalRollPitchYaw.Transform(Vector3f(0, 1, 0));
+				 finalForward =			finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
+				 shiftedEyePos =		Pos + rollPitchYaw.Transform(useEyePose->Position);
 
-				Matrix4f view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
+				 lookat = shiftedEyePos + finalForward;
+				
+
+				 view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
+				Matrix4f inverseView = view.Inverted();
 				Matrix4f proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
 				// Render the scene
 				for (int t = 0; t < timesToRenderScene; t++)

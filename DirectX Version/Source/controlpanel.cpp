@@ -93,7 +93,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 //initiate monitor pick from panel
 void ControlPanel::initPick(){
-	pickedMonitor = currScene->pickMonitor(*cameraPos, *yaw);
+	pickedMonitor = currScene->pickMonitor(eyeposes->Position,eyeposes->Orientation);
 }
 
 // default constructor
@@ -114,13 +114,14 @@ ControlPanel::ControlPanel() {
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw, ovrPosef_ *eyepose) {
 
 	// now we have access to the information we need
 	currScene = roomScene;
 	cameraPos = pos;
 	oculus = theOculus;
 	this->yaw = yaw;
+	eyeposes = eyepose;//we use eyepose[1]
 
 	// used to have a class for the window with the styles we want
 	WNDCLASSW wc; 
@@ -415,8 +416,12 @@ void ControlPanel::updateControlPanel() {
 //since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 //we must offset this to rotate negative pi radians so the object will be in front of us
 void ControlPanel::moveMonitor(int monitorNum) {
-	currScene->Monitors[monitorNum] -> Pos = *cameraPos;
-	currScene->Monitors[monitorNum]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
+	if (monitorNum != 0){
+		currScene->Monitors[monitorNum]->Pos = currScene->Monitors[monitorNum]->Pos.Lerp(*cameraPos, .7);
+		currScene->Monitors[monitorNum]->Rot = currScene->Monitors[monitorNum]->Rot.Nlerp(Quatf(Vector3f(0, eyeposes->Position.y == 0 ? .001 : eyeposes->Position.y, 0),
+			eyeposes->Orientation.y * eyeposes->Orientation.w), .7);
+	}
+
 }
 
 void ControlPanel::resetMonitors() {

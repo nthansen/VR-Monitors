@@ -14,11 +14,15 @@ void Scene::Add(Model * n)
 	Models[num_models++] = n;
 }
 
-int Scene::pickMonitor(Vector3f Pos, float Yaw){
-	//save the direction to cast in dir and ray origin in dpos
-	SimpleMath::Vector3 dPos = SimpleMath::Vector3(Pos.x, Pos.y, Pos.z);//position for simplemath
-	SimpleMath::Vector3 dir = SimpleMath::Vector3(sinf(Yaw-PI), 0, cosf(Yaw-PI));
-	//ray is really only a container holding the origin and direction to cast
+int Scene::pickMonitor(ovrVector3f pos,ovrQuatf dir_){
+	SimpleMath::Quaternion a = SimpleMath::Quaternion(dir_.x, dir_.y, dir_.z, dir_.w);
+	
+//save the direction to cast in dir and ray origin in dpos
+	SimpleMath::Vector3 dPos = SimpleMath::Vector3(pos.x, pos.y, pos.z);//position for simplemath
+	SimpleMath::Vector3 dir = SimpleMath::Vector3(dir_.x, 0, dir_.z) / sqrtf( dir_.x*dir_.x+dir_.z*dir_.z);
+	//SimpleMath::Vector3 dir = SimpleMath::Vector3(a.x,0, a.z);	//ray is really only a container holding the origin and direction to cast
+	//dir.Normalize();
+
 	SimpleMath::Ray cast = SimpleMath::Ray(dPos, dir);
 	float _dist = 0.0f;
 	for (int i = 0; i < num_monitors; i++){
@@ -32,6 +36,28 @@ int Scene::pickMonitor(Vector3f Pos, float Yaw){
 
 
 }
+
+int Scene::pickM(Vector3f pos,Vector3f dir_){
+
+	//save the direction to cast in dir and ray origin in dpos
+	SimpleMath::Vector3 dPos = SimpleMath::Vector3(pos.x, pos.y, pos.z);//position for simplemath
+	SimpleMath::Vector3 dir = SimpleMath::Vector3(dir_.x, 0, dir_.z);
+	//SimpleMath::Vector3 dir = SimpleMath::Vector3(dir_.x,0, dir_.z);	//ray is really only a container holding the origin and direction to cast
+	dir.Normalize();
+	SimpleMath::Ray cast = SimpleMath::Ray(dPos, dir);
+	float _dist = 0.0f;
+	for (int i = 0; i < num_monitors; i++){
+		Model *temp = Monitors[i];
+		DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(temp->Pos.x, temp->Pos.y, temp->Pos.z), XMFLOAT3(.5f, .5f, 0), XMFLOAT4(0, temp->Rot.y, 0, temp->Rot.w));
+		if (mbox.Intersects(cast.position, cast.direction, _dist)){
+			return i;
+		}
+	}
+	return 0;//return default first monitor
+
+
+}
+
 
 // Main world
 Scene::Scene() :

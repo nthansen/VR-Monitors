@@ -7,6 +7,7 @@
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 #include "../3rdParty/SimpleMath.h"
+#include "OVR_CAPI.h"
 
 using namespace DirectX;
 //used in scene to define the size of the monitors
@@ -41,7 +42,8 @@ struct Scene
 	// used to change textures
 	ShaderFill * generated_texture[9];
 	Vector3f monitorOffset = Vector3f(1.2,0,0);//used by getters and setters for adding monitors
-	int pickMonitor(const Vector3f, const float);
+	int pickMonitor(const ovrVector3f,const ovrQuatf);
+	int pickM(const Vector3f, const Vector3f);
 	//float monitorHeight;
 	//startFloat startingPoint;
 	float monitorHeight;
