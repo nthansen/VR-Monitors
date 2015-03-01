@@ -55,6 +55,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						   else if (clicked == ID_TRAY_DESKTOP2) {
 							   // switch to Desktop2
 							   controlPanel.rotate(2.0);
+							   controlPanel.switchDesktop(1);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP3) {
 							   // switch to Desktop3
@@ -646,4 +647,10 @@ NOTIFYICONDATA ControlPanel::getSysTrayData() {
 
 HMENU ControlPanel::getSysTrayMenu() {
 	return sysTrayMenu;
+}
+
+void ControlPanel::switchDesktop(int desktop) {
+	currScene->doRender = false;
+	currScene->Models[0]->desktop->newDesktop();
+	currScene->doRender = true;
 }
