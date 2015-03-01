@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "desktop.h"
 
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 { { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -57,6 +56,9 @@ Model::Color(128, 128, 128))
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
 	m->AllocateBuffers(); Add(m); Monitors[num_monitors++]=m;
+	m->desktop = new Desktop();
+	m->desktop->init(false);
+	m->Fill = m->desktop->masterFill;
 
 	// skybox
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
