@@ -27,8 +27,6 @@ int				 clock;
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
 
-D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[];
-D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[];
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {

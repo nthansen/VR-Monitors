@@ -75,10 +75,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			dwPos = SendMessage(handle, TBM_GETPOS, 0, 0);
 			controlPanel.moveCameraZ(dwPos);
 		}
+		/*
 		else if (controlPanel.checkIfResizeMonitorTrackbar(handle)) {
 			dwPos = SendMessage(handle, TBM_GETPOS, 0, 0);
 			controlPanel.resizeMonitor(dwPos);
-		}
+		}*/
 		break;
 	case WM_COMMAND:
 		// if the quit button is clicked then destroy this window
@@ -112,7 +113,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				Button_SetText(handle, L"Place Monitor");
 			}
 		}
-		// user clicked the move monitor button
+		// user clicked the reset monitor button
 		else if (LOWORD(wParam) == 6) {
 			controlPanel.resetMonitors();
 		}
@@ -395,10 +396,10 @@ void ControlPanel::createDropDowns(){
 }
 
 void ControlPanel::createSliders() {
-	FLOAT iMin = -4;     // minimum value in trackbar range 
-	FLOAT iMax = 4;     // maximum value in trackbar range 
-	FLOAT iSelMin = -4;  // minimum value in trackbar selection 
-	FLOAT iSelMax = 4;  // maximum value in trackbar selection 
+	FLOAT iMin = -5;     // minimum value in trackbar range 
+	FLOAT iMax = -1;     // maximum value in trackbar range 
+	FLOAT iSelMin = -5;  // minimum value in trackbar selection 
+	FLOAT iSelMax = -1;  // maximum value in trackbar selection 
 
 	cameraPositionTrackbar = CreateWindowEx(
 		0,                               // no extended styles 
@@ -421,7 +422,7 @@ void ControlPanel::createSliders() {
 		(LPARAM)MAKELONG(iMin, iMax));  // min. & max. positions
 
 	SendMessage(cameraPositionTrackbar, TBM_SETPAGESIZE,
-		0, (LPARAM)4);                  // new page size 
+		0, (LPARAM)1);                  // new page size 
 
 	SendMessage(cameraPositionTrackbar, TBM_SETSEL,
 		(WPARAM)FALSE,                  // redraw flag 
@@ -429,8 +430,10 @@ void ControlPanel::createSliders() {
 
 	SendMessage(cameraPositionTrackbar, TBM_SETPOS,
 		(WPARAM)TRUE,                   // redraw flag 
-		(LPARAM)0);
+		(LPARAM)-3);
 
+
+	/*
 	iMin = -1;     // minimum value in trackbar range 
 	iMax = 3;     // maximum value in trackbar range 
 	iSelMin = -1;  // minimum value in trackbar selection 
@@ -466,6 +469,7 @@ void ControlPanel::createSliders() {
 	SendMessage(monitorSizeTrackbar, TBM_SETPOS,
 		(WPARAM)TRUE,                   // redraw flag 
 		(LPARAM)1);
+		*/
 }
 
 void ControlPanel::createText() {
@@ -489,6 +493,7 @@ void ControlPanel::createText() {
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);
 
+	/*
 	// create text for camera slider
 	CreateWindow(L"STATIC", L"Resize Monitor:",
 		SS_LEFT | WS_VISIBLE | WS_CHILD,
@@ -498,12 +503,13 @@ void ControlPanel::createText() {
 		NULL,
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);
+		*/
 }
 
 // move the camera on the z coordinates
 void ControlPanel::moveCameraZ(float zValue) {
-		cameraPos->z = zValue * .2;
-		currScene->Models[1]->Pos.z = zValue *.2;
+		cameraPos->z = zValue;
+		currScene->Models[1]->Pos.z = zValue;
 }
 
 void ControlPanel::resizeMonitor(float resizeValue){
