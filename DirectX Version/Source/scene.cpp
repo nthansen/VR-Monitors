@@ -37,7 +37,7 @@ int Scene::pickMonitor(Vector3f Pos, float Yaw){
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(1), monitorWidth(1), monitorDepth(0.8f),
 
-startingPoint(0-monitorWidth/2,0-monitorHeight/2,monitorDepth,monitorWidth/2,monitorHeight/2,monitorDepth,
+startingPoint(0-monitorWidth/2,0-monitorHeight/2,monitorDepth,monitorWidth/2,monitorHeight/2,monitorDepth*2,
 Model::Color(128, 128, 128))
 {
 	
@@ -71,10 +71,10 @@ Model::Color(128, 128, 128))
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
 	//add first monitor
-	Model * m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // eventually will be the monitor
-	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
-		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
+	Model * m = new Model(Vector3f(0, 0, 0), generated_texture[1]); // eventually will be the monitor
+	m->AddSolidColorBox(-1,-1,-1,1,1,1, startingPoint.color);//starting details can be managed at top
 	m->AllocateBuffers(); Add(m); Monitors[num_monitors++] = m; selected = m;
+	//m->Pos.z = startingPoint.z1;
 
 	// skybox
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);

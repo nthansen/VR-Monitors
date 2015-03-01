@@ -20,7 +20,7 @@ ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
 float			Yaw(3.141592f);			// Horizontal rotation of the player
-Vector3f         Pos(0.0f,0.0f,0.0f);	// Position of player
+Vector3f         Pos(0.0f,0.0f,-3.0f);	// Position of player
 int				 clock;
 
 #define   OVR_D3D_VERSION 11
@@ -102,7 +102,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
 	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
-
+	int count = 1;
+	float rotationCount = PI / 2 * count;
     // MAIN LOOP
     // =========
 	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
@@ -164,14 +165,21 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		if (DX11.Key['C'] && clock % 12 == 0) {
 			Yaw += PI / 2;
 		}
-		
+		//rotates cube 90 degrees
+		if (DX11.Key['X'] && clock %12 ==0) {
+			Vector3f mpos = roomScene.Models[0]->Pos;
+			Quatf mrot = roomScene.Models[0]->Rot;
+			//roomScene.Models[0]->Pos = roomScene.Models[0]->Pos.Lerp(mpos, .6);
+			roomScene.Models[0]->Rot = Quatf(Vector3f(0, .0001, 0), PI / 2 * count++);//roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .0001, 0), PI / 2*count++),.9);
+			int test = 1;
+		}
 	
 		// shows how to select a model and mess with it
 		/*
 		// Animate the cube
 		if (speed)
 			roomScene.Models[0]->Pos = Vector3f(9 * sin(0.01f*clock), 3, 9 * cos(0.01f*clock));
-			*/
+			*/	
 
 
 		// Get both eye poses simultaneously, with IPD offset already included. 
