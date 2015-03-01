@@ -133,12 +133,14 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 			Monitors[1]->Pos = _pos;
 			Monitors[1]->OriginalPos = _pos;
 			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
-			Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
+			//Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
+			Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), - PI / 6.5);
 			Monitors[1]->OriginalRot = Monitors[1]->Rot;
 			_pos = Vector3f(.9, 0, 0);
 			Monitors[0]->Pos = _pos;
 			Monitors[0]->OriginalPos = _pos;
-			Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 6.5);
+			//Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 6.5);
+			Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), + PI / 6.5);
 			Monitors[0]->OriginalRot = Monitors[0]->Rot;
 			//so go back to the initial point on x, add an offset to put them on top 
 			//temp.x = startingPoint.x1;
