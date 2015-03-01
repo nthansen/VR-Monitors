@@ -11,7 +11,6 @@
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "controlPanel.h"
 #include "desktop.h"
-#include "../3rdParty/ScreenGrab/ScreenGrab.h"
 
 
 ovrHmd           HMD;					// The handle of the headset
@@ -24,7 +23,6 @@ float            YawAtRender[2];		// Useful to remember where the rendered eye o
 float			 Yaw(3.141592f);		// Horizontal rotation of the player
 Vector3f         Pos(1, 1, -5.0f);	// Position of player
 int				 clock;
-
 
 #define   OVR_D3D_VERSION 11
 #include "OVR_CAPI_D3D.h"                   // Include SDK-rendered code for the D3D version
@@ -101,10 +99,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	int				 count = 1;
     // MAIN LOOP
     // =========
-    Desktop * desktop = new Desktop();
-	// to signal that we are doing this for the main monitor
-    desktop->init(false);
-    roomScene.Models[0]->Fill = desktop->masterFill;
 
     while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
     {
@@ -141,23 +135,24 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
         }
         // just so it'd give some time before switching between each texture
         // replaces the shader fill to the new shaderfill
+		for (int i = 0; i < roomScene.num_monitors; i++){
         bool timedout;
         FRAME_DATA frame;
-        desktop->relaseFrame();
+			roomScene.Monitors[i]->desktop->relaseFrame();
 
-        desktop->getFrame(&frame, &timedout);
+			roomScene.Monitors[i]->desktop->getFrame(&frame, &timedout);
         if (frame.Frame != nullptr && !timedout) {
 
             // the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
             D3D11_TEXTURE2D_DESC frameDesc;
             frame.Frame->GetDesc(&frameDesc);
             HRESULT hr;
-            desktop->deviceContext->CopyResource(desktop->stage, frame.Frame);
+				roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
 
             // we capture a shared handle from the staging resource 
             HANDLE Hnd(NULL);
             IDXGIResource* DXGIResource = nullptr;
-            hr = desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+				hr = roomScene.Monitors[i]->desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
             DXGIResource->GetSharedHandle(&Hnd);
             DXGIResource->Release();
             DXGIResource = nullptr;
@@ -166,9 +161,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
             //SaveDDSTextureToFile(DX11.Context, desktop->masterImage, L"mytexture.dds");
 
             // using the shared handle we copy the data to the image bound to the render view
-            DX11.Context->CopyResource(desktop->masterImage, tmp);
+				DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
+			}
+			roomScene.Monitors[i]->desktop->relaseFrame();
         }
-        desktop->relaseFrame();
 
         // accesses the actual texture in the shaderfill and switches them out
         //roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
@@ -195,7 +191,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
 			//mod->Pos = Vector3f(-2, 0, 0);
 
-		}
+        }
 		if (DX11.Key['X']) {
 			Model *mod = roomScene.Models[0];
 			Matrix4f  modmat = mod->GetMatrix();

@@ -1,8 +1,9 @@
 #include "desktop.h"
+
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "Color", 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "Color", 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
@@ -152,14 +153,14 @@ int Desktop::relaseFrame(){
 }
 
 
-void Desktop::init(boolean newMonitor) {
+void Desktop::init(boolean newMonitor, boolean newDesktop) {
 
 	HDESK mainDesktop = GetThreadDesktop(GetCurrentThreadId());
 
 	HDESK CurrentDesktop = nullptr;
 	thread = nullptr;
 
-	if (newMonitor) {
+	if (newDesktop) {
 		/*
 		_THREAD_DATA * threadData = new _THREAD_DATA;
 		threadData->OffsetX = 1920;
@@ -170,6 +171,9 @@ void Desktop::init(boolean newMonitor) {
 		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
 		//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
 
+		SwitchDesktop(CurrentDesktop);
+		SetThreadDesktop(CurrentDesktop);
+
 		system("start explorer");
 		WCHAR cmd[] = L"explorer";
 		STARTUPINFOW si = { 0 };
@@ -178,9 +182,6 @@ void Desktop::init(boolean newMonitor) {
 		si.wShowWindow = SW_SHOW;
 		PROCESS_INFORMATION pi;
 		CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
-
-		SwitchDesktop(CurrentDesktop);
-		SetThreadDesktop(CurrentDesktop);
 	}
 
 
@@ -205,6 +206,15 @@ void Desktop::init(boolean newMonitor) {
     {
     }
 
+	if (newDesktop){
+		SwitchDesktop(mainDesktop);
+		SetThreadDesktop(mainDesktop);
+	}
+
+	if (newMonitor) {
+		Output = 1;
+	}
+
     // Get output
     IDXGIOutput* DxgiOutput = nullptr;
     hr = DxgiAdapter->EnumOutputs(Output, &DxgiOutput);
@@ -213,11 +223,6 @@ void Desktop::init(boolean newMonitor) {
     if (FAILED(hr))
     {
     }
-
-	if (newMonitor){
-		SwitchDesktop(mainDesktop);
-		SetThreadDesktop(mainDesktop);
-	}
 
     DxgiOutput->GetDesc(&OutputDesc);
 

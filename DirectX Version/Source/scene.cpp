@@ -1,10 +1,11 @@
 #include "scene.h"
 #include "desktop.h"
 
+
 D3D11_INPUT_ELEMENT_DESC ModelVertexDesc[] =
 { { "Position", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(Model::Vertex, Pos), D3D11_INPUT_PER_VERTEX_DATA, 0 },
 { "Color", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 0, offsetof(Model::Vertex, C), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex,U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
+{ "TexCoord", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(Model::Vertex, U), D3D11_INPUT_PER_VERTEX_DATA, 0 }, };
 const float PI = 3.1415927f;
 
 //used in addmonitor and initialization just below here for the first "screen"
@@ -19,7 +20,7 @@ void Scene::Add(Model * n)
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(2),
 
-startingPoint(0,0,0,monitorWidth,monitorHeight,monitorDepth,
+startingPoint(0, 0, monitorDepth, monitorWidth, monitorHeight, monitorDepth,
 Model::Color(128, 128, 128))
 {
 	
@@ -52,15 +53,25 @@ Model::Color(128, 128, 128))
 	// Construct geometry
 	// first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
 
+	Desktop * desktop = new Desktop();
+	// to signal that we are doing this for the main monitor
+	desktop->init(false, false);
+
 	//add first monitor
-	Model * m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[1]); // eventually will be the monitor
+	Model * m = new Model(Vector3f(0, 0, startingPoint.z1), desktop->masterFill); // eventually will be the monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
-	m->AllocateBuffers(); Add(m); Monitors[num_monitors++]=m;
+	m->AllocateBuffers(); Add(m); Monitors[num_monitors++] = m;
+	m->desktop = desktop;
 
 	// skybox
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
 	m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
+	m->AllocateBuffers();
+	Add(m);
+
+	m = new Model(Vector3f(0, 0, 0), generated_texture[2]);
+	m->AddSolidColorBox(0, 0, -3, 2, 2, -3, Model::Color(128, 128, 128));
 	m->AllocateBuffers();
 	Add(m);
 }
@@ -80,7 +91,7 @@ void Scene::Render(Matrix4f view, Matrix4f proj)
 
 }
 Vector3f Scene::getLastMonitorPosition(){
-	return Monitors[num_monitors-1]->Pos;
+	return Monitors[num_monitors - 1]->Pos;
 }
 
 
@@ -95,18 +106,24 @@ void Scene::setOffset(Vector3f _Voffset){
 	monitorOffset = _Voffset;
 }
 
-void Scene::addMonitor(float yaw,Vector3f _pos){
+void Scene::addMonitor(float yaw, Vector3f _pos){
 	
 	if (num_monitors < 3) {
 		static Model::Color tex_pixels[4][256 * 256];
 		//we would probably fill this tex with pixels from desktop dup here
 		Desktop*  d = new Desktop();
-		d->init(true);
+		
+		// add new monitor
+		d->init(true, false);
+
+		// add new desktop
+		//d->init(false, true);
 
 		_pos = Vector3f(0, 0, 0);
 
 		num_monitors++;//add one to monitors here to determine how to group them below
-		Model* m = new Model(Vector3f(0, 0, startingPoint.z1), generated_texture[0]);
+		Model* m = new Model(Vector3f(0, 0, startingPoint.z1), d->masterFill);
+		m->desktop = d;
 		//everything is added based on the first monitor the startingpoint monitor
 		m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 			startingPoint.y2, startingPoint.z2, startingPoint.color);
@@ -116,16 +133,16 @@ void Scene::addMonitor(float yaw,Vector3f _pos){
 		//Vector3f temp = getLastMonitorPosition();
 		//Vector3f tempVect = getOffset() + getLastMonitorPosition();//initialize in case we change in loop below
 		if (num_monitors == 2){//change position of first monitor
-			Monitors[0]->Pos = _pos;
-			Monitors[0]->OriginalPos = _pos;
-			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
-			Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 5.5);
-			Monitors[0]->OriginalRot = Monitors[0]->Rot;
-			_pos = Vector3f(1, 0, monitorDepth * 2);
 			Monitors[1]->Pos = _pos;
 			Monitors[1]->OriginalPos = _pos;
-			Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 5.5);
+			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
+			Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 5.5);
 			Monitors[1]->OriginalRot = Monitors[1]->Rot;
+			_pos = Vector3f(1, 0, monitorDepth * 2);
+			Monitors[0]->Pos = _pos;
+			Monitors[0]->OriginalPos = _pos;
+			Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 5.5);
+			Monitors[0]->OriginalRot = Monitors[0]->Rot;
 			//so go back to the initial point on x, add an offset to put them on top 
 			//temp.x = startingPoint.x1;
 			//temp.y = startingPoint.y1 + monitorHeight/2;
@@ -215,3 +232,4 @@ void Scene::loadSkyboxes() {
 	generated_texture[8] = new ShaderFill(ModelVertexDesc, 3, Skybox, t);
 
 }
+
