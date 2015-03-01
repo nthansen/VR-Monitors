@@ -170,6 +170,7 @@ void Desktop::init(boolean newMonitor) {
 		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
 		//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
 
+		system("start explorer");
 		WCHAR cmd[] = L"explorer";
 		STARTUPINFOW si = { 0 };
 		si.cb = sizeof (si);
@@ -203,6 +204,7 @@ void Desktop::init(boolean newMonitor) {
     if (FAILED(hr))
     {
     }
+
     // Get output
     IDXGIOutput* DxgiOutput = nullptr;
     hr = DxgiAdapter->EnumOutputs(Output, &DxgiOutput);
@@ -218,10 +220,6 @@ void Desktop::init(boolean newMonitor) {
 	}
 
     DxgiOutput->GetDesc(&OutputDesc);
-
-	if (newMonitor) {
-		OutputDesc.AttachedToDesktop = 2;
-	}
 
 
     // QI for Output 1

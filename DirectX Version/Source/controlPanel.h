@@ -3,6 +3,7 @@
 #include <CommCtrl.h>
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "scene.h"
+#include <strsafe.h>
 
 class ControlPanel{
 	

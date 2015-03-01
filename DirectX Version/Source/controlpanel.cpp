@@ -128,6 +128,24 @@ void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector
 
 	// now setup everything necessary for this
 	setupControlPanel();
+
+	NOTIFYICONDATA cPI = {};
+
+	cPI.cbSize = sizeof(cPI);
+	cPI.hWnd = window;
+
+	cPI.uFlags = NIF_SHOWTIP;
+
+	StringCchCopy(cPI.szTip, ARRAYSIZE(cPI.szTip), L"VR-Monitors Control Panel");
+	
+	cPI.dwInfoFlags = NIIF_INFO;
+
+	static const GUID myGUID =
+	{ 0xd22cb9b1, 0x7c69, 0x4f92, 0x83a5, 0xcf026485b589 };
+
+	cPI.guidItem = myGUID;
+
+	bool success = 	Shell_NotifyIcon(NIM_ADD, &cPI);
 }
 
 ControlPanel::~ControlPanel() {
