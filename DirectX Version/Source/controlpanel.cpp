@@ -24,11 +24,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 						   break;
 					   }
 
-
 					   if (lParam == WM_LBUTTONUP)
 					   {
 
-						   ShowWindow(controlPanel.getWindow(), SW_SHOW);
+						   ShowWindow(controlPanel.getWindow(), SW_RESTORE);
 					   }
 					   else if (lParam == WM_RBUTTONDOWN)
 					   {
