@@ -363,6 +363,66 @@ void ControlPanel::createButtons() {
 		(HMENU)8,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
+
+	// used to set the desktop 1 to true at the start
+	HWND desktop1;
+	// create the adding desktop 1 button
+	desktop1 = CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"1",      // Button text 
+		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
+		235,         // x position 
+		75,         // y position 
+		30,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)9,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
+
+	SendMessage(desktop1, BM_SETCHECK, BST_CHECKED, 0);
+
+	// create the adding desktop 2 button
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"2",      // Button text 
+		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
+		268,         // x position 
+		75,         // y position 
+		30,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)10,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
+
+	// create the adding desktop 3 button
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"3",      // Button text 
+		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
+		300,         // x position 
+		75,         // y position 
+		30,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)11,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
+
+	// create the adding desktop 4 button
+	CreateWindow(
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"4",      // Button text 
+		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
+		335,         // x position 
+		75,         // y position 
+		30,        // Button width
+		25,        // Button height
+		window,     // Parent window
+		(HMENU)12,       // used for the wndProc to know what button is pressed
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);      // Pointer not needed.
 }
 
 void ControlPanel::createDropDowns(){
@@ -487,6 +547,15 @@ void ControlPanel::createText() {
 	CreateWindow(L"STATIC", L"Move Camera:",
 		SS_LEFT | WS_VISIBLE | WS_CHILD,
 		11, 55,
+		120, 20,
+		window,
+		NULL,
+		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		NULL);
+
+	CreateWindow(L"STATIC", L"Choose Desktop:",
+		SS_LEFT | WS_VISIBLE | WS_CHILD,
+		239, 60,
 		120, 20,
 		window,
 		NULL,
