@@ -20,7 +20,7 @@ void Scene::Add(Model * n)
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(2),
 
-startingPoint(0, 0, monitorDepth, monitorWidth, monitorHeight, monitorDepth,
+startingPoint(0, 0, 0, monitorWidth, monitorHeight, monitorDepth,
 Model::Color(128, 128, 128))
 {
 	
@@ -58,7 +58,7 @@ Model::Color(128, 128, 128))
 	desktop->init(false, false);
 
 	//add first monitor
-	Model * m = new Model(Vector3f(0, 0, startingPoint.z1), desktop->masterFill); // eventually will be the monitor
+	Model * m = new Model(Vector3f(0, 0, 0), desktop->masterFill); // eventually will be the monitor
 	m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
 		startingPoint.y2, startingPoint.z2, startingPoint.color);//starting details can be managed at top
 	m->AllocateBuffers(); Add(m); Monitors[num_monitors++] = m;

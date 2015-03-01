@@ -149,7 +149,7 @@ void ControlPanel::rotate(float monitorNum){
 	//int control = 300;
 	//Quatf temp = currScene->Models[0]->Rot;
 	//for (transition; transition < control; transition+=transition){
-		currScene->Models[0]->Rot = Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * monitorNum);
+		//currScene->Models[0]->Rot = Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * monitorNum);
 	//}
 		currScene->Models[0]->Rot = Quatf(Vector3f(0, .000001, 0), PI / 2 * monitorNum);
 		Model *mod = currScene->Models[0];

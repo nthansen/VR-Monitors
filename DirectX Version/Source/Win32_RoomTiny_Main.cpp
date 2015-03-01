@@ -21,7 +21,7 @@ ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
 float			 Yaw(3.141592f);		// Horizontal rotation of the player
-Vector3f         Pos(1, 1, -5.0f);	// Position of player
+Vector3f         Pos(1, 1, -3.0f);	// Position of player
 int				 clock;
 
 #define   OVR_D3D_VERSION 11
@@ -179,7 +179,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
         }
 
-		if (DX11.Key['Z']&&clock%12==0) {
+		if (DX11.Key['Z']){//&&clock%12==0) {
 			//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
 			//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 			//we must offset this to rotate negative pi radians so the object will be in front of us
