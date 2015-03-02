@@ -34,6 +34,8 @@ struct Model
 	Quatf        Rot;
 	Quatf		 OriginalRot;
 	Matrix4f     Mat;
+	Matrix4f	 OriginalMat;
+	Matrix4f	 rotatedMatrix;//set when the cube has finished a complete rotation
 	int          numVertices, numIndices;
 	Vertex       Vertices[2000]; //Note fixed maximum
 	uint16_t     Indices[2000];

@@ -92,8 +92,11 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
-
-    controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw);
+	//need to pass in view and proj to control panel to render model while transitioning
+	Matrix4f view;
+	Matrix4f proj;
+	ovrD3D11Texture eyeTexture[2];//used to end the frame in cube rotation
+    controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw, &view, &proj);
 	int				 count = 1;
     // MAIN LOOP
     // =========
@@ -183,17 +186,27 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			//we must offset this to rotate negative pi radians so the object will be in front of us
 			//roomScene.Models[0]->Pos = Pos;
 			Vector3f mpos = roomScene.Models[0]->Pos;
-			roomScene.Models[0]->Rot = Quatf(Vector3f(0, .000001, 0), PI/2*count++);
+			roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(1, 0, 0), PI / 2 * count++),.9);
 			Model *mod = roomScene.Models[0];
 			Matrix4f  modmat = mod->GetMatrix();
-			mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+			//roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 2);
+			//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
 			//mod->Pos = Vector3f(-2, 0, 0);
 
         }
 		if (DX11.Key['X']) {
+			ovrHmd_EndFrame(HMD, EyeRenderPose, &eyeTexture[0].Texture);
+			while (roomScene.Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * 1)) > 0.01){
+				ovrHmd_BeginFrame(HMD, 0);
+				roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI / 2 * 1), .9);
+				roomScene.Render(view, proj);
+				Sleep(20);
+				ovrHmd_EndFrame(HMD, EyeRenderPose, &eyeTexture[0].Texture);
+			}
+			ovrHmd_BeginFrame(HMD, 0);
 			Model *mod = roomScene.Models[0];
 			Matrix4f  modmat = mod->GetMatrix();
-			mod->Pos = modmat.Transform(Vector3f(0,0,count));
+			mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
 		}
         // shows how to select a model and mess with it
         /*
@@ -231,8 +244,8 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
                 Vector3f finalForward = finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
                 Vector3f shiftedEyePos = Pos + rollPitchYaw.Transform(useEyePose->Position);
 
-                Matrix4f view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
-                Matrix4f proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
+               view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
+                proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
 
                 // Render the scene
                 for (int t = 0; t < timesToRenderScene; t++)
@@ -241,7 +254,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
         }
 
         // Do distortion rendering, Present and flush/sync
-        ovrD3D11Texture eyeTexture[2]; // Gather data for eye textures 
+        //ovrD3D11Texture eyeTexture[2]; // Gather data for eye textures 
         for (int eye = 0; eye < 2; eye++)
         {
             eyeTexture[eye].D3D11.Header.API = ovrRenderAPI_D3D11;
