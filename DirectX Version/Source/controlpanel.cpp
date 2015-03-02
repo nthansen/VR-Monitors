@@ -156,6 +156,9 @@ void ControlPanel::rotate(float monitorNum){
 		Model *mod = currScene->Models[0];
 		Matrix4f  modmat = mod->GetMatrix();
 		mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+
+	
+
 }
 
 
