@@ -54,6 +54,8 @@ struct Scene
 	// Simple latency box (keep similar vertex format and shader params same, for ease of code)
 	Scene();
 
+	boolean doRender;
+
 	void Render(Matrix4f view, Matrix4f proj);
 
 	void loadSkyboxes();

@@ -63,6 +63,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							   // switch to Desktop2
 							   controlPanel.activeMonitor = 2;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+							  // controlPanel.rotate(2.0);
+							   controlPanel.switchDesktop(1);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP3) {
 							   // switch to Desktop3
@@ -179,7 +181,7 @@ void ControlPanel::rotate(float monitorNum){
 		//if (mod->Pos.Compare(mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9)) > .0001){//compare positions
 			positioning = false;//we are done moving set to false
 			//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
-		//}
+	//}
 	}
 	//if the angles are the same then we are done rotating so set the bool to false so
 	//that update monitor wont call this function until the next rotate monitor call
@@ -688,4 +690,10 @@ NOTIFYICONDATA ControlPanel::getSysTrayData() {
 
 HMENU ControlPanel::getSysTrayMenu() {
 	return sysTrayMenu;
+}
+
+void ControlPanel::switchDesktop(int desktop) {
+	currScene->doRender = false;
+	currScene->Models[0]->desktop->newDesktop();
+	currScene->doRender = true;
 }
