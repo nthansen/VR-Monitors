@@ -9,6 +9,7 @@ D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
 
 Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
+pointerImage(nullptr),
 metaDataBuffer(nullptr),
 metaDataSize(0),
 Device(nullptr)
@@ -18,7 +19,7 @@ Device(nullptr)
     pointer.Position.x = 0;
     pointer.Position.y = 0;
     pointer.PtrShapeBuffer = nullptr;
-    
+
 
 
     //initilize the desktpp
@@ -108,17 +109,34 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
                     //could not allocate
                     pointer.BufferSize = 0;
                 }
-                else {
-                    //get the shape
-                    UINT requiredBufferSize;
-                    hr = desktop->GetFramePointerShape(pointer.BufferSize, reinterpret_cast<VOID*>(pointer.PtrShapeBuffer), &requiredBufferSize, &(pointer.ShapeInfo));
-                    //create texture2d
-                    if (!pointer.pointerImage){
-
-                    }
-                }
-
             }
+            //get the shape
+            UINT requiredBufferSize;
+            hr = desktop->GetFramePointerShape(pointer.BufferSize, reinterpret_cast<VOID*>(pointer.PtrShapeBuffer), &requiredBufferSize, &(pointer.ShapeInfo));
+            //create texture2d
+            if (pointerImage){
+                //release old image
+                pointerImage->Release();
+                pointerImage = nullptr;
+            }
+            D3D11_TEXTURE2D_DESC Desc;
+            Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+            Desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+            Desc.MipLevels = 1;
+            Desc.ArraySize = 1;
+            Desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+            Desc.SampleDesc.Count = 1;
+            Desc.SampleDesc.Quality = 0;
+            Desc.Usage = D3D11_USAGE_DEFAULT;
+            Desc.CPUAccessFlags = 0;
+
+            Desc.Width = pointer.ShapeInfo.Width;
+            Desc.Height = pointer.ShapeInfo.Height;
+            D3D11_SUBRESOURCE_DATA ptrData;
+            ptrData.pSysMem = pointer.PtrShapeBuffer;
+            ptrData.SysMemPitch = pointer.ShapeInfo.Pitch;
+            ptrData.SysMemSlicePitch = 0;
+            Device->CreateTexture2D(&Desc, &ptrData, &pointerImage);
         }
         //update the position of the mouse
         //there might need to be an offset for a multiple monitor setup
@@ -198,37 +216,37 @@ int Desktop::relaseFrame(){
 
 void Desktop::init(boolean newMonitor) {
 
-	HDESK mainDesktop = GetThreadDesktop(GetCurrentThreadId());
+    HDESK mainDesktop = GetThreadDesktop(GetCurrentThreadId());
 
-	HDESK CurrentDesktop = nullptr;
-	thread = nullptr;
+    HDESK CurrentDesktop = nullptr;
+    thread = nullptr;
 
-	/*
-	if (newMonitor) {
-		
-		_THREAD_DATA * threadData = new _THREAD_DATA;
-		threadData->OffsetX = 1920;
-		threadData->OffsetY = 1080;
-		threadData->PtrInfo = &ptrInfo;
-		
+    /*
+    if (newMonitor) {
 
-		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
-		//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
-
-		WCHAR cmd[] = L"explorer";
-		STARTUPINFOW si = { 0 };
-		si.cb = sizeof (si);
-		si.lpDesktop = L"Virtual Desktop";
-		si.wShowWindow = SW_SHOW;
-		PROCESS_INFORMATION pi;
-		CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
-
-		SwitchDesktop(CurrentDesktop);
-		SetThreadDesktop(CurrentDesktop);
-	}*/
+    _THREAD_DATA * threadData = new _THREAD_DATA;
+    threadData->OffsetX = 1920;
+    threadData->OffsetY = 1080;
+    threadData->PtrInfo = &ptrInfo;
 
 
-	UINT Output = 0;
+    CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+    //thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
+
+    WCHAR cmd[] = L"explorer";
+    STARTUPINFOW si = { 0 };
+    si.cb = sizeof (si);
+    si.lpDesktop = L"Virtual Desktop";
+    si.wShowWindow = SW_SHOW;
+    PROCESS_INFORMATION pi;
+    CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
+
+    SwitchDesktop(CurrentDesktop);
+    SetThreadDesktop(CurrentDesktop);
+    }*/
+
+
+    UINT Output = 0;
 
     HRESULT hr;
 
@@ -249,9 +267,9 @@ void Desktop::init(boolean newMonitor) {
     {
     }
 
-	if (newMonitor) {
-		Output = 1;
-	}
+    if (newMonitor) {
+        Output = 1;
+    }
 
     // Get output
     IDXGIOutput* DxgiOutput = nullptr;
@@ -262,18 +280,18 @@ void Desktop::init(boolean newMonitor) {
     {
     }
 
-	/*
-	if (newMonitor){
-		SwitchDesktop(mainDesktop);
-		SetThreadDesktop(mainDesktop);
-	}*/
+    /*
+    if (newMonitor){
+    SwitchDesktop(mainDesktop);
+    SetThreadDesktop(mainDesktop);
+    }*/
 
     DxgiOutput->GetDesc(&OutputDesc);
 
-	/*
-	if (newMonitor) {
-		OutputDesc.AttachedToDesktop = 2;
-	}*/
+    /*
+    if (newMonitor) {
+    OutputDesc.AttachedToDesktop = 2;
+    }*/
 
 
     // QI for Output 1
@@ -316,7 +334,7 @@ void Desktop::init(boolean newMonitor) {
 
     hr = Device->CreateTexture2D(&dsDesc, nullptr, &stage);
     deviceContext->CopyResource(stage, data.Frame);  //we save the data to an intermediary 
-    
+
     D3D11_TEXTURE2D_DESC dsDesc2;
 
     RtlZeroMemory(&dsDesc, sizeof(D3D11_TEXTURE2D_DESC));
@@ -331,7 +349,7 @@ void Desktop::init(boolean newMonitor) {
     dsDesc2.SampleDesc.Count = 1;
     dsDesc2.SampleDesc.Quality = 0;
     dsDesc2.Usage = D3D11_USAGE_DEFAULT;
-    
+
     HANDLE Hnd(NULL);
     IDXGIResource* DXGIResource = nullptr;
     hr = stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
@@ -342,7 +360,7 @@ void Desktop::init(boolean newMonitor) {
     hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
 
     hr = DX11.Device->CreateTexture2D(&dsDesc2, nullptr, &masterImage);
-    
+
     DX11.Context->CopyResource(masterImage, tmp);
     DX11.Device->CreateShaderResourceView(masterImage, NULL, &masterView);
     masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), masterImage, masterView);
