@@ -35,6 +35,7 @@ struct Scene
 
 	int     num_models;
 	int		num_monitors;
+    int     activeDesktop;
 	Model * Models[20];
 	Model * Monitors[20];
 	// used to change textures

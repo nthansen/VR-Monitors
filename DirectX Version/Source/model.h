@@ -40,8 +40,9 @@ struct Model
     uint16_t     Indices[2000];
     Desktop *		desktop;
     bool active;
-    HANDLE thread;
+    HANDLE thread;      //current thread
     IDXGIKeyedMutex *keyMutexRead;
+    HANDLE signalRead; //semaphore that signals it's ok to read
     UINT Output;
     INT OffsetX;
     INT OffsetY;

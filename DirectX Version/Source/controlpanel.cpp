@@ -58,24 +58,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							   //third attempt set active monitor here and set rotating monitor to true
 							   controlPanel.activeMonitor = 1;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
-						   }
+                               controlPanel.switchDesktop(1);
+                           }
 						   else if (clicked == ID_TRAY_DESKTOP2) {
 							   // switch to Desktop2
 							   controlPanel.activeMonitor = 2;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
 							  // controlPanel.rotate(2.0);
-							   controlPanel.switchDesktop(1);
-						   }
+                               controlPanel.switchDesktop(2);
+                           }
 						   else if (clicked == ID_TRAY_DESKTOP3) {
 							   // switch to Desktop3
 							   controlPanel.activeMonitor = 3;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
-						   }
+                               controlPanel.switchDesktop(3);
+                           }
 						   else if (clicked == ID_TRAY_DESKTOP4) {
 							   // switch to Desktop4
 							   controlPanel.activeMonitor = 4;
 								controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
-						   }
+                                controlPanel.switchDesktop(4);
+                           }
 					   }
 					   break;
 	}
@@ -697,6 +700,20 @@ HMENU ControlPanel::getSysTrayMenu() {
 
 void ControlPanel::switchDesktop(int desktop) {
 	currScene->doRender = false;
-	currScene->Models[0]->desktop->newDesktop();
+    for (int i = 0; i < 4; i++) {
+        currScene->Monitors[i]->active = false;
+        //(currScene->Monitors[i]->thread);
+    }
+    DWORD result = WaitForSingleObject(currScene->Monitors[desktop -1]->thread, 0);
+    if (result == WAIT_OBJECT_0) {
+        // the thread handle is signaled - the thread has terminated
+        //create new thread
+    }
+    else {
+        // the thread handle is not signaled - the thread is still alive
+    }
+    currScene->Monitors[desktop - 1]->active = true;
+    ResumeThread(currScene->Monitors[desktop - 1]->thread);
+	//currScene->Models[0]->desktop->newDesktop();
 	currScene->doRender = true;
 }

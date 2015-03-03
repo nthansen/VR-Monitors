@@ -22,7 +22,7 @@ ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
 float			 Yaw(3.141592f);		// Horizontal rotation of the player
-Vector3f         Pos(0, 0, -1.0f);	// Position of player
+Vector3f         Pos(0, 0, -2.0f);	// Position of player
 int				 clock;
 
 #define   OVR_D3D_VERSION 11
@@ -154,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
                     if (!roomScene.Monitors[i]->keyMutexRead){
                         hr = roomScene.Monitors[i]->desktop->stage->QueryInterface(__uuidof(IDXGIKeyedMutex), reinterpret_cast<void**>(&roomScene.Monitors[i]->keyMutexRead));
                     }
-                    hr = roomScene.Monitors[i]->keyMutexRead->AcquireSync(1, 10);// 10 ms gives us about 60 fps worst case
+                    hr = roomScene.Monitors[i]->keyMutexRead->AcquireSync(1, 100);// 10 ms gives us about 60 fps worst case
                     if (hr == WAIT_TIMEOUT)
                     {
                         // Another thread has the keyed mutex so try again later

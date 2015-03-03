@@ -25,8 +25,7 @@ void Scene::Add(Model * n)
 // Main world
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(2), doRender(true),
-
-startingPoint(-.5, -.5, -.5, .5,.5,.5,//monitorWidth, monitorHeight, monitorDepth,
+startingPoint(-.5, -.5, -.5, .5, .5, .5,//monitorWidth, monitorHeight, monitorDepth,
 Model::Color(128, 128, 128))
 {
     Vector3f monitorOffset = Vector3f(0, 0, 0);
@@ -55,7 +54,33 @@ Model::Color(128, 128, 128))
     loadSkyboxes();
     // Construct geometry
     // first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
-    addMonitor(0.0, Vector3<float>(0.0, 0.0, 0.0));
+
+    //create 4  capture threads
+    for (int i = 0; i < 4; i++) {
+        num_monitors++;//add one to monitors here to determine how to group them below
+        Desktop*  d = new Desktop(num_monitors - 1); //num_monitors is 1 indexed instead of 0
+
+        // add new monitor
+        Model* m = new Model(Vector3f(i - 2 , (i*.1), startingPoint.z1), generated_texture[0]);
+        m->active = false;
+        m->Output = num_monitors - 1;
+        m->desktop = d;
+        //ResumeThread(m->thread);//start thread
+        // add new desktop
+        //d->init(false, true);
+
+        //everything is added based on the first monitor the startingpoint monitor
+        m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
+            startingPoint.y2, startingPoint.z2, startingPoint.color);
+        m->AllocateBuffers();
+        Add(m);//add monitor to scene array to be rendered;
+        Monitors[num_monitors - 1] = m;
+    }
+    //start the default
+    DWORD threadID;
+    Monitors[0]->thread = CreateThread(nullptr, 0, captureDesktop, Monitors[0], CREATE_SUSPENDED, &threadID);
+    activeDesktop = 0;
+
     // skybox
     Model* m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
     m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
@@ -139,29 +164,29 @@ DWORD WINAPI captureDesktop(void* params) {
     bool skipCapture = false;
     FRAME_DATA frame;
     bool timedout;
-    while (true) {
+    while (input->active) {
         //capture
-        if (!skipCapture) {
-            //release to be safe
-            input->desktop->relaseFrame();
-            input->desktop->getFrame(&frame, &timedout);
-            if (frame.Frame == nullptr || timedout) {
-                //could not get frame try again later
-                input->desktop->relaseFrame();
-                //Sleep(10);
-                continue;
-            }
-        }
-
-        hr = KeyMutex->AcquireSync(0, 100); //possibly dangerous because an old image will be renderd if the mutex isn't released 
+        hr = KeyMutex->AcquireSync(0, 1000); //possibly dangerous because an old image will be renderd if the mutex isn't released 
         if (hr == WAIT_TIMEOUT) {
             //we don't have access try again later
             //techincally this should never happen
             //input->desktop->relaseFrame();
-            //  hr = KeyMutex->ReleaseSync(1);
+            Sleep(10);
             skipCapture = true;
             continue;
-        }        // the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
+        }
+
+        //release to be safe
+        input->desktop->relaseFrame();
+        input->desktop->getFrame(&frame, &timedout);
+        if (frame.Frame == nullptr || timedout) {
+            //could not get frame try again later
+            input->desktop->relaseFrame();
+            hr = KeyMutex->ReleaseSync(1);
+            continue;
+        }
+
+        // the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
         skipCapture = false;
         HRESULT hr;
         input->desktop->deviceContext->CopyResource(input->desktop->stage, frame.Frame);
@@ -169,10 +194,9 @@ DWORD WINAPI captureDesktop(void* params) {
         /*SaveDDSTextureToFile(DX11.Context, input->desktop->masterImage, L"masterImage.dds");
         SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stageHandle, L"stageHandle.dds");
         */
-        SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stage, L"stage.dds");
-
-        hr = KeyMutex->ReleaseSync(1);
+        // SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stage, L"stage.dds");
         input->desktop->relaseFrame();
+        hr = KeyMutex->ReleaseSync(1);
     }
 Exit:
     //do cleanup work
@@ -180,10 +204,11 @@ Exit:
 
 }
 
-void Scene::addMonitor(float yaw, Vector3f _pos){
+void Scene::addMonitor(float yaw, Vector3f _pos){ //we probably won't need this anymore
     //deactivate all monitors
     for (int i = 0; i < num_monitors; i++) {
         Monitors[i]->active = false;
+        SuspendThread(Monitors[i]->thread);
     }
     if (num_monitors < 3) {
         static Model::Color tex_pixels[4][256 * 256];
@@ -200,9 +225,6 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
         m->desktop = d;
 
         m->thread = CreateThread(nullptr, 0, captureDesktop, m, 0, &threadID);
-        //ResumeThread(m->thread);//start thread
-        // add new desktop
-        //d->init(false, true);
 
         _pos = Vector3f(0, 0, 0);
 
