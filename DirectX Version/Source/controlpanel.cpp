@@ -48,22 +48,33 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							   PostQuitMessage(0);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP1) {
+							   //intial attempt
 							   /*currScene->Models[0]->Pos = *cameraPos;
 							   currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), 3.1415927);*/
-							   controlPanel.rotate(1.0);
+
+							   //second attempt works but doesnt do the transition smoothly
+							   //controlPanel.rotate(1.0);
+
+							   //third attempt set active monitor here and set rotating monitor to true
+							   controlPanel.activeMonitor = 1;
+							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP2) {
 							   // switch to Desktop2
-							   controlPanel.rotate(2.0);
+							   controlPanel.activeMonitor = 2;
+							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+							  // controlPanel.rotate(2.0);
 							   controlPanel.switchDesktop(1);
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP3) {
 							   // switch to Desktop3
-							   controlPanel.rotate(3.0);
+							   controlPanel.activeMonitor = 3;
+							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP4) {
 							   // switch to Desktop4
-							   controlPanel.rotate(4.0);
+							   controlPanel.activeMonitor = 4;
+								controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
 						   }
 					   }
 					   break;
@@ -145,18 +156,45 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 //rotate 
 //called from system menu, rotates to the selected monitor
+//passed the active monitor from update control panel and checks every update if rotating monitor
 void ControlPanel::rotate(float monitorNum){
+	Model *mod = currScene->Models[0];//pointer to the monitor cube
 	// rotate the cube by pi/2 times the monitor side we want
-	//float transition = .9;
-	//int control = 300;
-	//Quatf temp = currScene->Models[0]->Rot;
-	//for (transition; transition < control; transition+=transition){
-		//currScene->Models[0]->Rot = Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * monitorNum);
+	//need to rotate the cube a little bit each update until the rotation
+	//is equal to the complete rotation of the active monitor
+	if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * monitorNum)) > 0.01){
+		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI / 2 * monitorNum),.9);//do the rotation
+		
+		//check if we are done rotating and set the final rotated matrix
+		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), 3.14159 / 2 * monitorNum)) <= 0.01){
+			currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();
+			//positioning = true;//now we need to position if we want any additional future transforms do it there
+		}
+		
+		
+	}
+	//positioning keeps us from moving a monitor that is already chosen or equal to the rotation above
+	//we can keep this feature if we would like to move the cube around while it is rotating
+	else if (positioning){
+		//Matrix4f  modmat = mod->rotatedMatrix;
+		//mod->Pos = mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9);//linearly interpolate the position of the monitor each go
+		//check if we are finished positioning the cube
+		//if (mod->Pos.Compare(mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9)) > .0001){//compare positions
+			positioning = false;//we are done moving set to false
+			//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
 	//}
-		currScene->Models[0]->Rot = Quatf(Vector3f(0, .000001, 0), PI / 2 * monitorNum);
-		Model *mod = currScene->Models[0];
-		Matrix4f  modmat = mod->GetMatrix();
-		mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+	}
+	//if the angles are the same then we are done rotating so set the bool to false so
+	//that update monitor wont call this function until the next rotate monitor call
+	else{
+		//if we want to change the position of the monitor we can do so here just before we are finished
+		//we can also jump to a totally different monitor at the last minute
+		//Matrix4f  modmat = mod->GetMatrix();//need to set the original matrix each iteration for the transform
+		//mod->Pos = mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9);//linearly interpolate the position of the monitor each go
+		//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+		
+		rotatingMonitor = false;//we are finished changing the monitor position so dont call from updatecontrol panel anymore
+	}
 }
 
 
@@ -176,20 +214,22 @@ ControlPanel::ControlPanel() {
 
 ControlPanel ControlPanel::createNewControlPanel() {
 	ControlPanel anotherControlPanel;
-	anotherControlPanel.createControlPanel(NULL, currScene, cameraPos, oculus, yaw);
+	anotherControlPanel.createControlPanel(NULL, currScene, cameraPos, oculus, yaw, view, proj);
 	return anotherControlPanel;
 }
 
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
-void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw) {
+void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector3f * pos, ovrHmd * theOculus, float * yaw, Matrix4f * _view, Matrix4f * _proj) {
 
 	// now we have access to the information we need
 	currScene = roomScene;
 	cameraPos = pos;
 	oculus = theOculus;
 	this->yaw = yaw;
+	this->view = _view;
+	this->proj = _proj;
 
 	// used to have a class for the window with the styles we want
 	WNDCLASSW wc; 
@@ -457,10 +497,10 @@ void ControlPanel::createDropDowns(){
 }
 
 void ControlPanel::createSliders() {
-	FLOAT iMin = -5;     // minimum value in trackbar range 
-	FLOAT iMax = -1;     // maximum value in trackbar range 
-	FLOAT iSelMin = -5;  // minimum value in trackbar selection 
-	FLOAT iSelMax = -1;  // maximum value in trackbar selection 
+	FLOAT iMin = -2;     // minimum value in trackbar range 
+	FLOAT iMax = 2;     // maximum value in trackbar range 
+	FLOAT iSelMin = -2;  // minimum value in trackbar selection 
+	FLOAT iSelMax = 2;  // maximum value in trackbar selection 
 
 	cameraPositionTrackbar = CreateWindowEx(
 		0,                               // no extended styles 
@@ -491,7 +531,7 @@ void ControlPanel::createSliders() {
 
 	SendMessage(cameraPositionTrackbar, TBM_SETPOS,
 		(WPARAM)TRUE,                   // redraw flag 
-		(LPARAM)-3);
+		(LPARAM)0);
 
 
 	/*
@@ -578,8 +618,9 @@ void ControlPanel::createText() {
 
 // move the camera on the z coordinates
 void ControlPanel::moveCameraZ(float zValue) {
-		cameraPos->z = zValue;
-		currScene->Models[1]->Pos.z = zValue;
+	int defaultDistance = -1;
+	cameraPos->z = zValue *.1 + defaultDistance;
+	currScene->Models[1]->Pos.z = zValue * .1 + defaultDistance;
 }
 
 void ControlPanel::resizeMonitor(float resizeValue){
@@ -594,6 +635,9 @@ void ControlPanel::updateControlPanel() {
 	if (movingMonitor) {
 		moveMonitor();
 	}
+	if (rotatingMonitor){
+		rotate(activeMonitor);
+	}
 }
 
 //rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
@@ -603,6 +647,8 @@ void ControlPanel::moveMonitor() {
 	currScene->Models[0]->Pos = *cameraPos;
 	currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
 }
+
+
 
 void ControlPanel::resetMonitors() {
 	// eventualyl will be a for loop

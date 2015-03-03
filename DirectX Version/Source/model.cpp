@@ -7,6 +7,8 @@ keyMutexRead(nullptr)
 	Pos = arg_pos;
 	OriginalPos = Pos;
 	OriginalRot = Quatf();
+	OriginalMat = this->GetMatrix();
+	rotatedMatrix = this->GetMatrix();
 	Fill = arg_Fill;
 	scale = 1;
     active = false;

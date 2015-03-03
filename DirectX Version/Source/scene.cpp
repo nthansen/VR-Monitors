@@ -26,10 +26,9 @@ void Scene::Add(Model * n)
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(2), doRender(true),
 
-startingPoint(0, 0, 0, monitorWidth, monitorHeight, monitorDepth,
+startingPoint(-.5, -.5, -.5, .5,.5,.5,//monitorWidth, monitorHeight, monitorDepth,
 Model::Color(128, 128, 128))
 {
-
     Vector3f monitorOffset = Vector3f(0, 0, 0);
 
     // Construct textures
@@ -53,13 +52,10 @@ Model::Color(128, 128, 128))
         // then create these textures into shaders
         generated_texture[k] = new ShaderFill(ModelVertexDesc, 3, Box, t);
     }
-
     loadSkyboxes();
-
     // Construct geometry
     // first gives the starting x y and z coordinantes then the ending x y and z coordinantes of the box and then the initial color of the model
     addMonitor(0.0, Vector3<float>(0.0, 0.0, 0.0));
-
     // skybox
     Model* m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
     m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));

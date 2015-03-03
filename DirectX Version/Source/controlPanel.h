@@ -24,7 +24,7 @@ public:
 	~ControlPanel();
 
 	// creates the actual window and recieves the scene and pos to use for later
-	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw);
+	void createControlPanel(HINSTANCE hinst, Scene *roomScene, Vector3f *pos, ovrHmd * HMD, float * yaw, Matrix4f *view, Matrix4f *proj);
 
 	// changes the background based on the int given
 	void changeBackground(int background);
@@ -49,6 +49,9 @@ public:
 
 	// Check to make sure we aren't currently moving the monitor
 	bool movingMonitor;
+	bool rotatingMonitor;
+	bool positioning;
+	int  activeMonitor = 0;
 
 	// used whenever we move the monitor since it needs to be constantly updating
 	void updateControlPanel();
@@ -83,6 +86,8 @@ private:
 	HMENU sysTrayMenu;
 	ovrHmd * oculus;
 	float * yaw;
+	Matrix4f * view;
+	Matrix4f * proj;
 	const float PI = 3.1415972f;
 
 	// used so we can manipulate the stuff inside the scene and the camera
@@ -96,7 +101,8 @@ private:
 
 	// the function to actually move the monitor
 	void moveMonitor();
-
+	//rotates the monitor cube
+	//void rotateMonitor(int);
 
 	// sets up the control panel by calling the helper functions below
 	void setupControlPanel();
