@@ -497,10 +497,10 @@ void ControlPanel::createDropDowns(){
 }
 
 void ControlPanel::createSliders() {
-	FLOAT iMin = -5;     // minimum value in trackbar range 
-	FLOAT iMax = -1;     // maximum value in trackbar range 
-	FLOAT iSelMin = -5;  // minimum value in trackbar selection 
-	FLOAT iSelMax = -1;  // maximum value in trackbar selection 
+	FLOAT iMin = -2;     // minimum value in trackbar range 
+	FLOAT iMax = 2;     // maximum value in trackbar range 
+	FLOAT iSelMin = -2;  // minimum value in trackbar selection 
+	FLOAT iSelMax = 2;  // maximum value in trackbar selection 
 
 	cameraPositionTrackbar = CreateWindowEx(
 		0,                               // no extended styles 
@@ -531,7 +531,7 @@ void ControlPanel::createSliders() {
 
 	SendMessage(cameraPositionTrackbar, TBM_SETPOS,
 		(WPARAM)TRUE,                   // redraw flag 
-		(LPARAM)-3);
+		(LPARAM)0);
 
 
 	/*
@@ -618,8 +618,9 @@ void ControlPanel::createText() {
 
 // move the camera on the z coordinates
 void ControlPanel::moveCameraZ(float zValue) {
-		cameraPos->z = zValue;
-		currScene->Models[1]->Pos.z = zValue;
+	int defaultDistance = -1;
+	cameraPos->z = zValue *.1 + defaultDistance;
+	currScene->Models[1]->Pos.z = zValue * 2 + defaultDistance;
 }
 
 void ControlPanel::resizeMonitor(float resizeValue){

@@ -68,7 +68,7 @@ Model::Color(128, 128, 128))
 	m = new Model(Vector3f(0, 0, 0), generated_texture[4]);
 	m->AddSolidColorBox(-10, -10, -10, 10, 10, 10, Model::Color(128, 128, 128));
 	m->AllocateBuffers();
-	m->Pos.z = -3;
+	m->Pos.z = -1;
 	Add(m);
 }
 
