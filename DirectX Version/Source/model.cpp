@@ -1,6 +1,7 @@
 #include "model.h"
 
-Model::Model(Vector3f arg_pos, ShaderFill * arg_Fill)
+Model::Model(Vector3f arg_pos, ShaderFill * arg_Fill) : 
+keyMutexRead(nullptr)
 {
 	numVertices = 0; numIndices = 0;
 	Pos = arg_pos;
@@ -8,6 +9,7 @@ Model::Model(Vector3f arg_pos, ShaderFill * arg_Fill)
 	OriginalRot = Quatf();
 	Fill = arg_Fill;
 	scale = 1;
+    active = false;
 }
 
 Matrix4f& Model::GetMatrix()

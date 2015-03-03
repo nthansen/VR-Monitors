@@ -22,6 +22,8 @@ struct startFloat {
 };
 
 //------------------------------------------------------------------------- 
+DWORD WINAPI captureDesktop(void* params);
+
 struct Scene
 {
 	

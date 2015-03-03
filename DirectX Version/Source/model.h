@@ -9,51 +9,55 @@
 
 using namespace DirectX;
 using namespace std;
-
 //---------------------------------------------------------------------------
 struct Model
 {
-	struct Color
-	{
-		unsigned char R, G, B, A;
+    struct Color
+    {
+        unsigned char R, G, B, A;
 
-		Color(unsigned char r = 0, unsigned char g = 0, unsigned char b = 0, unsigned char a = 0xff)
-			: R(r), G(g), B(b), A(a)
-		{ }
-	};
+        Color(unsigned char r = 0, unsigned char g = 0, unsigned char b = 0, unsigned char a = 0xff)
+            : R(r), G(g), B(b), A(a)
+        { }
+    };
 
-	struct Vertex
-	{
-		Vector3f  Pos;
-		Color     C;
-		float     U, V;
-	};
+    struct Vertex
+    {
+        Vector3f  Pos;
+        Color     C;
+        float     U, V;
+    };
 
-	Vector3f     Pos;
-	Vector3f	 OriginalPos;
-	Quatf        Rot;
-	Quatf		 OriginalRot;
-	Matrix4f     Mat;
-	int          numVertices, numIndices;
-	Vertex       Vertices[2000]; //Note fixed maximum
-	uint16_t     Indices[2000];
-	Desktop *		desktop;
-	ShaderFill * Fill;
-	DataBuffer * VertexBuffer, *IndexBuffer;
-	int scale;
+    Vector3f     Pos;
+    Vector3f	 OriginalPos;
+    Quatf        Rot;
+    Quatf		 OriginalRot;
+    Matrix4f     Mat;
+    int          numVertices, numIndices;
+    Vertex       Vertices[2000]; //Note fixed maximum
+    uint16_t     Indices[2000];
+    Desktop *		desktop;
+    bool active;
+    HANDLE thread;
+    IDXGIKeyedMutex *keyMutexRead;
+    UINT Output;
+    INT OffsetX;
+    INT OffsetY;
+    ShaderFill * Fill;
+    DataBuffer * VertexBuffer, *IndexBuffer;
+    int scale;
 
-	Model(Vector3f arg_pos, ShaderFill * arg_Fill);
-	Matrix4f& GetMatrix();
+    Model(Vector3f arg_pos, ShaderFill * arg_Fill);
+    Matrix4f& GetMatrix();
 
-	void setOriginalPos();
+    void setOriginalPos();
 
-	void AddVertex(const Vertex& v);
+    void AddVertex(const Vertex& v);
 
-	void AddIndex(uint16_t a);
+    void AddIndex(uint16_t a);
 
-	void AllocateBuffers();
+    void AllocateBuffers();
 
-	void AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
+    void AddSolidColorBox(float x1, float y1, float z1, float x2, float y2, float z2, Color c);
 };
-
 #endif

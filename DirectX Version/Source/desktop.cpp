@@ -1,53 +1,40 @@
 #include "desktop.h"
 
 //forward declaration
-D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
-    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "Color", 0, DXGI_FORMAT_B8G8R8A8_UNORM, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-};
 
+Desktop::Desktop(int id) : Desktop() {
+    switch (id) {
+    case 0:
+        //the is the original 'workspace'
+        //establish primary desktop for the first output
+        // named Default
+        initialized = true;
+        desktopName = L"Default";
+        mainDesktop = OpenDesktop(L"Default", DF_ALLOWOTHERACCOUNTHOOK, true, DESKTOP_JOURNALRECORD | DESKTOP_JOURNALPLAYBACK | DESKTOP_CREATEWINDOW | DESKTOP_ENUMERATE | DESKTOP_WRITEOBJECTS | DESKTOP_SWITCHDESKTOP | DESKTOP_CREATEMENU | DESKTOP_HOOKCONTROL | DESKTOP_READOBJECTS);
+        break;
+    case 1:
+        desktopName = L"Desktop1";
+        mainDesktop = CreateDesktop(L"Desktop1", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+        break;
+    case 2:
+        desktopName = L"Desktop2";
+        mainDesktop = CreateDesktop(L"Desktop2", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+        break;
+    case 3:
+        desktopName = L"Desktop3";
+        mainDesktop = CreateDesktop(L"Desktop3", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+        break;
+    }
+}
 Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
+masterImage(nullptr),
+stage(nullptr),
 metaDataBuffer(nullptr),
 metaDataSize(0),
-Device(nullptr)
+Device(nullptr),
+initialized(false)
 {
-    //initilize the desktpp
-    RtlZeroMemory(&OutputDesc, sizeof(OutputDesc));
-    HRESULT hr;
-    D3D_DRIVER_TYPE drivers[] =
-    {
-        D3D_DRIVER_TYPE_HARDWARE,
-        D3D_DRIVER_TYPE_WARP,
-        D3D_DRIVER_TYPE_REFERENCE,
-    };
-
-    D3D_FEATURE_LEVEL FeatureLevels[] =
-    {
-        D3D_FEATURE_LEVEL_11_0,
-        D3D_FEATURE_LEVEL_10_1,
-        D3D_FEATURE_LEVEL_10_0,
-        D3D_FEATURE_LEVEL_9_1
-    };
-    UINT featureLength = ARRAYSIZE(FeatureLevels);
-    D3D_FEATURE_LEVEL FeatureLevel;
-
-    for (UINT i = 0; i < 3; i++) {
-        //create the dxgi adapter
-        //driver type is not software so it's ok to pass null for the HMODULE   
-        hr = D3D11CreateDevice(nullptr, drivers[i], nullptr, 0, FeatureLevels,
-            featureLength, D3D11_SDK_VERSION, &Device, &FeatureLevel, &deviceContext);
-        if (SUCCEEDED(hr))
-        {
-            break;
-        }
-    }
-    if (FAILED(hr))
-    {
-        //could not create
-    }
-
 }
 
 int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
@@ -55,7 +42,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     DXGI_OUTDUPL_FRAME_INFO frameData;
     HRESULT hr;
 
-    hr = desktop->AcquireNextFrame(1, &frameData, &desktopResource);
+    hr = desktop->AcquireNextFrame(100, &frameData, &desktopResource);
     if (hr == DXGI_ERROR_WAIT_TIMEOUT)
     {
         *timedout = true;
@@ -65,6 +52,10 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
 
     if (FAILED(hr)) {
         //could not get frame
+        if (hr == DXGI_ERROR_ACCESS_LOST) {
+            //reinitialize
+            init(output);
+        }
         *timedout = true;
         return -1;
     }
@@ -152,69 +143,100 @@ int Desktop::relaseFrame(){
     return 0;
 }
 
-void Desktop::newDesktop() {
-	/*
-	_THREAD_DATA * threadData = new _THREAD_DATA;
-	threadData->OffsetX = 1920;
-	threadData->OffsetY = 1080;
-	threadData->PtrInfo = &ptrInfo;
-	*/
-	mainDesktop = GetThreadDesktop(GetCurrentThreadId());
-
-	HDESK CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
-	//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
-
-	SwitchDesktop(CurrentDesktop);
-	SetThreadDesktop(CurrentDesktop);
-
-	system("start explorer");
-	WCHAR cmd[] = L"explorer";
-	STARTUPINFOW si = { 0 };
-	si.cb = sizeof (si);
-	si.lpDesktop = L"Virtual Desktop";
-	si.wShowWindow = SW_SHOW;
-	PROCESS_INFORMATION pi;
-	CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
-
-	SwitchDesktop(mainDesktop);
-	SetThreadDesktop(mainDesktop);
+BOOL __stdcall EnumDesktopProc(LPTSTR lpszDesktop, LPARAM lParam){
+    return true;
 }
 
-void Desktop::init(boolean newMonitor, boolean newDesktop) {
+void Desktop::newDesktop() {
+    /*
+    _THREAD_DATA * threadData = new _THREAD_DATA;
+    threadData->OffsetX = 1920;
+    threadData->OffsetY = 1080;
+    threadData->PtrInfo = &ptrInfo;
+    */
+    mainDesktop = GetThreadDesktop(GetCurrentThreadId());
+    EnumDesktops(NULL, EnumDesktopProc, NULL);
+    HDESK CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+    //thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
 
-	HDESK mainDesktop = GetThreadDesktop(GetCurrentThreadId());
+    SwitchDesktop(CurrentDesktop);
+    SetThreadDesktop(CurrentDesktop);
 
-	HDESK CurrentDesktop = nullptr;
-	thread = nullptr;
+    system("start explorer");
+    WCHAR cmd[] = L"explorer.exe";
+    STARTUPINFOW si = { 0 };
+    si.cb = sizeof(si);
+    si.lpDesktop = L"Virtual Desktop";
+    si.wShowWindow = SW_SHOW;
+    PROCESS_INFORMATION pi;
+    CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
 
-	if (newDesktop) {
-		/*
-		_THREAD_DATA * threadData = new _THREAD_DATA;
-		threadData->OffsetX = 1920;
-		threadData->OffsetY = 1080;
-		threadData->PtrInfo = &ptrInfo;
-		*/
+    SwitchDesktop(mainDesktop);
+    SetThreadDesktop(mainDesktop);
+}
 
-		CurrentDesktop = CreateDesktop(TEXT("Virtual Desktop"), NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
-		//thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
+//Starts the capture of the desktop object
+void Desktop::init(int outputNumber) {
+    //EnumWindowStations(EnumDesktopProc, NULL);
+    //EnumDesktops(GetProcessWindowStation(), EnumDesktopProc, NULL);
+    //switch the desktop to the current desktop 
+    output = outputNumber;
+    SwitchDesktop(mainDesktop);
+    SetThreadDesktop(mainDesktop);
 
-		SwitchDesktop(CurrentDesktop);
-		SetThreadDesktop(CurrentDesktop);
+    if (!initialized) {
+        /*
+        _THREAD_DATA * threadData = new _THREAD_DATA;
+        threadData->OffsetX = 1920;
+        threadData->OffsetY = 1080;
+        threadData->PtrInfo = &ptrInfo;
+        */ //thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
 
-		system("start explorer");
-		WCHAR cmd[] = L"explorer";
-		STARTUPINFOW si = { 0 };
-		si.cb = sizeof (si);
-		si.lpDesktop = L"Virtual Desktop";
-		si.wShowWindow = SW_SHOW;
-		PROCESS_INFORMATION pi;
-		CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
-	}
+        //SwitchDesktop(CurrentDesktop);
 
-
-	UINT Output = 0;
-
+        //  system("start explorer");
+        WCHAR cmd[] = L"explorer.exe";
+        STARTUPINFOW si = { 0 };
+        si.cb = sizeof(si);
+        si.lpDesktop = desktopName;
+        si.wShowWindow = SW_SHOW;
+        PROCESS_INFORMATION pi;
+        CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
+        initialized = true;
+    }
+    //initilize the desktpp
+    RtlZeroMemory(&OutputDesc, sizeof(OutputDesc));
     HRESULT hr;
+    D3D_DRIVER_TYPE drivers[] =
+    {
+        D3D_DRIVER_TYPE_HARDWARE,
+        D3D_DRIVER_TYPE_WARP,
+        D3D_DRIVER_TYPE_REFERENCE,
+    };
+
+    D3D_FEATURE_LEVEL FeatureLevels[] =
+    {
+        D3D_FEATURE_LEVEL_11_0,
+        D3D_FEATURE_LEVEL_10_1,
+        D3D_FEATURE_LEVEL_10_0,
+        D3D_FEATURE_LEVEL_9_1
+    };
+    UINT featureLength = ARRAYSIZE(FeatureLevels);
+    D3D_FEATURE_LEVEL FeatureLevel;
+
+    for (UINT i = 0; i < 3; i++) {
+        //create the dxgi adapter
+        //driver type is not software so it's ok to pass null for the HMODULE   
+        hr = D3D11CreateDevice(nullptr, drivers[i], nullptr, 0, FeatureLevels,
+            featureLength, D3D11_SDK_VERSION, &Device, &FeatureLevel, &deviceContext);
+        if (SUCCEEDED(hr))
+        {
+            break;
+        }
+    }
+
+
+    UINT Output = outputNumber;
 
 
     // Get DXGI device
@@ -222,6 +244,7 @@ void Desktop::init(boolean newMonitor, boolean newDesktop) {
     hr = DX11.Device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&DxgiDevice));
     if (FAILED(hr))
     {
+        printf("failed");
     }
 
     // Get DXGI adapter
@@ -231,24 +254,17 @@ void Desktop::init(boolean newMonitor, boolean newDesktop) {
     DxgiDevice = nullptr;
     if (FAILED(hr))
     {
+        printf("failed");
     }
-
-	if (newDesktop){
-		SwitchDesktop(mainDesktop);
-		SetThreadDesktop(mainDesktop);
-	}
-
-	if (newMonitor) {
-		Output = 1;
-	}
 
     // Get output
     IDXGIOutput* DxgiOutput = nullptr;
-    hr = DxgiAdapter->EnumOutputs(Output, &DxgiOutput);
+    hr = DxgiAdapter->EnumOutputs(0, &DxgiOutput);
     DxgiAdapter->Release();
     DxgiAdapter = nullptr;
     if (FAILED(hr))
     {
+        printf("failed");
     }
 
     DxgiOutput->GetDesc(&OutputDesc);
@@ -261,6 +277,7 @@ void Desktop::init(boolean newMonitor, boolean newDesktop) {
     DxgiOutput = nullptr;
     if (FAILED(hr))
     {
+        printf("failed");
     }
 
     hr = DxgiOutput1->DuplicateOutput(Device, &desktop);
@@ -282,7 +299,7 @@ void Desktop::init(boolean newMonitor, boolean newDesktop) {
     RtlZeroMemory(&dsDesc, sizeof(D3D11_TEXTURE2D_DESC));
     dsDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
     dsDesc.CPUAccessFlags = 0;
-    dsDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+    dsDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX;
     dsDesc.Width = frameDesc.Width;
     dsDesc.Height = frameDesc.Height;
     dsDesc.MipLevels = frameDesc.MipLevels;
@@ -294,37 +311,5 @@ void Desktop::init(boolean newMonitor, boolean newDesktop) {
 
     hr = Device->CreateTexture2D(&dsDesc, nullptr, &stage);
     deviceContext->CopyResource(stage, data.Frame);  //we save the data to an intermediary 
-    
-    D3D11_TEXTURE2D_DESC dsDesc2;
-
-    RtlZeroMemory(&dsDesc, sizeof(D3D11_TEXTURE2D_DESC));
-    dsDesc2.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-    dsDesc2.CPUAccessFlags = 0;
-    dsDesc2.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-    dsDesc2.Width = frameDesc.Width;
-    dsDesc2.Height = frameDesc.Height;
-    dsDesc2.MipLevels = frameDesc.MipLevels;
-    dsDesc2.ArraySize = 1;
-    dsDesc2.Format = frameDesc.Format;
-    dsDesc2.SampleDesc.Count = 1;
-    dsDesc2.SampleDesc.Quality = 0;
-    dsDesc2.Usage = D3D11_USAGE_DEFAULT;
-    
-    HANDLE Hnd(NULL);
-    IDXGIResource* DXGIResource = nullptr;
-    hr = stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
-    DXGIResource->GetSharedHandle(&Hnd);
-    DXGIResource->Release();
-    DXGIResource = nullptr;
-    ID3D11Texture2D* tmp;
-    hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
-
-    hr = DX11.Device->CreateTexture2D(&dsDesc2, nullptr, &masterImage);
-    
-    DX11.Context->CopyResource(masterImage, tmp);
-    DX11.Device->CreateShaderResourceView(masterImage, NULL, &masterView);
-    masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height), masterImage, masterView);
-    masterFill = new ShaderFill(ModelVertexDescMon, 3, 0, masterBuffer);
     this->relaseFrame();
-
 }

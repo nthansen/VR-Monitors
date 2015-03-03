@@ -43,24 +43,12 @@ typedef struct _PTR_INFO
 	LARGE_INTEGER LastTimeStamp;
 } PTR_INFO;
 
-typedef struct _THREAD_DATA
-{
-	UINT Output;
-	INT OffsetX;
-	INT OffsetY;
-	PTR_INFO* PtrInfo;
-} THREAD_DATA;
-
-
-
-//
-// FRA
-
 class Desktop {
 public:
     ID3D11Texture2D* desktopImage;
     ID3D11Texture2D* stage;
     ID3D11Texture2D* masterImage;
+    ID3D11Texture2D* stageHandle;
     ID3D11ShaderResourceView* masterView;
     ID3D11Device* Device;
     ID3D11DeviceContext* deviceContext;
@@ -71,15 +59,18 @@ public:
 
 	void newDesktop();
 	HDESK mainDesktop;
-
+    Desktop(int id);
     Desktop();
     ~Desktop();
 
-    void init(boolean newMonitor, boolean newDesktop); // binds the desktop to the current thread
+    void init(int outputNumber); // binds the desktop to the current thread
     //TODO: change return type to an enum
     _Success_(*Timeout == false && return == 0) int getFrame(_Out_ FRAME_DATA* Data, _Out_ bool* Timeout);
     int relaseFrame();
 private:
+    int output;
+    LPWSTR desktopName;
+    bool initialized;
     IDXGIOutputDuplication* desktop; //desktop object to get frame data from
     _Field_size_bytes_(MetaDataSize) BYTE* metaDataBuffer;
     UINT metaDataSize;
@@ -88,6 +79,5 @@ private:
     static int const timeout = 500; //desktop image grab timoute in ms
 	HANDLE thread;
 };
-
 
 #endif
