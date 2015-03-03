@@ -21,7 +21,7 @@ ImageBuffer    * pEyeDepthBuffer[2];	// For the eye buffers to use when rendered
 ovrPosef         EyeRenderPose[2];		// Useful to remember where the rendered eye originated
 float            YawAtRender[2];		// Useful to remember where the rendered eye originated
 float			 Yaw(3.141592f);		// Horizontal rotation of the player
-Vector3f         Pos(1, 1, -3.0f);	// Position of player
+Vector3f         Pos(0, 0, -1.0f);	// Position of player
 int				 clock;
 
 #define   OVR_D3D_VERSION 11
@@ -92,6 +92,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
+	//Vector3f mpos = roomScene.Models[0]->Pos; roomScene.Models[0]->Pos = roomScene.Models[0]->Mat.Transform(Vector3f(-2, 0, 0));
 	//need to pass in view and proj to control panel to render model while transitioning
 	Matrix4f view;
 	Matrix4f proj;
@@ -185,10 +186,12 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 				//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 				//we must offset this to rotate negative pi radians so the object will be in front of us
 				//roomScene.Models[0]->Pos = Pos;
-				Vector3f mpos = roomScene.Models[0]->Pos;
-				roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(1, 0, 0), PI / 2 * count++), .9);
 				Model *mod = roomScene.Models[0];
-				Matrix4f  modmat = mod->GetMatrix();
+				//mod->Pos.x = 1;
+				//mod->Mat = Matrix4f::Matrix4() * mod->Mat.Translation(Vector3f(4, 0, 0));
+				//roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, 1, 0), PI / 2 * count++), .9);
+				roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 4 * count++);
+				//Matrix4f  modmat = mod->GetMatrix();
 				//roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 2);
 				//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
 				//mod->Pos = Vector3f(-2, 0, 0);

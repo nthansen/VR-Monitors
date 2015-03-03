@@ -165,17 +165,18 @@ void ControlPanel::rotate(float monitorNum){
 	if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * monitorNum)) > 0.01){
 		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI / 2 * monitorNum),.9);//do the rotation
 		
-		//check if we are done rotating and set the matrix
+		//check if we are done rotating and set the final rotated matrix
 		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), 3.14159 / 2 * monitorNum)) <= 0.01){
 			currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();
-			//positioning = true;//now we need to position
+			//positioning = true;//now we need to position if we want any additional future transforms do it there
 		}
 		
 		
 	}
 	//positioning keeps us from moving a monitor that is already chosen or equal to the rotation above
+	//we can keep this feature if we would like to move the cube around while it is rotating
 	else if (positioning){
-		Matrix4f  modmat = mod->rotatedMatrix;
+		//Matrix4f  modmat = mod->rotatedMatrix;
 		//mod->Pos = mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9);//linearly interpolate the position of the monitor each go
 		//check if we are finished positioning the cube
 		//if (mod->Pos.Compare(mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9)) > .0001){//compare positions
@@ -186,12 +187,13 @@ void ControlPanel::rotate(float monitorNum){
 	//if the angles are the same then we are done rotating so set the bool to false so
 	//that update monitor wont call this function until the next rotate monitor call
 	else{
-		
-		Matrix4f  modmat = mod->GetMatrix();//need to set the original matrix each iteration for the transform
+		//if we want to change the position of the monitor we can do so here just before we are finished
+		//we can also jump to a totally different monitor at the last minute
+		//Matrix4f  modmat = mod->GetMatrix();//need to set the original matrix each iteration for the transform
 		//mod->Pos = mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9);//linearly interpolate the position of the monitor each go
-		mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+		//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
 		
-		rotatingMonitor = false;
+		rotatingMonitor = false;//we are finished changing the monitor position so dont call from updatecontrol panel anymore
 	}
 }
 

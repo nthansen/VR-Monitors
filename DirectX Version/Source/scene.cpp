@@ -20,7 +20,7 @@ void Scene::Add(Model * n)
 Scene::Scene() :
 num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(2), doRender(true),
 
-startingPoint(0, 0, 0, monitorWidth, monitorHeight, monitorDepth,
+startingPoint(-.5, -.5, -.5, .5,.5,.5,//monitorWidth, monitorHeight, monitorDepth,
 Model::Color(128, 128, 128))
 {
 	
