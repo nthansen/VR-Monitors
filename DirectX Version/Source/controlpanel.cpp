@@ -620,7 +620,7 @@ void ControlPanel::createText() {
 void ControlPanel::moveCameraZ(float zValue) {
 	int defaultDistance = -1;
 	cameraPos->z = zValue *.1 + defaultDistance;
-	currScene->Models[1]->Pos.z = zValue * 2 + defaultDistance;
+	currScene->Models[1]->Pos.z = zValue * .1 + defaultDistance;
 }
 
 void ControlPanel::resizeMonitor(float resizeValue){
