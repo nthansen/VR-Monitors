@@ -5,6 +5,7 @@
 #include <d3d11.h>
 #include <d3d11_2.h>
 #include <dxgi1_2.h>
+#include <string.h>
 #include <sal.h>
 #include <new>
 #include <warning.h>
@@ -34,60 +35,50 @@ typedef struct FRAME_DATA
 //
 typedef struct _PTR_INFO
 {
-	_Field_size_bytes_(BufferSize) BYTE* PtrShapeBuffer;
-	DXGI_OUTDUPL_POINTER_SHAPE_INFO ShapeInfo;
-	POINT Position;
-	bool Visible;
-	UINT BufferSize;
-	UINT WhoUpdatedPositionLast;
-	LARGE_INTEGER LastTimeStamp;
+    _Field_size_bytes_(BufferSize) BYTE* PtrShapeBuffer;
+    DXGI_OUTDUPL_POINTER_SHAPE_INFO ShapeInfo;
+    POINT Position;
+    bool Visible;
+    UINT BufferSize;
+    UINT WhoUpdatedPositionLast;
+    LARGE_INTEGER LastTimeStamp;
 } PTR_INFO;
-
-typedef struct _THREAD_DATA
-{
-	UINT Output;
-	INT OffsetX;
-	INT OffsetY;
-	PTR_INFO* PtrInfo;
-} THREAD_DATA;
-
-
-
-//
-// FRA
 
 class Desktop {
 public:
     ID3D11Texture2D* desktopImage;
     ID3D11Texture2D* stage;
     ID3D11Texture2D* masterImage;
+    ID3D11Texture2D* stageHandle;
     ID3D11ShaderResourceView* masterView;
     ID3D11Device* Device;
     ID3D11DeviceContext* deviceContext;
     ShaderFill* masterFill;
     ImageBuffer * masterBuffer;
 
-	PTR_INFO ptrInfo;
+    PTR_INFO ptrInfo;
 
-	void newDesktop();
-	HDESK mainDesktop;
-
+    void newDesktop(int id);
+    HDESK mainDesktop;
+    Desktop(int id);
     Desktop();
     ~Desktop();
 
-    void init(boolean newMonitor, boolean newDesktop); // binds the desktop to the current thread
+    void init(int outputNumber); // binds the desktop to the current thread
     //TODO: change return type to an enum
     _Success_(*Timeout == false && return == 0) int getFrame(_Out_ FRAME_DATA* Data, _Out_ bool* Timeout);
     int relaseFrame();
 private:
+    int output;
+    LPWSTR desktopName;
+    bool initialized;
     IDXGIOutputDuplication* desktop; //desktop object to get frame data from
     _Field_size_bytes_(MetaDataSize) BYTE* metaDataBuffer;
     UINT metaDataSize;
     UINT outputNumber;
     DXGI_OUTPUT_DESC OutputDesc;
     static int const timeout = 500; //desktop image grab timoute in ms
-	HANDLE thread;
+    HANDLE thread;
 };
-
 
 #endif

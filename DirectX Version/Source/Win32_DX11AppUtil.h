@@ -6,7 +6,7 @@
 #include <d3dcompiler.h>
 
 using namespace OVR;
-
+static int comm;
 //---------------------------------------------------------------------
 struct DirectX11
 {

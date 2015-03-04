@@ -58,6 +58,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							   //third attempt set active monitor here and set rotating monitor to true
 							   controlPanel.activeMonitor = 1;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+                               controlPanel.switchDesktop(0);
+
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP2) {
 							   // switch to Desktop2
@@ -75,6 +77,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							   // switch to Desktop4
 							   controlPanel.activeMonitor = 4;
 								controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+                                controlPanel.switchDesktop(2);
+
 						   }
 					   }
 					   break;
@@ -697,6 +701,6 @@ HMENU ControlPanel::getSysTrayMenu() {
 
 void ControlPanel::switchDesktop(int desktop) {
 	currScene->doRender = false;
-	currScene->Models[0]->desktop->newDesktop();
+	currScene->Models[0]->desktop->newDesktop(desktop);
 	currScene->doRender = true;
 }

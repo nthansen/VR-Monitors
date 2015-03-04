@@ -11,6 +11,7 @@
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "controlPanel.h"
 #include "desktop.h"
+#include "../3rdParty/ScreenGrab/ScreenGrab.h"
 
 
 ovrHmd           HMD;					// The handle of the headset
@@ -30,7 +31,14 @@ int				 clock;
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
-
+    HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, L"SingleInstanceMutex");
+    DWORD dwError = GetLastError();
+    if (dwError == ERROR_ALREADY_EXISTS)
+    {
+        // Application already lunched
+        printf("running");
+    }
+    comm = rand();
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
     HMD = ovrHmd_Create(0);
@@ -160,7 +168,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 					DXGIResource = nullptr;
 					ID3D11Texture2D* tmp;
 					hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
-					//SaveDDSTextureToFile(DX11.Context, desktop->masterImage, L"mytexture.dds");
 
 					// using the shared handle we copy the data to the image bound to the render view
 					DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
