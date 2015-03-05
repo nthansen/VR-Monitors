@@ -17,17 +17,17 @@ Desktop::Desktop(int id) : Desktop() {
         mainDesktop = OpenDesktop(L"Default", DF_ALLOWOTHERACCOUNTHOOK, true, DESKTOP_JOURNALRECORD | DESKTOP_JOURNALPLAYBACK | DESKTOP_CREATEWINDOW | DESKTOP_ENUMERATE | DESKTOP_WRITEOBJECTS | DESKTOP_SWITCHDESKTOP | DESKTOP_CREATEMENU | DESKTOP_HOOKCONTROL | DESKTOP_READOBJECTS);
         break;
     case 1:
-        desktopName = L"Desktop2";
+        desktopName = L"Sysinternals Desktop 1";
         //create to double check that the desktop exist
-        mainDesktop = CreateDesktop(L"Desktop1", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+        mainDesktop = CreateDesktop(L"Sysinternals Desktop 1", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
         break;
     case 2:
-        desktopName = L"Desktop2";
-        mainDesktop = CreateDesktop(L"Desktop2", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+        desktopName = L"Sysinternals Desktop 2";
+        mainDesktop = CreateDesktop(L"Sysinternals Desktop 2", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
         break;
     case 3:
-        desktopName = L"Desktop3";
-        mainDesktop = CreateDesktop(L"Desktop3", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
+        desktopName = L"Sysinternals Desktop 3";
+        mainDesktop = CreateDesktop(L"Sysinternals Desktop 3", NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
         break;
     }
 }
@@ -194,18 +194,18 @@ void Desktop::newDesktop(int id) {
         targetDesk = CreateDesktop(targetName, NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
         break;
     case 2:
-        targetName = L"Sysinternals Desktop 1";
+        targetName = L"Sysinternals Desktop 2";
         targetDesk = CreateDesktop(targetName, NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
         break;
     case 3:
-        targetName = L"Desktop3";
+        targetName = L"Sysinternals Desktop 3";
         targetDesk = CreateDesktop(targetName, NULL, NULL, DF_ALLOWOTHERACCOUNTHOOK, GENERIC_ALL, NULL);
         break;
     }
     //thread = CreateThread(NULL, 0, NULL, &threadData, 0, NULL);
 
     //system("start explorer");
-    WCHAR cmd[] = L"C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe";
+    WCHAR cmd[] = L"VR-Monitors.exe";
     STARTUPINFOW si = { 0 };
     si.cb = sizeof(si);
     si.lpDesktop = targetName;
@@ -219,7 +219,7 @@ void Desktop::newDesktop(int id) {
         printf("placeholder");
     }
     SwitchDesktop(targetDesk);
-    SetThreadDesktop(targetDesk);
+    //SetThreadDesktop(targetDesk);
 
 }
 
