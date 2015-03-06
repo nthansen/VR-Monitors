@@ -38,6 +38,19 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	int length = (int)(*lpnLengthNeeded);
 
 	wcscat(data, L" VR-Monitors");
+    HANDLE hFirstExecution = CreateMutex(NULL, TRUE, L"VR-Monitors Original");
+    DWORD createError = GetLastError();
+    if (createError != ERROR_ALREADY_EXISTS) {
+        WCHAR cmd[] = L"Desktops.exe";
+        STARTUPINFOW si = { 0 };
+        si.cb = sizeof(si);
+        si.lpDesktop = L"Default";
+       //a si.wShowWindow = SW_SHOW;
+        PROCESS_INFORMATION pi;
+        int result = CreateProcess(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
+        DWORD le = GetLastError();
+        printf("DS");
+    }
 
 	HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, ((LPWSTR)(data)));
 	DWORD dwError = GetLastError();
@@ -47,7 +60,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		printf("running");
 		return 0;
 	}
-    comm = rand();
+
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
     HMD = ovrHmd_Create(0);
