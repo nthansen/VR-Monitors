@@ -1,7 +1,7 @@
 *.sdf
 *.suo
 DirectX Version/Obj/*
-DirectX Version/Bin/*
+DirectX Version/Bin/Debug/*
 DirectX Version/DirectXTex/DirectXTex/Bin/*
 DirectX Version/LibOVR/Obj/*
 */*/Bin/*
