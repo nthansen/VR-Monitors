@@ -30,6 +30,7 @@ Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
 masterImage(nullptr),
 stage(nullptr),
+stageHandle(nullptr),
 metaDataBuffer(nullptr),
 metaDataSize(0),
 Device(nullptr),
@@ -52,9 +53,21 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
 
     if (FAILED(hr)) {
         //could not get frame
-        if (hr == DXGI_ERROR_ACCESS_LOST) {
+        if (hr == DXGI_ERROR_ACCESS_LOST || hr == DXGI_ERROR_INVALID_CALL) {
             //reinitialize
-            init(output);
+            //check if current desktop
+            HDESK currentDesktop = OpenInputDesktop(0, false, DESKTOP_READOBJECTS);
+            wchar_t data[100]; //name should never be more than 100
+            LPDWORD lpnLengthNeeded = new DWORD;
+            bool result = GetUserObjectInformation(currentDesktop, UOI_NAME, data, (100 * sizeof(char)), lpnLengthNeeded);
+            int length = (int)(*lpnLengthNeeded);
+            if (wcscmp((LPWSTR)(data), desktopName) == 0) {
+                Sleep(100); //for some reason if the desktops are switch too quickly we won't have access to it
+                desktop->Release();
+                desktop = nullptr;
+                init(output);
+                return -1;
+            }
         }
         *timedout = true;
         return -1;
@@ -299,7 +312,7 @@ void Desktop::init(int outputNumber) {
     RtlZeroMemory(&dsDesc, sizeof(D3D11_TEXTURE2D_DESC));
     dsDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
     dsDesc.CPUAccessFlags = 0;
-    dsDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX;
+    dsDesc.MiscFlags = D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX | D3D11_RESOURCE_MISC_SHARED_NTHANDLE;
     dsDesc.Width = frameDesc.Width;
     dsDesc.Height = frameDesc.Height;
     dsDesc.MipLevels = frameDesc.MipLevels;
@@ -309,7 +322,9 @@ void Desktop::init(int outputNumber) {
     dsDesc.SampleDesc.Quality = 0;
     dsDesc.Usage = D3D11_USAGE_DEFAULT;
 
-    hr = Device->CreateTexture2D(&dsDesc, nullptr, &stage);
+    if (!stage) {
+        hr = Device->CreateTexture2D(&dsDesc, nullptr, &stage);
+    }
     deviceContext->CopyResource(stage, data.Frame);  //we save the data to an intermediary 
     this->relaseFrame();
 }

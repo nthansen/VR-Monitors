@@ -79,6 +79,7 @@ Model::Color(128, 128, 128))
     //start the default
     DWORD threadID;
     Monitors[0]->thread = CreateThread(nullptr, 0, captureDesktop, Monitors[0], CREATE_SUSPENDED, &threadID);
+    ResumeThread(Monitors[0]->thread);
     activeDesktop = 0;
 
     // skybox
@@ -148,9 +149,7 @@ DWORD WINAPI captureDesktop(void* params) {
     DXGIResource->GetSharedHandle(&Hnd);
     DXGIResource->Release();
     DXGIResource = nullptr;
-    hr = input->desktop->Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&(input->desktop->stageHandle)));
-
-    input->desktop->deviceContext->CopyResource(input->desktop->stageHandle, input->desktop->stage);
+    hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&(input->desktop->stageHandle)));
 
     DX11.Device->CreateShaderResourceView(input->desktop->masterImage, NULL, &(input->desktop->masterView));
     input->desktop->masterBuffer = new ImageBuffer(true, false, Sizei(frameDesc.Width, frameDesc.Height),
@@ -166,12 +165,12 @@ DWORD WINAPI captureDesktop(void* params) {
     bool timedout;
     while (input->active) {
         //capture
-        hr = KeyMutex->AcquireSync(0, 1000); //possibly dangerous because an old image will be renderd if the mutex isn't released 
+        Sleep(300); //sleep for 30 ms gives us about 30 fps
+       // hr = KeyMutex->AcquireSync(0, 100); //possibly dangerous because an old image will be renderd if the mutex isn't released 
         if (hr == WAIT_TIMEOUT) {
             //we don't have access try again later
             //techincally this should never happen
             //input->desktop->relaseFrame();
-            Sleep(10);
             skipCapture = true;
             continue;
         }
@@ -190,13 +189,16 @@ DWORD WINAPI captureDesktop(void* params) {
         skipCapture = false;
         HRESULT hr;
         input->desktop->deviceContext->CopyResource(input->desktop->stage, frame.Frame);
-        //SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stage, L"stage.dds");
-        /*SaveDDSTextureToFile(DX11.Context, input->desktop->masterImage, L"masterImage.dds");
-        SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stageHandle, L"stageHandle.dds");
-        */
+        input->desktop->deviceContext->CopyResource(input->desktop->stageHandle, input->desktop->stage);
+
+        SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stage, L"stage.dds");
+        SaveDDSTextureToFile(input->desktop->deviceContext, frame.Frame, L"frame.dds");
+        SaveDDSTextureToFile(DX11.Context, input->desktop->masterImage, L"masterImage.dds");
+        //SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stageHandle, L"stageHandle.dds");
+        
         // SaveDDSTextureToFile(input->desktop->deviceContext, input->desktop->stage, L"stage.dds");
         input->desktop->relaseFrame();
-        hr = KeyMutex->ReleaseSync(1);
+       // hr = KeyMutex->ReleaseSync(1);
     }
 Exit:
     //do cleanup work
