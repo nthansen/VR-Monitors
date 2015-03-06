@@ -56,28 +56,30 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 							   //controlPanel.rotate(1.0);
 
 							   //third attempt set active monitor here and set rotating monitor to true
-							   controlPanel.activeMonitor = 1;
+							   controlPanel.activeMonitor = 0;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
-                               controlPanel.switchDesktop(0);
+							   controlPanel.firstRotate = true;
+
 
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP2) {
 							   // switch to Desktop2
-							   controlPanel.activeMonitor = 2;
+							   controlPanel.activeMonitor = 1;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
-							  // controlPanel.rotate(2.0);
-							   controlPanel.switchDesktop(1);
+							   controlPanel.firstRotate = true;
+
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP3) {
 							   // switch to Desktop3
-							   controlPanel.activeMonitor = 3;
+							   controlPanel.activeMonitor = 2;
 							   controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+							   controlPanel.firstRotate = true;
 						   }
 						   else if (clicked == ID_TRAY_DESKTOP4) {
 							   // switch to Desktop4
-							   controlPanel.activeMonitor = 4;
+							   controlPanel.activeMonitor = 3;
 								controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
-                                controlPanel.switchDesktop(2);
+								controlPanel.firstRotate = true;
 
 						   }
 					   }
@@ -166,36 +168,42 @@ void ControlPanel::rotate(float monitorNum){
 	// rotate the cube by pi/2 times the monitor side we want
 	//need to rotate the cube a little bit each update until the rotation
 	//is equal to the complete rotation of the active monitor
-	if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * monitorNum)) > 0.01){
-		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI / 2 * monitorNum),.9);//do the rotation
+	
+	mod->Rot.y;
+	if (firstRotate){//&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159/2*3)) > 0.01){
+		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI),.9);//do the rotation
 		
 		//check if we are done rotating and set the final rotated matrix
-		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), 3.14159 / 2 * monitorNum)) <= 0.01){
+		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
 			currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();
-			//positioning = true;//now we need to position if we want any additional future transforms do it there
+			//positionng = true;//now we need to position if we want any additional future transforms do it there
+			firstRotate = false;
+			secondRotate = true;
 		}
 		
 		
 	}
+	//do the second rotation
+	else if (secondRotate&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159*2)) > 0.01){
+		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI*2), .9);//do the rotation
+		//check if we are finished with the second rotation
+		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
+			secondRotate = false;
+		}
+
+	}
 	//positioning keeps us from moving a monitor that is already chosen or equal to the rotation above
 	//we can keep this feature if we would like to move the cube around while it is rotating
-	else if (positioning){
-		//Matrix4f  modmat = mod->rotatedMatrix;
-		//mod->Pos = mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9);//linearly interpolate the position of the monitor each go
-		//check if we are finished positioning the cube
-		//if (mod->Pos.Compare(mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9)) > .0001){//compare positions
+	else if(positioning){
 			positioning = false;//we are done moving set to false
-			//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
-	//}
 	}
 	//if the angles are the same then we are done rotating so set the bool to false so
 	//that update monitor wont call this function until the next rotate monitor call
 	else{
 		//if we want to change the position of the monitor we can do so here just before we are finished
 		//we can also jump to a totally different monitor at the last minute
-		//Matrix4f  modmat = mod->GetMatrix();//need to set the original matrix each iteration for the transform
-		//mod->Pos = mod->Pos.Lerp(modmat.Transform(Vector3f(-2, 0, 0)), .9);//linearly interpolate the position of the monitor each go
-		//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+		
+		//controlPanel.switchDesktop(activeMonitor);
 		
 		rotatingMonitor = false;//we are finished changing the monitor position so dont call from updatecontrol panel anymore
 	}

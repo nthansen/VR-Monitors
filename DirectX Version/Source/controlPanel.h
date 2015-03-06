@@ -50,6 +50,8 @@ public:
 	// Check to make sure we aren't currently moving the monitor
 	bool movingMonitor;
 	bool rotatingMonitor;
+	bool firstRotate;//rotate the cube 180 degrees facing the back
+	bool secondRotate;//roate the cube the last 180 degrees to face the original position
 	bool positioning;
 	int  activeMonitor = 0;
 
