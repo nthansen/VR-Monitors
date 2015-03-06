@@ -64,15 +64,15 @@ Model::Color(128, 128, 128))
         desktop = new Desktop(0);
         desktop->init(0);
     }
-    else if (wcscmp((LPWSTR)(data), L"Desktop1") == 0){
+    else if (wcscmp((LPWSTR)(data), L"Sysinternals Desktop 1") == 0){
         desktop = new Desktop(1);
         desktop->init(0);
     }
-    else if (wcscmp((LPWSTR)(data), L"Desktop2") == 0){
+    else if (wcscmp((LPWSTR)(data), L"Sysinternals Desktop 2") == 0){
         desktop = new Desktop(2);
         desktop->init(0);
     }
-    else if (wcscmp((LPWSTR)(data), L"Desktop3") == 0){
+    else if (wcscmp((LPWSTR)(data), L"Sysinternals Desktop 3") == 0){
         desktop = new Desktop(3);
         desktop->init(0);
     }

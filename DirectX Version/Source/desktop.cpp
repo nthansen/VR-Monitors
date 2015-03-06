@@ -284,7 +284,7 @@ void Desktop::init(int outputNumber) {
     }
 
 
-    UINT Output = outputNumber;
+    UINT Output = 0;
 
     if (!desktop) {
         // Get DXGI device

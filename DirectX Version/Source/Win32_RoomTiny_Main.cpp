@@ -31,13 +31,22 @@ int				 clock;
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
-    HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, L"SingleInstanceMutex");
-    DWORD dwError = GetLastError();
-    if (dwError == ERROR_ALREADY_EXISTS)
-    {
-        // Application already lunched
-        printf("running");
-    }
+	HDESK currentDesktop = OpenInputDesktop(0, false, DESKTOP_READOBJECTS);
+	wchar_t data[100]; //name should never be more than 100
+	LPDWORD lpnLengthNeeded = new DWORD;
+	bool result = GetUserObjectInformation(currentDesktop, UOI_NAME, data, (100 * sizeof(char)), lpnLengthNeeded);
+	int length = (int)(*lpnLengthNeeded);
+
+	wcscat(data, L" VR-Monitors");
+
+	HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, ((LPWSTR)(data)));
+	DWORD dwError = GetLastError();
+	if (dwError == ERROR_ALREADY_EXISTS)
+	{
+		// Application already lunched
+		printf("running");
+		return 0;
+	}
     comm = rand();
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
@@ -288,4 +297,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     return(0);
 }
+
+
 
