@@ -164,6 +164,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //called from system menu, rotates to the selected monitor
 //passed the active monitor from update control panel and checks every update if rotating monitor
 void ControlPanel::rotate(float monitorNum){
+
+	if (desktop == monitorNum) {
+		return;
+	}
+
 	Model *mod = currScene->Models[0];//pointer to the monitor cube
 	// rotate the cube by pi/2 times the monitor side we want
 	//need to rotate the cube a little bit each update until the rotation
