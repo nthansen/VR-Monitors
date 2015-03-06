@@ -101,7 +101,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_COMMAND:
 		// if the quit button is clicked then destroy this window
-		if (LOWORD(wParam) == 1) {
+		if (LOWORD(wParam) == ID_QUIT) {
 			controlPanel.~ControlPanel();
 		}
 		// if the user changes the background in the drop down menu
@@ -116,11 +116,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		// user clicked the recenter oculus button
-		else if (LOWORD(wParam) == 4) {
+		else if (LOWORD(wParam) == ID_RECENTER) {
 			controlPanel.recenterOculus();
 		}
 		// user clicked the move monitor button
-		else if (LOWORD(wParam) == 5) {
+		else if (LOWORD(wParam) == ID_MOVE_MONITOR) {
 			handle = (HWND)lParam;
 			if (controlPanel.movingMonitor) {
 				controlPanel.movingMonitor = false;
@@ -132,11 +132,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		// user clicked the reset monitor button
-		else if (LOWORD(wParam) == 6) {
+		else if (LOWORD(wParam) == ID_RESET_MONITOR) {
 			controlPanel.resetMonitors();
 		}
 		// user clicked the add monitor button
-		else if (LOWORD(wParam) == 8) {
+		else if (LOWORD(wParam) == ID_ADD_MONITOR) {
 			controlPanel.addMonitor();
 		}
 		break;
@@ -376,7 +376,7 @@ void ControlPanel::createButtons() {
 		125,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)1,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_QUIT,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -390,7 +390,7 @@ void ControlPanel::createButtons() {
 		125,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)4,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_RECENTER,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -404,7 +404,7 @@ void ControlPanel::createButtons() {
 		100,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)5,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_MOVE_MONITOR,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -418,7 +418,7 @@ void ControlPanel::createButtons() {
 		110,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)6,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_RESET_MONITOR,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -432,7 +432,7 @@ void ControlPanel::createButtons() {
 		100,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)8,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_ADD_MONITOR,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -446,7 +446,7 @@ void ControlPanel::createButtons() {
 		30,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)9,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_DESKTOP1_RADIO,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -460,7 +460,7 @@ void ControlPanel::createButtons() {
 		30,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)10,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_DESKTOP2_RADIO,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -474,7 +474,7 @@ void ControlPanel::createButtons() {
 		30,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)11,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_DESKTOP3_RADIO,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -488,7 +488,7 @@ void ControlPanel::createButtons() {
 		30,        // Button width
 		25,        // Button height
 		window,     // Parent window
-		(HMENU)12,       // used for the wndProc to know what button is pressed
+		(HMENU)ID_DESKTOP4_RADIO,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
@@ -500,7 +500,7 @@ void ControlPanel::createDropDowns(){
 	// create the combo box for all the different options
 	backgroundCombobox = CreateWindow(L"COMBOBOX", NULL,
 		CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
-		10, 25, 100, 120, window, (HMENU)2, (HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
+		10, 25, 100, 120, window, (HMENU)ID_BACKGROUND, (HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);
 
 	// all the different options for the combo box
@@ -542,7 +542,7 @@ void ControlPanel::createSliders() {
 		5, 75,                          // position 
 		200, 30,                         // size 
 		window,                         // parent window 
-		(HMENU)3,                     // control identifier 
+		(HMENU)ID_CAMERA_POS,                     // control identifier 
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),      // instance 
 		NULL                             // no WM_CREATE parameter 
 		);
