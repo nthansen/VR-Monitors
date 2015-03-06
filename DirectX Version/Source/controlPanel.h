@@ -89,6 +89,8 @@ public:
 
 	void switchDesktop(int desktop);
 
+	void resetDesktopRadio();
+
 private:
 
 	// holds the handle to each part of the control panel window
@@ -130,8 +132,6 @@ private:
 	void createButtons();
 	void createDropDowns();
 	void createSliders();
-
-	void resetDesktopRadio();
 
 };
 

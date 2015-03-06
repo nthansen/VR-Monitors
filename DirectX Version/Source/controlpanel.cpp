@@ -131,6 +131,30 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				Button_SetText(handle, L"Place Monitor");
 			}
 		}
+		else if (LOWORD(wParam) == ID_DESKTOP1_RADIO) {
+			controlPanel.activeMonitor = 0;
+			controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+			controlPanel.firstRotate = true;
+			controlPanel.resetDesktopRadio();
+		}
+		else if (LOWORD(wParam) == ID_DESKTOP2_RADIO) {
+			controlPanel.activeMonitor = 1;
+			controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+			controlPanel.firstRotate = true;
+			controlPanel.resetDesktopRadio();
+		}
+		else if (LOWORD(wParam) == ID_DESKTOP3_RADIO) {
+			controlPanel.activeMonitor = 2;
+			controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+			controlPanel.firstRotate = true;
+			controlPanel.resetDesktopRadio();
+		}
+		else if (LOWORD(wParam) == ID_DESKTOP4_RADIO) {
+			controlPanel.activeMonitor = 3;
+			controlPanel.rotatingMonitor = true; //sets bool to rotate active monitor next update
+			controlPanel.firstRotate = true;
+			controlPanel.resetDesktopRadio();
+		}
 		// user clicked the reset monitor button
 		else if (LOWORD(wParam) == ID_RESET_MONITOR) {
 			controlPanel.resetMonitors();
@@ -733,14 +757,26 @@ void ControlPanel::switchDesktop(int desktop) {
 void ControlPanel::resetDesktopRadio() {
 	if (desktop == 0) {
 		SendMessage(desktopRadio0, BM_SETCHECK, BST_CHECKED, 0);
+		SendMessage(desktopRadio1, BM_SETCHECK, BST_UNCHECKED, 0);
+		SendMessage(desktopRadio2, BM_SETCHECK, BST_UNCHECKED, 0);
+		SendMessage(desktopRadio3, BM_SETCHECK, BST_UNCHECKED, 0);
 	}
 	else if (desktop == 1) {
+		SendMessage(desktopRadio0, BM_SETCHECK, BST_UNCHECKED, 0);
 		SendMessage(desktopRadio1, BM_SETCHECK, BST_CHECKED, 0);
+		SendMessage(desktopRadio2, BM_SETCHECK, BST_UNCHECKED, 0);
+		SendMessage(desktopRadio3, BM_SETCHECK, BST_UNCHECKED, 0);
 	}
 	else if (desktop == 2) {
+		SendMessage(desktopRadio0, BM_SETCHECK, BST_UNCHECKED, 0);
+		SendMessage(desktopRadio1, BM_SETCHECK, BST_UNCHECKED, 0);
 		SendMessage(desktopRadio2, BM_SETCHECK, BST_CHECKED, 0);
+		SendMessage(desktopRadio3, BM_SETCHECK, BST_UNCHECKED, 0);
 	}
 	else if (desktop == 3) {
+		SendMessage(desktopRadio0, BM_SETCHECK, BST_UNCHECKED, 0);
+		SendMessage(desktopRadio1, BM_SETCHECK, BST_UNCHECKED, 0);
+		SendMessage(desktopRadio2, BM_SETCHECK, BST_UNCHECKED, 0);
 		SendMessage(desktopRadio3, BM_SETCHECK, BST_CHECKED, 0);
 	}
 }
