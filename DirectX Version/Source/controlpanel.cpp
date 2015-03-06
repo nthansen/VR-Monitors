@@ -184,12 +184,12 @@ void ControlPanel::rotate(float monitorNum){
 		
 	}
 	//do the second rotation
-	else if (secondRotate&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159*2)) > 0.01){
-		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI*2), .9);//do the rotation
+	else if (secondRotate){//&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159*2)) > 0.01){
+		currScene->Models[0]->Rot = Quatf(Vector3f(0, .000001, 0), PI*2);//do the rotation
 		//check if we are finished with the second rotation
-		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
+		//if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
 			secondRotate = false;
-		}
+		//}
 
 	}
 	//positioning keeps us from moving a monitor that is already chosen or equal to the rotation above
