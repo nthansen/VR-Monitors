@@ -7,6 +7,7 @@ D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 Desktop::Desktop(int id) : Desktop() {
+	outputNumber = id;
     switch (id) {
     case 0:
         //the is the original 'workspace'

@@ -83,12 +83,18 @@ private:
 	HWND backgroundCombobox;
 	HWND cameraPositionTrackbar;
 	HWND monitorSizeTrackbar;
+	HWND desktopRadio0;
+	HWND desktopRadio1;
+	HWND desktopRadio2;
+	HWND desktopRadio3;
 	HMENU sysTrayMenu;
 	ovrHmd * oculus;
 	float * yaw;
 	Matrix4f * view;
 	Matrix4f * proj;
 	const float PI = 3.1415972f;
+
+	int desktop;
 
 	// used so we can manipulate the stuff inside the scene and the camera
 	Scene *currScene;
@@ -111,6 +117,8 @@ private:
 	void createButtons();
 	void createDropDowns();
 	void createSliders();
+
+	void resetDesktopRadio();
 
 };
 

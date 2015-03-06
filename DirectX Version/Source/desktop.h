@@ -58,6 +58,8 @@ public:
 
     PTR_INFO ptrInfo;
 
+	UINT outputNumber;
+
     void newDesktop(int id);
     HDESK mainDesktop;
     Desktop(int id);
@@ -75,7 +77,6 @@ private:
     IDXGIOutputDuplication* desktop; //desktop object to get frame data from
     _Field_size_bytes_(MetaDataSize) BYTE* metaDataBuffer;
     UINT metaDataSize;
-    UINT outputNumber;
     DXGI_OUTPUT_DESC OutputDesc;
     static int const timeout = 500; //desktop image grab timoute in ms
     HANDLE thread;

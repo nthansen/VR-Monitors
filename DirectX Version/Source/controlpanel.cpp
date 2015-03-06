@@ -234,6 +234,7 @@ void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector
 	this->yaw = yaw;
 	this->view = _view;
 	this->proj = _proj;
+	desktop = currScene->Models[0]->desktop->outputNumber;
 
 	// used to have a class for the window with the styles we want
 	WNDCLASSW wc; 
@@ -270,6 +271,18 @@ void ControlPanel::setUpSysTray() {
 	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_DESKTOP4, TEXT("Desktop 4"));
 
 	AppendMenu(sysTrayMenu, MF_STRING, ID_TRAY_EXIT, TEXT("Exit VR-Monitors"));
+
+	if (desktop == 0) {
+		CheckMenuItem(sysTrayMenu, ID_TRAY_DESKTOP1, MF_CHECKED);
+	}
+	else if (desktop == 1) {
+		CheckMenuItem(sysTrayMenu, ID_TRAY_DESKTOP2, MF_CHECKED);
+	} else if (desktop == 2) {
+		CheckMenuItem(sysTrayMenu, ID_TRAY_DESKTOP3, MF_CHECKED);
+	}
+	else if (desktop == 3) {
+		CheckMenuItem(sysTrayMenu, ID_TRAY_DESKTOP4, MF_CHECKED);
+	}
 
 	cPI = {};
 
@@ -409,10 +422,8 @@ void ControlPanel::createButtons() {
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
-	// used to set the desktop 1 to true at the start
-	HWND desktop1;
 	// create the adding desktop 1 button
-	desktop1 = CreateWindow(
+	desktopRadio0 = CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"1",      // Button text 
 		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
@@ -425,10 +436,8 @@ void ControlPanel::createButtons() {
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
-	SendMessage(desktop1, BM_SETCHECK, BST_CHECKED, 0);
-
 	// create the adding desktop 2 button
-	CreateWindow(
+	desktopRadio1 = CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"2",      // Button text 
 		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
@@ -442,7 +451,7 @@ void ControlPanel::createButtons() {
 		NULL);      // Pointer not needed.
 
 	// create the adding desktop 3 button
-	CreateWindow(
+	desktopRadio2 = CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"3",      // Button text 
 		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
@@ -456,7 +465,7 @@ void ControlPanel::createButtons() {
 		NULL);      // Pointer not needed.
 
 	// create the adding desktop 4 button
-	CreateWindow(
+	desktopRadio3 = CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"4",      // Button text 
 		BS_AUTORADIOBUTTON | WS_VISIBLE | WS_CHILD,  // Styles 
@@ -468,6 +477,8 @@ void ControlPanel::createButtons() {
 		(HMENU)12,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
+
+	resetDesktopRadio();
 }
 
 void ControlPanel::createDropDowns(){
@@ -703,4 +714,19 @@ void ControlPanel::switchDesktop(int desktop) {
 	currScene->doRender = false;
 	currScene->Models[0]->desktop->newDesktop(desktop);
 	currScene->doRender = true;
+}
+
+void ControlPanel::resetDesktopRadio() {
+	if (desktop == 0) {
+		SendMessage(desktopRadio0, BM_SETCHECK, BST_CHECKED, 0);
+	}
+	else if (desktop == 1) {
+		SendMessage(desktopRadio1, BM_SETCHECK, BST_CHECKED, 0);
+	}
+	else if (desktop == 2) {
+		SendMessage(desktopRadio2, BM_SETCHECK, BST_CHECKED, 0);
+	}
+	else if (desktop == 3) {
+		SendMessage(desktopRadio3, BM_SETCHECK, BST_CHECKED, 0);
+	}
 }
