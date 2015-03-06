@@ -178,6 +178,9 @@ void ControlPanel::rotate(float monitorNum){
 			currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();
 			//positionng = true;//now we need to position if we want any additional future transforms do it there
 			firstRotate = false;
+
+			controlPanel.switchDesktop(activeMonitor);
+
 			secondRotate = true;
 		}
 		
@@ -202,8 +205,6 @@ void ControlPanel::rotate(float monitorNum){
 	else{
 		//if we want to change the position of the monitor we can do so here just before we are finished
 		//we can also jump to a totally different monitor at the last minute
-		
-		//controlPanel.switchDesktop(activeMonitor);
 		
 		rotatingMonitor = false;//we are finished changing the monitor position so dont call from updatecontrol panel anymore
 	}
