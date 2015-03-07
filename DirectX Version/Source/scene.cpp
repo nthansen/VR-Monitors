@@ -159,8 +159,9 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 		//TODO change num_Models back to num_monitors ==1 below
         if (num_models == 3){//change position of first monitor
 			//first grab the second monitor from the models array
+			//in vector3f we removed the parameter _pos.x which is where the camera starts on x and removed _pos.z and placed -1 for the same reason
 			Models[2]->Pos = Models[2]->OriginalMat.Transform(
-				Vector3f(_pos.x+.5, _pos.y, _pos.z-1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+				Vector3f(0+.5, _pos.y, -1-1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
        
            Models[2]->OriginalPos = _pos;//save the position of the second monitor
             //Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
@@ -188,8 +189,10 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 			//since we arent moving the cube we just put the monitor on the other side
 			//first grab the second monitor from the models array
 			//first grab the second monitor from the models array
+			//in vector3f we removed the parameter _pos.x which is where the camera starts on x and removed _pos.z and placed -1 for the same reason
+
 			Models[3]->Pos = Models[3]->OriginalMat.Transform(
-				Vector3f(_pos.x - .5, _pos.y, _pos.z - 1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+				Vector3f(0 - .5, _pos.y, -1- 1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
 
 			Models[3]->OriginalPos = _pos;//save the position of the second monitor
 			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
