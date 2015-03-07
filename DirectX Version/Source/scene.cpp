@@ -160,12 +160,12 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
         if (num_models == 3){//change position of first monitor
 			//first grab the second monitor from the models array
 			Models[2]->Pos = Models[2]->OriginalMat.Transform(
-				Vector3f(_pos.x+.7, _pos.y, _pos.z-1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+				Vector3f(_pos.x+.5, _pos.y, _pos.z-1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
        
            Models[2]->OriginalPos = _pos;//save the position of the second monitor
             //Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
             //Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
-            Models[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), PI / 5);//negative pi rotates right(clockwise)
+            Models[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), PI / 4);//negative pi rotates right(clockwise)
             Models[2]->OriginalRot = Models[2]->Rot;
 
 
@@ -189,12 +189,12 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 			//first grab the second monitor from the models array
 			//first grab the second monitor from the models array
 			Models[3]->Pos = Models[3]->OriginalMat.Transform(
-				Vector3f(_pos.x - .7, _pos.y, _pos.z - 1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+				Vector3f(_pos.x - .5, _pos.y, _pos.z - 1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
 
 			Models[3]->OriginalPos = _pos;//save the position of the second monitor
 			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
 			//Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
-			Models[3]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI / 5);//negative pi rotates right(clockwise)
+			Models[3]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI / 4);//negative pi rotates right(clockwise)
 			Models[3]->OriginalRot = Models[3]->Rot;
 
             //_pos = Vector3f(0, 0, monitorDepth * 2);
