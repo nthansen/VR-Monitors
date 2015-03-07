@@ -127,8 +127,9 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
     if (num_models < 4) {
         static Model::Color tex_pixels[4][256 * 256];
         //we would probably fill this tex with pixels from desktop dup here
-        //Desktop*  d = new Desktop();
+        Desktop*  d = new Desktop(Monitors[num_monitors - 1]->desktop->outputNumber);
 
+		d->init(num_monitors);
         // add new monitor
         //		d->init(true, false);
 
@@ -137,13 +138,10 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 
         //_pos = Vector3f(0, 0, 0);
 
-		ImageBuffer* t = new ImageBuffer(true, true, Sizei(256, 256), 8, (unsigned char *)tex_pixels); // eventually will be the monitor
-		ShaderFill * generated_texture = new ShaderFill(ModelVertexDesc, 3, Box, t);
-
 		//TODO add after fix to keep track of monitors in desktop so increment below(uncomment)
         //num_monitors++;//add one to monitors here to determine how to group them below
-        Model* m = new Model(Vector3f(0, 0, 0), generated_texture);
-        //m->desktop = d;
+        Model* m = new Model(Vector3f(0, 0, 0), d->masterFill);
+        m->desktop = d;
         //everything is added based on the first monitor the startingpoint monitor
 		//use startingpoint z2 so the monitor is a plane and not a box
         m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z2, startingPoint.x2,
@@ -151,7 +149,7 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
         m->AllocateBuffers(); Add(m);//add monitor to scene array to be rendered;
 		//not adding to monitors array as of now 
 		//TODO add this model into Monitors uncomment below
-        //Monitors[num_monitors - 1] = m;//add this monitor to the array of monitors	//if we have two monitors on the bottom then we need to add some up top
+        Monitors[num_monitors - 1] = m;//add this monitor to the array of monitors	//if we have two monitors on the bottom then we need to add some up top
 
 
 
