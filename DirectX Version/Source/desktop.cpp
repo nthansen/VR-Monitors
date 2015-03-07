@@ -34,6 +34,7 @@ Desktop::Desktop(int id) : Desktop() {
 }
 Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
+pointerImage(nullptr),
 masterImage(nullptr),
 stage(nullptr),
 metaDataBuffer(nullptr),
@@ -42,6 +43,11 @@ metaDataSize(0),
 Device(nullptr),
 initialized(false)
 {
+    //empty out pointer informmation
+    pointer.BufferSize = 0;
+    pointer.Position.x = 0;
+    pointer.Position.y = 0;
+    pointer.PtrShapeBuffer = nullptr;
 }
 
 int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
@@ -93,7 +99,60 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
         data->Frame = desktopImage;
     }
 
+    pointer.Visible = frameData.PointerPosition.Visible;
+    if (frameData.LastMouseUpdateTime.QuadPart != 0 && frameData.PointerPosition.Visible) { //there is a mouse on the screen capture the buffer
+        if (frameData.PointerShapeBufferSize != 0) {
+            //new shape update the buffer
+            if (pointer.BufferSize != frameData.PointerShapeBufferSize) {
+                pointer.BufferSize = frameData.PointerShapeBufferSize;
+                if (pointer.PtrShapeBuffer) {
+                    //release old buffer
+                    delete[] pointer.PtrShapeBuffer;
+                    pointer.PtrShapeBuffer = nullptr;
+                }
+                //allocate new buffer space
+                pointer.PtrShapeBuffer = new (std::nothrow) BYTE[pointer.BufferSize]; //mouse is not critical, don't throw an error
+                if (pointer.PtrShapeBuffer == nullptr) {
+                    //could not allocate
+                    pointer.BufferSize = 0;
+                }
+            }
+            //get the shape
+            UINT requiredBufferSize;
+            hr = desktop->GetFramePointerShape(pointer.BufferSize, reinterpret_cast<VOID*>(pointer.PtrShapeBuffer), &requiredBufferSize, &(pointer.ShapeInfo));
+            //create texture2d
+            if (pointerImage){
+                //release old image
+                pointerImage->Release();
+                pointerImage = nullptr;
+            }
+            D3D11_TEXTURE2D_DESC Desc;
+            Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+            Desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+            Desc.MipLevels = 1;
+            Desc.ArraySize = 1;
+            Desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+            Desc.SampleDesc.Count = 1;
+            Desc.SampleDesc.Quality = 0;
+            Desc.Usage = D3D11_USAGE_DEFAULT;
+            Desc.CPUAccessFlags = 0;
 
+            Desc.Width = pointer.ShapeInfo.Width;
+            Desc.Height = pointer.ShapeInfo.Height;
+            D3D11_SUBRESOURCE_DATA ptrData;
+            ptrData.pSysMem = pointer.PtrShapeBuffer;
+            ptrData.SysMemPitch = pointer.ShapeInfo.Pitch;
+            ptrData.SysMemSlicePitch = 0;
+            Device->CreateTexture2D(&Desc, &ptrData, &pointerImage);
+        }
+        //update the position of the mouse
+        //there might need to be an offset for a multiple monitor setup
+        pointer.Position.x = frameData.PointerPosition.Position.x;
+        pointer.Position.y = frameData.PointerPosition.Position.y;
+        pointer.LastTimeStamp = frameData.LastMouseUpdateTime;
+    }
+
+    //below data is never really used
     //get metadata for dirty count
     // Get metadata
     if (frameData.TotalMetadataBufferSize)

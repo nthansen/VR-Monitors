@@ -49,7 +49,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
         PROCESS_INFORMATION pi;
         int result = CreateProcess(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
         DWORD le = GetLastError();
-        printf("DS");
     }
 
 	HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, ((LPWSTR)(data)));
@@ -180,7 +179,18 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 					frame.Frame->GetDesc(&frameDesc);
 					HRESULT hr;
 					roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
-
+                    if (frame.FrameInfo.LastMouseUpdateTime.QuadPart != 0 && frame.FrameInfo.PointerPosition.Visible) {
+                        //mouse has been updated, draw onto stage
+                        roomScene.Monitors[i]->desktop->deviceContext->CopySubresourceRegion(
+                            roomScene.Monitors[i]->desktop->stage,
+                            0,
+                            roomScene.Monitors[i]->desktop->pointer.Position.x,
+                            roomScene.Monitors[i]->desktop->pointer.Position.y,
+                            0,
+                            roomScene.Monitors[i]->desktop->pointerImage,
+                            0,
+                            NULL);
+                    }
 					// we capture a shared handle from the staging resource 
 					HANDLE Hnd(NULL);
 					IDXGIResource* DXGIResource = nullptr;
