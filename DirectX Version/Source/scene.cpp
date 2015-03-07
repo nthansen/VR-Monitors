@@ -136,7 +136,7 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
         //d->init(false, true);
 
         _pos = Vector3f(0, 0, 0);
-
+		d->init(num_monitors);
         num_monitors++;//add one to monitors here to determine how to group them below
         Model* m = new Model(Vector3f(0, 0, startingPoint.z1), d->masterFill);
         m->desktop = d;

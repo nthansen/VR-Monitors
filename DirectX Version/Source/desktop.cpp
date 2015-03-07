@@ -244,13 +244,14 @@ void Desktop::init(int outputNumber) {
         //SwitchDesktop(CurrentDesktop);
 
         //  system("start explorer");
+		/*
         WCHAR cmd[] = L"explorer.exe";
         STARTUPINFOW si = { 0 };
         si.cb = sizeof(si);
         si.lpDesktop = desktopName;
         si.wShowWindow = SW_SHOW;
         PROCESS_INFORMATION pi;
-        CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
+        CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);*/
         initialized = true;
     }
     //initilize the desktpp
@@ -284,9 +285,6 @@ void Desktop::init(int outputNumber) {
         }
     }
 
-
-    UINT Output = 0;
-
     if (!desktop) {
         // Get DXGI device
         IDXGIDevice* DxgiDevice = nullptr;
@@ -308,7 +306,7 @@ void Desktop::init(int outputNumber) {
 
         // Get output
         IDXGIOutput* DxgiOutput = nullptr;
-        hr = DxgiAdapter->EnumOutputs(0, &DxgiOutput);
+        hr = DxgiAdapter->EnumOutputs(output, &DxgiOutput);
         DxgiAdapter->Release();
         DxgiAdapter = nullptr;
         if (FAILED(hr))
