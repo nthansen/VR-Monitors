@@ -161,7 +161,6 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 			
 			//Monitors[0]->Pos = _pos;
 			//save original settings
-			Monitors[0]->OriginalPos = _pos;
 			Monitors[0]->OriginalRot = Monitors[0]->Rot;
 
 			//should probably do the same for the other monitor once we have it
@@ -189,19 +188,31 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 
         }
         else if (num_models == 4){
-			//since we arent moving the cube we just put the monitor on the other side
-			//first grab the second monitor from the models array
-			//first grab the second monitor from the models array
 			//in vector3f we removed the parameter _pos.x which is where the camera starts on x and removed _pos.z and placed -1 for the same reason
 
+			//first reset cube and rotated position
+			Monitors[0]->Rot = Monitors[0]->RotatedRot = Monitors[0]->OriginalRot;
+			Monitors[0]->Pos = Monitors[0]->OriginalPos;
+			
+			//set new monitor
 			Models[3]->Pos = Models[3]->OriginalMat.Transform(
-				Vector3f(0 - .5, _pos.y, -1- 1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+				Vector3f(0 - 1.22, _pos.y, - 1.5)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
 
 			Models[3]->OriginalPos = _pos;//save the position of the second monitor
-			//Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
 			//Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
-			Models[3]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI / 4);//negative pi rotates right(clockwise)
+			Models[3]->Rot = Quatf(Vector3f(0, 1, 0), -PI / 4);//negative pi rotates right(clockwise)
 			Models[3]->OriginalRot = Models[3]->Rot;
+
+			//set second monitor
+			//set new monitor
+			Models[2]->Pos = Models[3]->OriginalMat.Transform(
+				Vector3f(0 + 1.22, 0,  - 1.5)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+
+			Models[2]->OriginalPos = _pos;//save the position of the second monitor
+			//Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
+			Models[2]->Rot = Quatf(Vector3f(0, 1, 0), PI / 4);//negative pi rotates right(clockwise)
+			Models[2]->OriginalRot = Models[3]->Rot;
+
 
             //_pos = Vector3f(0, 0, monitorDepth * 2);
             //Monitors[0]->Pos = _pos;
