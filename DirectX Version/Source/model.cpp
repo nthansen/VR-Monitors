@@ -6,6 +6,7 @@ Model::Model(Vector3f arg_pos, ShaderFill * arg_Fill)
 	Pos = arg_pos;
 	OriginalPos = Pos;
 	OriginalRot = Quatf();
+	RotatedRot = Quatf();
 	OriginalMat = this->GetMatrix();
 	rotatedMatrix = this->GetMatrix();
 	Fill = arg_Fill;

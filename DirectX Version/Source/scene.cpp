@@ -18,7 +18,7 @@ void Scene::Add(Model * n)
 
 // Main world
 Scene::Scene() :
-num_models(0), num_monitors(0), monitorHeight(2), monitorWidth(2), monitorDepth(2), doRender(true),
+num_models(0), num_monitors(0), monitorHeight(1), monitorWidth(1), monitorDepth(1), doRender(true),
 
 startingPoint(-.5, -.5, -.5, .5, .5, .5,//monitorWidth, monitorHeight, monitorDepth,
 Model::Color(128, 128, 128))
@@ -146,7 +146,7 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
         //m->desktop = d;
         //everything is added based on the first monitor the startingpoint monitor
 		//use startingpoint z2 so the monitor is a plane and not a box
-        m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z2, startingPoint.x2,
+        m->AddSolidColorBox(startingPoint.x1, startingPoint.y1, startingPoint.z1, startingPoint.x2,
             startingPoint.y2, startingPoint.z2, startingPoint.color);
         m->AllocateBuffers(); Add(m);//add monitor to scene array to be rendered;
 		//not adding to monitors array as of now 
@@ -158,32 +158,35 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 		//since the cube is now the first model we will place the new one to the left of it
 		//TODO change num_Models back to num_monitors ==1 below
         if (num_models == 3){//change position of first monitor
+			
+			//Monitors[0]->Pos = _pos;
+			//save original settings
+			Monitors[0]->OriginalPos = _pos;
+			Monitors[0]->OriginalRot = Monitors[0]->Rot;
+
+			//should probably do the same for the other monitor once we have it
+			////Monitors[1]->Pos = _pos;
+			//Monitors[1]->OriginalPos = _pos;
+			//Monitors[1]->OriginalRot = Monitors[0]->Rot;
+
 			//first grab the second monitor from the models array
-			//in vector3f we removed the parameter _pos.x which is where the camera starts on x and removed _pos.z and placed -1 for the same reason
+			//in vector3f we removed the parameter _pos.x which is where the camera starts on x and removed
+			//_pos.z and placed -1 for the same reason
 			Models[2]->Pos = Models[2]->OriginalMat.Transform(
-				Vector3f(0+.5, _pos.y, -1-1.2)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
-       
-           Models[2]->OriginalPos = _pos;//save the position of the second monitor
-            //Monitors[0]->Pos.x = ;//do i need to shift the monitor position?
-            //Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
-            Models[2]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), PI / 4);//negative pi rotates right(clockwise)
-            Models[2]->OriginalRot = Models[2]->Rot;
+				Vector3f(+monitorWidth/2+.155, 0, -monitorDepth)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+            Models[2]->Rot = Quatf(Vector3f(0, 1, 0), PI / 8);//positive pi rotates left (ccw)
+
+			//move the cube
+
+            Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI/6 / 6.5);
+			Monitors[0]->Pos = Models[2]->OriginalMat.Transform(
+				//shift cube right half monitor width
+				Vector3f(-monitorWidth / 2-.155, 0, -monitorDepth)) //shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+				+ Vector3f(-sinf(PI), 0, -cosf(PI));//when looking left monitor will be offset 0 in z direction conversely straigt ahead 0 in x
+			Monitors[0]->Rot = Quatf(Vector3f(0, 1, 0), -PI / 8);//negative pi rotates right(clockwise)
+			Monitors[0]->RotatedRot = Monitors[0]->Rot;//set the rotated matrix for the next transition
 
 
-			//dont touch cube
-
-            //Monitors[0]->Pos = _pos;
-            //Monitors[0]->OriginalPos = _pos;
-            ////Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw + PI / 6.5);
-            //Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), +PI / 6.5);
-            //Monitors[0]->OriginalRot = Monitors[0]->Rot;
-
-
-            //so go back to the initial point on x, add an offset to put them on top 
-            //temp.x = startingPoint.x1;
-            //temp.y = startingPoint.y1 + monitorHeight/2;
-            //temp.z = startingPoint.z1;//and reset z so when we get the last monitor position it doesnt start pushing them back
-            //tempVect = temp;//reset tempVect to this one since we had to reposition
         }
         else if (num_models == 4){
 			//since we arent moving the cube we just put the monitor on the other side
