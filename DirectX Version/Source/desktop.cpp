@@ -70,17 +70,21 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
             //check if current desktop
             HDESK currentDesktop = OpenInputDesktop(0, false, DESKTOP_READOBJECTS);
             wchar_t data[100]; //name should never be more than 100
-            LPDWORD lpnLengthNeeded = new DWORD;
-            bool result = GetUserObjectInformation(currentDesktop, UOI_NAME, data, (100 * sizeof(char)), lpnLengthNeeded);
-            int length = (int)(*lpnLengthNeeded);
+            bool result = GetUserObjectInformation(currentDesktop, UOI_NAME, data, (100 * sizeof(char)), nullptr);
             if (wcscmp((LPWSTR)(data), desktopName) == 0) {
                 Sleep(100); //for some reason if the desktops are switch too quickly we won't have access to it
                 desktop->Release();
                 desktop = nullptr;
                 init(output);
+                *timedout = true;
+                CloseDesktop(currentDesktop);
                 return -1;
             }
+            else {
+                CloseDesktop(currentDesktop);
+            }
         }
+            
         *timedout = true;
         return -1;
     }
@@ -303,13 +307,14 @@ void Desktop::init(int outputNumber) {
         //SwitchDesktop(CurrentDesktop);
 
         //  system("start explorer");
+		/*
         WCHAR cmd[] = L"explorer.exe";
         STARTUPINFOW si = { 0 };
         si.cb = sizeof(si);
         si.lpDesktop = desktopName;
         si.wShowWindow = SW_SHOW;
         PROCESS_INFORMATION pi;
-        CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
+        CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);*/
         initialized = true;
     }
     //initilize the desktpp
@@ -343,9 +348,6 @@ void Desktop::init(int outputNumber) {
         }
     }
 
-
-    UINT Output = 0;
-
     if (!desktop) {
         // Get DXGI device
         IDXGIDevice* DxgiDevice = nullptr;
@@ -367,7 +369,7 @@ void Desktop::init(int outputNumber) {
 
         // Get output
         IDXGIOutput* DxgiOutput = nullptr;
-        hr = DxgiAdapter->EnumOutputs(0, &DxgiOutput);
+        hr = DxgiAdapter->EnumOutputs(output, &DxgiOutput);
         DxgiAdapter->Release();
         DxgiAdapter = nullptr;
         if (FAILED(hr))

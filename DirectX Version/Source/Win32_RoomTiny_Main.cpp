@@ -252,14 +252,6 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 			roomScene.Models[0]->Pos = Vector3f(9 * sin(0.01f*clock), 3, 9 * cos(0.01f*clock));
 			*/
 
-		
-			// shows how to select a model and mess with it
-			/*
-			// Animate the cube
-			if (speed)
-			roomScene.Models[0]->Pos = Vector3f(9 * sin(0.01f*clock), 3, 9 * cos(0.01f*clock));
-			*/
-
 			// Get both eye poses simultaneously, with IPD offset already included. 
 			ovrPosef temp_EyeRenderPose[2];
 			ovrHmd_GetEyePoses(HMD, 0, useHmdToEyeViewOffset, temp_EyeRenderPose, NULL);
