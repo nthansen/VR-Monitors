@@ -33,6 +33,7 @@ struct Model
 	Vector3f	 OriginalPos;
 	Quatf        Rot;
 	Quatf		 OriginalRot;
+	Quatf		 RotatedRot;
 	Matrix4f     Mat;
 	Matrix4f	 OriginalMat;
 	Matrix4f	 rotatedMatrix;//set when the cube has finished a complete rotation

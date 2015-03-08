@@ -206,7 +206,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 				//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 				//we must offset this to rotate negative pi radians so the object will be in front of us
 				roomScene.Models[0]->Pos = Pos;
-				roomScene.Models[0]->Rot = Quatf(Vector3f(0, Pos.y == 0 ? .001 : Pos.y, 0), -PI + Yaw);
+				roomScene.Models[0]->Rot = Quatf(Vector3f(0 , 1 , 0), -PI + Yaw);
 
 			}
 

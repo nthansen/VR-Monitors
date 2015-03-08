@@ -188,27 +188,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //called from system menu, rotates to the selected monitor
 //passed the active monitor from update control panel and checks every update if rotating monitor
 void ControlPanel::rotate(float monitorNum){
-
+	Model *mod = currScene->Models[0];//pointer to the monitor cube
 	if (desktop == monitorNum) {
 		return;
 	}
 
-	Model *mod = currScene->Models[0];//pointer to the monitor cube
-	// rotate the cube by pi/2 times the monitor side we want
+	
+	// rotate the cube by pi times the monitor side we want
 	//need to rotate the cube a little bit each update until the rotation
 	//is equal to the complete rotation of the active monitor
-	
-	mod->Rot.y;
 	if (firstRotate){//&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159/2*3)) > 0.01){
-		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI),.9);//do the rotation
-		
+		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, 1, 0), PI), .9);//do the rotation
+		Quatf temp = Quatf(Vector3f(0, -1, 0), PI);
+		temp += temp;
 		//check if we are done rotating and set the final rotated matrix
 		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
 			currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();
 			//positionng = true;//now we need to position if we want any additional future transforms do it there
 			firstRotate = false;
 
-			controlPanel.switchDesktop(activeMonitor);
+			//controlPanel.switchDesktop(activeMonitor);
 
 			secondRotate = true;
 		}
@@ -217,7 +216,9 @@ void ControlPanel::rotate(float monitorNum){
 	}
 	//do the second rotation
 	else if (secondRotate){//&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159*2)) > 0.01){
-		currScene->Models[0]->Rot = Quatf(Vector3f(0, .000001, 0), PI*2);//do the rotation
+		//reset the rotation back to the original rotation or if there is another monitor to that rotated rotation
+		currScene->Models[0]->Rot = mod->RotatedRot;//Quatf(Vector3f(0, .000001, 0), PI*2)+mod->RotatedRot;//do the rotation
+		currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();//save this matrix
 		//check if we are finished with the second rotation
 		//if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
 			secondRotate = false;
