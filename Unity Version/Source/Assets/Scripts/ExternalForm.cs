@@ -86,7 +86,7 @@ public class ExternalForm : MonoBehaviour {
 
         current.Controls.Add(viewCrosshair);
 
-        current.Text = "I am testing";
+        current.Text = "VR-Monitors Control Panel";
 
         current.StartPosition = FormStartPosition.CenterScreen;
         
