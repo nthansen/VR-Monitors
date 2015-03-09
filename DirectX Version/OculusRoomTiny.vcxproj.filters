@@ -33,7 +33,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
     <ClCompile Include="source\Win32_DX11AppUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,6 +57,7 @@
     <ClCompile Include="3rdParty\ScreenGrab\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\VR-Monitors.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
