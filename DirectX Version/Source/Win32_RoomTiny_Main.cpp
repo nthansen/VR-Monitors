@@ -41,14 +41,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
     HANDLE hFirstExecution = CreateMutex(NULL, TRUE, L"VR-Monitors Original");
     DWORD createError = GetLastError();
     if (createError != ERROR_ALREADY_EXISTS) {
-        WCHAR cmd[] = L"Desktops.exe";
-        STARTUPINFOW si = { 0 };
-        si.cb = sizeof(si);
-        si.lpDesktop = L"Default";
-       //a si.wShowWindow = SW_SHOW;
-        PROCESS_INFORMATION pi;
-        int result = CreateProcess(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
-        DWORD le = GetLastError();
+
     }
 
 	HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, ((LPWSTR)(data)));
@@ -59,6 +52,17 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 		printf("running");
 		return 0;
 	}
+    SHELLEXECUTEINFO shExInfo = { 0 };
+    shExInfo.cbSize = sizeof(shExInfo);
+    shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+    shExInfo.hwnd = 0;
+    shExInfo.lpVerb = L"runas";                // Operation to perform
+    shExInfo.lpFile = L"C:\\Windows\\explorer.exe";       // Application to start    
+    shExInfo.lpDirectory = 0;
+    shExInfo.nShow = SW_SHOW;
+    shExInfo.hInstApp = 0;
+    ShellExecuteEx(&shExInfo);
+    DWORD le = GetLastError();
 
     // Initializes LibOVR, and the Rift
     ovr_Initialize();
@@ -180,7 +184,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 					HRESULT hr;
 					roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
                     if (frame.FrameInfo.LastMouseUpdateTime.QuadPart != 0 && frame.FrameInfo.PointerPosition.Visible) {
-                        //mouse has been updated, draw onto stage
+
                         roomScene.Monitors[i]->desktop->deviceContext->CopySubresourceRegion(
                             roomScene.Monitors[i]->desktop->stage,
                             0,

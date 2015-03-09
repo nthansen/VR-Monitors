@@ -1,4 +1,5 @@
 #include "desktop.h"
+#include "../3rdParty/ScreenGrab/ScreenGrab.h"
 
 //forward declaration
 D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
@@ -7,7 +8,8 @@ D3D11_INPUT_ELEMENT_DESC ModelVertexDescMon[] = {
     { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 Desktop::Desktop(int id) : Desktop() {
-	outputNumber = id;
+    outputNumber = id;
+
     switch (id) {
     case 0:
         //the is the original 'workspace'
@@ -84,7 +86,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
                 CloseDesktop(currentDesktop);
             }
         }
-            
+
         *timedout = true;
         return -1;
     }
@@ -154,57 +156,73 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
         pointer.Position.x = frameData.PointerPosition.Position.x;
         pointer.Position.y = frameData.PointerPosition.Position.y;
         pointer.LastTimeStamp = frameData.LastMouseUpdateTime;
-    }
 
-    //below data is never really used
-    //get metadata for dirty count
-    // Get metadata
-    if (frameData.TotalMetadataBufferSize)
-    {
-        // Old buffer too small
-        if (frameData.TotalMetadataBufferSize > metaDataSize)
-        {
-            if (metaDataBuffer) // wipe out old buffer
-            {
-                delete[] metaDataBuffer;
-                metaDataBuffer = nullptr;
+        /*
+        */
+        D3D11_TEXTURE2D_DESC Desc;
+        ZeroMemory(&Desc, sizeof(Desc));
+
+        Desc.MiscFlags = 0;
+        Desc.MipLevels = 1;
+        Desc.ArraySize = 1;
+        Desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        Desc.SampleDesc.Count = 1;
+        Desc.SampleDesc.Quality = 0;
+        Desc.Usage = D3D11_USAGE_STAGING;
+        Desc.BindFlags = 0;
+        Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+        Desc.Width = pointer.ShapeInfo.Width;
+        Desc.Height = pointer.ShapeInfo.Height;
+        if (pointerImage) {
+            pointerImage->Release();
+            pointerImage = nullptr;
+        }
+        Device->CreateTexture2D(&Desc, NULL, &pointerImage);
+        D3D11_BOX location;
+        location.left = pointer.Position.x;
+        location.top = pointer.Position.y;
+        location.front = 0;
+        location.right = pointer.Position.x + pointer.ShapeInfo.Width;
+        location.bottom = pointer.Position.y + pointer.ShapeInfo.Height;
+        location.back = 1;
+        deviceContext->CopySubresourceRegion(
+            pointerImage,
+            0,
+            0,
+            0,
+            0,
+            data->Frame,
+            0,
+            &location);
+        // SaveDDSTextureToFile(deviceContext, pointerImage, L"pointer1.dds");
+
+        //map data
+        D3D11_MAPPED_SUBRESOURCE mappedResource;
+        //Map the resources. Blocks the GPU from accessing the file. 
+        hr = deviceContext->Map(pointerImage, 0, D3D11_MAP_READ_WRITE, 0, &mappedResource);
+        if (!mappedResource.pData) {
+            //unmap
+            deviceContext->Unmap(pointerImage, 0);
+        }
+        else {
+            UCHAR* pTexels = (UCHAR*)mappedResource.pData;
+            for (int i = 0; i < pointer.BufferSize; i += 4) {
+                //get rgb values
+                int r = (UINT)pointer.PtrShapeBuffer[i];
+                int g = (UINT)pointer.PtrShapeBuffer[i + 1];
+                int b = (UINT)pointer.PtrShapeBuffer[i + 2];
+                int a = (UINT)pointer.PtrShapeBuffer[i + 3];
+                if (r == 0 && g == 0 && b == 0 && a == 0) {
+                    continue;
+                }
+                pTexels[i] = r;
+                pTexels[i + 1] = g;
+                pTexels[i + 2] = b;
+                pTexels[i + 3] = a;
             }
-            metaDataBuffer = new (std::nothrow) BYTE[frameData.TotalMetadataBufferSize];
-            if (!metaDataBuffer)
-            {
-                metaDataBuffer = 0;
-                data->MoveCount = 0;
-                data->DirtyCount = 0;
-                return -1; //failed to allocate buffer
-            }
-            metaDataSize = frameData.TotalMetadataBufferSize;
+            deviceContext->Unmap(pointerImage, 0);
         }
-
-        UINT BufSize = frameData.TotalMetadataBufferSize;
-
-        // Get move rectangles
-        hr = desktop->GetFrameMoveRects(BufSize, reinterpret_cast<DXGI_OUTDUPL_MOVE_RECT*>(metaDataBuffer), &BufSize);
-        if (FAILED(hr))
-        {
-            data->MoveCount = 0;
-            data->DirtyCount = 0;
-            return -1;
-        }
-        data->MoveCount = BufSize / sizeof(DXGI_OUTDUPL_MOVE_RECT);
-
-        BYTE* DirtyRects = metaDataBuffer + BufSize;
-        BufSize = frameData.TotalMetadataBufferSize - BufSize;
-
-        // Get dirty rectangles
-        hr = desktop->GetFrameDirtyRects(BufSize, reinterpret_cast<RECT*>(DirtyRects), &BufSize);
-        if (FAILED(hr))
-        {
-            data->MoveCount = 0;
-            data->DirtyCount = 0;
-            return -1; //failed to get dirty rects
-        }
-        data->DirtyCount = BufSize / sizeof(RECT);
-        data->MetaData = metaDataBuffer;
+        //loop through image
     }
 
     return 0;
@@ -277,7 +295,7 @@ void Desktop::newDesktop(int id) {
     PROCESS_INFORMATION pi;
     wchar_t exepath[MAX_PATH + 100]; // enough room for cwd and the rest of command line
     GetCurrentDirectory(MAX_PATH, exepath);
-    int result = CreateProcessW(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
+    int result = CreateProcess(NULL, cmd, 0, 0, FALSE, NULL, NULL, NULL, &si, &pi);
     if (result == 0) {
         DWORD lastError = GetLastError();
         printf("placeholder");
@@ -307,7 +325,7 @@ void Desktop::init(int outputNumber) {
         //SwitchDesktop(CurrentDesktop);
 
         //  system("start explorer");
-		/*
+        /*
         WCHAR cmd[] = L"explorer.exe";
         STARTUPINFOW si = { 0 };
         si.cb = sizeof(si);
