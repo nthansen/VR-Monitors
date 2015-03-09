@@ -21,7 +21,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Win32_RoomTiny_Main.cpp" />
     <ClCompile Include="source\Win32_DX11AppUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -40,6 +39,7 @@
     <ClCompile Include="3rdParty\DDSTextureLoader\DDSTextureLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\VR-Monitors_Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
