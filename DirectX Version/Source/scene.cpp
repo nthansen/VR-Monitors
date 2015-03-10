@@ -141,7 +141,7 @@ int Scene::pickMonitor(Vector3f Pos, float Yaw){
 			return i;
 		}
 	}
-	return -1;//return default first monitor
+	return -1;//return invalid, no monitor hit
 
 
 }

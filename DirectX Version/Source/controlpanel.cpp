@@ -189,42 +189,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //rotate 
 //called from system menu, rotates to the selected monitor
 //passed the active monitor from update control panel and checks every update if rotating monitor
-void ControlPanel::rotate(float monitorNum){
+void ControlPanel::rotate(int monitorNum){//monitorNum prevents switching to active desktop
 	Model *mod = currScene->Models[0];//pointer to the monitor cube
-	if (desktop == monitorNum) {
+	if (desktop == monitorNum) {//if we are rotating to the current monitor do not rotate
 		return;
 	}
-
-	
-	// rotate the cube by pi times the monitor side we want
 	//need to rotate the cube a little bit each update until the rotation
 	//is equal to the complete rotation of the active monitor
-	if (firstRotate){//&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159/2*3)) > 0.01){
-		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Vector3f(0, 1, 0), PI), .9);//do the rotation
-		Quatf temp = Quatf(Vector3f(0, -1, 0), PI);
-		temp += temp;
+	//first rotate set in system panel upon call to rotate
+	if (firstRotate){
+		//first do the rotation fragment then test for full rotation, if finished enter second phase
+		currScene->Models[0]->Rot = currScene->Models[0]->Rot.Nlerp(Quatf(Matrix4f::RotationY(PI)), .9);
+
+		float rotating = currScene->Models[0]->Rot.Angle(Quatf(Matrix4f::RotationY(PI)));//test
+		bool finished = rotating < .05;//is the angle less than 0.05 degrees?
 		//check if we are done rotating and set the final rotated matrix
-		if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
+		if (finished){
 			currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();
 			//positionng = true;//now we need to position if we want any additional future transforms do it there
 			firstRotate = false;
 			secondRotate = true;
 		}
-		
-		
 	}
-	//do the second rotation
-	else if (secondRotate){//&&currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159*2)) > 0.01){
-		//reset the rotation back to the original rotation or if there is another monitor to that rotated rotation
-		currScene->Models[0]->Rot = mod->RotatedRot;//Quatf(Vector3f(0, .000001, 0), PI*2)+mod->RotatedRot;//do the rotation
+
+	//do the second rotation, this sets the rotation to a rotation set by move monitor in scene
+	else if (secondRotate){
+		//reset the rotation back to the original rotation, so when a user comes back it is the original
+		currScene->Models[0]->Rot = mod->RotatedRot;//if monitor has moved from move monitor set to that rotated value
 		currScene->Models[0]->rotatedMatrix = currScene->Models[0]->GetMatrix();//save this matrix
-		//check if we are finished with the second rotation
-		//if (currScene->Models[0]->Rot.Angle(Quatf(Vector3f(0, -1, 0), PI)) <= 0.01){
-			secondRotate = false;
-		//}
+		secondRotate = false;//finished rotating so prepare to position if needed and exit rotation
 
 	}
-	//positioning keeps us from moving a monitor that is already chosen or equal to the rotation above
+	//positioning tells us if we want to do effects after the rotation
 	//we can keep this feature if we would like to move the cube around while it is rotating
 	else if(positioning){
 			positioning = false;//we are done moving set to false
@@ -235,8 +231,7 @@ void ControlPanel::rotate(float monitorNum){
 		//if we want to change the position of the monitor we can do so here just before we are finished
 		//we can also jump to a totally different monitor at the last minute
 		rotatingMonitor = false;//we are finished changing the monitor position so dont call from updatecontrol panel anymore
-        controlPanel.switchDesktop(activeMonitor);
-
+        controlPanel.switchDesktop(activeMonitor);//finally switch desktop
     }
 }
 

@@ -29,7 +29,7 @@
 class ControlPanel{
 	
 public:
-	void rotate(const float desktopNum);//rotates to the desktop that called it
+	void rotate(const int desktopNum);//rotates to the desktop that called it
 	ControlPanel();
 	
 	~ControlPanel();
