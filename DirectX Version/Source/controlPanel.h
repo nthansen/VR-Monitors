@@ -65,13 +65,15 @@ public:
 	bool secondRotate;//roate the cube the last 180 degrees to face the original position
 	bool positioning;
 	int  activeMonitor = 0;
+	int pickedMonitor = 0;
 
 	// used whenever we move the monitor since it needs to be constantly updating
 	void updateControlPanel();
 
 	// adds a monitor to the scene
 	void addMonitor();
-
+	void moveMonitor(int);
+	int initPick();//calls the pickmonitor method of this scene and sets the picked monitor, called by add monitor button
 	void recenterOculus();
 
 	void setUpSysTray();

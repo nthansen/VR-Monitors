@@ -4,6 +4,9 @@
 #include "Win32_DX11AppUtil.h"
 #include "model.h"
 #include "../3rdParty/DDSTextureLoader/DDSTextureLoader.h"
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
+#include "../3rdParty/SimpleMath/SimpleMath.h"
 
 using namespace DirectX;
 //used in scene to define the size of the monitors
@@ -51,6 +54,7 @@ struct Scene
 	void addMonitor(const float,const Vector3f);//adds monitor to scene uses position of last monitor
 	Scene(int reducedVersion); // Main world
 
+	int pickMonitor(Vector3f Pos, float Yaw);
 	// Simple latency box (keep similar vertex format and shader params same, for ease of code)
 	Scene();
 

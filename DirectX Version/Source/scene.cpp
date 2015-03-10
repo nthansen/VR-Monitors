@@ -92,6 +92,8 @@ Model::Color(128, 128, 128))
     Add(m);
 }
 
+
+
 void Scene::Render(Matrix4f view, Matrix4f proj)
 {
     for (int i = 0; i < num_models; i++)
@@ -120,6 +122,26 @@ Vector3f Scene::getOffset(){
 //sets the monitor offset used to separate monitors
 void Scene::setOffset(Vector3f _Voffset){
     monitorOffset = _Voffset;
+}
+
+int Scene::pickMonitor(Vector3f Pos, float Yaw){
+	//save the direction to cast in dir and ray origin in dpos
+	SimpleMath::Vector3 dPos = SimpleMath::Vector3(Pos.x, Pos.y, Pos.z);//position for simplemath
+	SimpleMath::Vector3 dir = SimpleMath::Vector3(sinf(Yaw - PI), 0, cosf(Yaw - PI));
+	//ray is really only a container holding the origin and direction to cast
+	SimpleMath::Ray cast = SimpleMath::Ray(dPos, dir);
+	float _dist = 0.0f;
+	for (int i = 0; i < num_monitors; i++){
+		Model *temp = Monitors[i];
+		DirectX::BoundingOrientedBox mbox = BoundingOrientedBox(XMFLOAT3(temp->Pos.x, temp->Pos.y, temp->Pos.z), 
+			XMFLOAT3(.5f, .5f, .5f), XMFLOAT4(0, temp->Rot.y, 0, temp->Rot.w));//extending boundary and quaternion rotatation direction
+		if (mbox.Intersects(cast.position, cast.direction, _dist)){
+			return i;
+		}
+	}
+	return -1;//return default first monitor
+
+
 }
 
 void Scene::addMonitor(float yaw, Vector3f _pos){
@@ -173,7 +195,7 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
             Monitors[1]->Rot = Quatf(Vector3f(0, 1, 0), PI / 8);//positive pi rotates left (ccw)
 			//move the cube
 
-            Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI/6 / 6.5);
+            //Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI/6 / 6.5);
 			Monitors[0]->Pos = Monitors[1]->OriginalMat.Transform(
 				//shift cube right half monitor width
 				Vector3f(-monitorWidth / 2-.155, 0, -monitorDepth)) //shift left 1 unit so pos.x+1 also bring forward so pos.z-1
@@ -197,17 +219,17 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 			Monitors[2]->OriginalPos = _pos;//save the position of the second monitor
 			//Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
 			Monitors[2]->Rot = Quatf(Vector3f(0, 1, 0), -PI / 4);//negative pi rotates right(clockwise)
-			Monitors[2]->OriginalRot = Monitors[3]->Rot;
+			Monitors[2]->OriginalRot = Monitors[2]->Rot;
 
 			//set second monitor
 			//set new monitor
-			Monitors[1]->Pos = Monitors[2]->OriginalMat.Transform(
+			Monitors[1]->Pos = Monitors[1]->OriginalMat.Transform(
 				Vector3f(0 + 1.22, 0,  - 1.5)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
 
 			Monitors[1]->OriginalPos = _pos;//save the position of the second monitor
 			//Monitors[1]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI + yaw - PI / 6.5);
 			Monitors[1]->Rot = Quatf(Vector3f(0, 1, 0), PI / 4);//negative pi rotates right(clockwise)
-			Monitors[1]->OriginalRot = Monitors[2]->Rot;
+			Monitors[1]->OriginalRot = Monitors[1]->Rot;
 
 
             //_pos = Vector3f(0, 0, monitorDepth * 2);

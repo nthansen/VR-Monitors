@@ -127,8 +127,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				Button_SetText(handle, L"Move Monitor");
 			}
 			else {
-				controlPanel.movingMonitor = true;
-				Button_SetText(handle, L"Place Monitor");
+				if (controlPanel.initPick() >= 0){
+					controlPanel.movingMonitor = true;
+					Button_SetText(handle, L"Place Monitor");
+				}
 			}
 		}
 		else if (LOWORD(wParam) == ID_DESKTOP1_RADIO) {
@@ -683,9 +685,18 @@ void ControlPanel::resizeMonitor(float resizeValue){
 	//currScene->Models[0]->AllocateBuffers();
 }
 
+//initiate monitor pick from panel
+int ControlPanel::initPick(){
+	int result = currScene->pickMonitor(*cameraPos, *yaw);
+	if (result >= 0)//if returned a valid monitor set picked monitor
+		return pickedMonitor = currScene->pickMonitor(*cameraPos, *yaw);
+	else{
+		return -1;//did not return valid monitor
+	}
+}
 void ControlPanel::updateControlPanel() {
 	if (movingMonitor) {
-		moveMonitor();
+		moveMonitor(pickedMonitor);
 	}
 	if (rotatingMonitor){
 		rotate(activeMonitor);
@@ -695,9 +706,14 @@ void ControlPanel::updateControlPanel() {
 //rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
 //since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 //we must offset this to rotate negative pi radians so the object will be in front of us
-void ControlPanel::moveMonitor() {
-	currScene->Models[0]->Pos = *cameraPos;
-	currScene->Models[0]->Rot = Quatf(Vector3f(0, .001, 0), -PI + *yaw);
+void ControlPanel::moveMonitor(int monitorNum) {
+	Model *mod = currScene->Models[monitorNum];
+	cameraPos->x;
+	mod->Pos = mod->OriginalMat.Transform(Vector3f(cameraPos->x, 0, cameraPos->z)) +
+		Vector3f(-sinf(*yaw), 0, -cosf(*yaw));
+	currScene->Models[0]->Rot = Quatf(Vector3f(0, 1, 0), -PI + *yaw);
+	mod->RotatedRot = mod->Rot;
+
 }
 
 

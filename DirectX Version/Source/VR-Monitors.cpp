@@ -233,7 +233,10 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 				//mod->Pos.x = 1;
 				//mod->Mat = Matrix4f::Matrix4() * mod->Mat.Translation(Vector3f(4, 0, 0));
 				//roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, 1, 0), PI / 2 * count++), .9);
-				roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 4 * count++);
+				mod->Pos = mod->OriginalMat.Transform(Vector3f(Pos.x, Pos.y, Pos.z))+
+					 Vector3f(-sinf(Yaw), 0, -cosf(Yaw));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+				mod->Rot = Quatf(Vector3f(0, 1, 0), -PI + Yaw);//positive pi rotates left (ccw)
+				//roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 4 * count++);
 				//Matrix4f  modmat = mod->GetMatrix();
 				//roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 2);
 				//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
