@@ -712,7 +712,7 @@ void ControlPanel::moveMonitor(int monitorNum) {
 	mod->Pos = mod->OriginalMat.Transform(Vector3f(cameraPos->x, 0, cameraPos->z)) +
 		Vector3f(-sinf(*yaw), 0, -cosf(*yaw));
 	currScene->Models[0]->Rot = Quatf(Vector3f(0, 1, 0), -PI + *yaw);
-	mod->RotatedRot = mod->Rot;
+	mod->RotatedRot = mod->Rot;//save this rotated monitor quaternion
 
 }
 
