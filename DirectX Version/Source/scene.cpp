@@ -182,7 +182,6 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 			
 			//Monitors[0]->Pos = _pos;
 			//save original settings
-			Monitors[0]->OriginalRot = Monitors[0]->Rot;
 
 			//should probably do the same for the other monitor once we have it
 			////Monitors[1]->Pos = _pos;
@@ -192,18 +191,23 @@ void Scene::addMonitor(float yaw, Vector3f _pos){
 			//first grab the second monitor from the models array
 			//in vector3f we removed the parameter _pos.x which is where the camera starts on x and removed
 			//_pos.z and placed -1 for the same reason
-			Monitors[1]->Pos = Monitors[1]->OriginalMat.Transform(
+			Monitors[0]->Pos = Monitors[0]->OriginalMat.Transform(
 				Vector3f(+monitorWidth/2+.155, 0, -monitorDepth)) + Vector3f(-sinf(PI), 0, -cosf(PI));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
-            Monitors[1]->Rot = Quatf(Vector3f(0, 1, 0), PI / 8);//positive pi rotates left (ccw)
+            Monitors[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 8);//positive pi rotates left (ccw)
+			Monitors[0]->OriginalPos = Monitors[0]->Pos;
+			Monitors[0]->OriginalRot = Monitors[0]->Rot;
 			//move the cube
 
             //Monitors[0]->Rot = Quatf(Vector3f(0, _pos.y == 0 ? .001 : _pos.y, 0), -PI/6 / 6.5);
-			Monitors[0]->Pos = Monitors[1]->OriginalMat.Transform(
+			Monitors[1]->Pos = Monitors[1]->OriginalMat.Transform(
 				//shift cube right half monitor width
 				Vector3f(-monitorWidth / 2-.155, 0, -monitorDepth)) //shift left 1 unit so pos.x+1 also bring forward so pos.z-1
 				+ Vector3f(-sinf(PI), 0, -cosf(PI));//when looking left monitor will be offset 0 in z direction conversely straigt ahead 0 in x
-			Monitors[0]->Rot = Quatf(Vector3f(0, 1, 0), -PI / 8);//negative pi rotates right(clockwise)
-			Monitors[0]->RotatedRot = Monitors[0]->Rot;//set the rotated matrix for the next transition
+			Monitors[1]->Rot = Quatf(Vector3f(0, 1, 0), -PI / 8);//negative pi rotates right(clockwise)
+			Monitors[1]->RotatedRot = Monitors[1]->Rot;//set the rotated matrix for the next transition
+			Monitors[1]->OriginalRot = Monitors[1]->Rot;
+			Monitors[1]->OriginalPos = Monitors[1]->Pos;
+
 
 
         }
