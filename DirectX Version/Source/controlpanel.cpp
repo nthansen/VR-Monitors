@@ -250,12 +250,6 @@ ControlPanel::ControlPanel() {
 	movingMonitor = false;
 }
 
-ControlPanel ControlPanel::createNewControlPanel() {
-	ControlPanel anotherControlPanel;
-	anotherControlPanel.createControlPanel(NULL, currScene, cameraPos, oculus, yaw, view, proj);
-	return anotherControlPanel;
-}
-
 // actually creates the control panel window
 // is given all the extra information necessary to process everything as well
 
@@ -287,6 +281,8 @@ void ControlPanel::createControlPanel(HINSTANCE hinst, Scene * roomScene, Vector
 		1000, 400, 500, 200, NULL, NULL, hinst, NULL);
 
 	// now setup everything necessary for this
+	checkMonitors();
+
 	setupControlPanel();
 
 	setUpSysTray();
@@ -442,8 +438,9 @@ void ControlPanel::createButtons() {
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
 
+
 	// create the adding monitor button
-	CreateWindow(
+	addMonitorButton = CreateWindow(
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"Add Monitor",      // Button text 
 		WS_VISIBLE | WS_CHILD,  // Styles 
@@ -455,6 +452,10 @@ void ControlPanel::createButtons() {
 		(HMENU)ID_ADD_MONITOR,       // used for the wndProc to know what button is pressed
 		(HINSTANCE)GetWindowLong(window, GWL_HINSTANCE),
 		NULL);      // Pointer not needed.
+
+	if (totalMonitors < currentMonitors) {
+		EnableWindow(addMonitorButton, FALSE);
+	}
 
 	// create the adding desktop 1 button
 	desktopRadio0 = CreateWindow(
@@ -720,6 +721,10 @@ void ControlPanel::resetMonitors() {
 
 void ControlPanel::addMonitor() {
 	currScene->addMonitor(*yaw, *cameraPos);
+	currentMonitors++;
+	if (totalMonitors <= currentMonitors) {
+		EnableWindow(addMonitorButton, FALSE);
+	}
 }
 
 // recenters the oculus
@@ -789,4 +794,46 @@ void ControlPanel::resetDesktopRadio() {
 		SendMessage(desktopRadio2, BM_SETCHECK, BST_UNCHECKED, 0);
 		SendMessage(desktopRadio3, BM_SETCHECK, BST_CHECKED, 0);
 	}
+}
+
+void ControlPanel::checkMonitors() {
+
+	currentMonitors = 1;
+
+	HRESULT hr;
+
+	// Get DXGI device
+	IDXGIDevice* DxgiDevice = nullptr;
+	hr = DX11.Device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&DxgiDevice));
+	if (FAILED(hr))
+	{
+		printf("failed");
+	}
+
+	// Get DXGI adapter
+	IDXGIAdapter* DxgiAdapter = nullptr;
+	hr = DxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&DxgiAdapter));
+	DxgiDevice->Release();
+	DxgiDevice = nullptr;
+	if (FAILED(hr))
+	{
+		printf("failed");
+	}
+	
+	for (int i = 0; i < 4; i++) {
+		// Get output
+		IDXGIOutput* DxgiOutput = nullptr;
+		hr = DxgiAdapter->EnumOutputs(i, &DxgiOutput);
+
+		if (DxgiOutput == NULL)
+		{
+			totalMonitors = i - 1;
+		}
+		else {
+			totalMonitors = i;
+		}
+	}
+	DxgiAdapter->Release();
+	DxgiAdapter = nullptr;
+
 }
