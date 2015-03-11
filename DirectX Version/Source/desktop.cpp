@@ -106,8 +106,12 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     }
 
     pointer.Visible = frameData.PointerPosition.Visible;
-    if (frameData.LastMouseUpdateTime.QuadPart != 0 && frameData.PointerPosition.Visible && 
-		frameData.PointerPosition.Position.x >= 0 && frameData.PointerPosition.Position.y >= 0) { //there is a mouse on the screen capture the buffer
+
+    //floor positions
+    frameData.PointerPosition.Position.x = max(0, frameData.PointerPosition.Position.x);
+    frameData.PointerPosition.Position.y = max(0, frameData.PointerPosition.Position.y);
+
+    if (frameData.LastMouseUpdateTime.QuadPart != 0 && frameData.PointerPosition.Visible) { //there is a mouse on the screen capture the buffer
         if (frameData.PointerShapeBufferSize != 0) {
             //new shape update the buffer
             if (pointer.BufferSize != frameData.PointerShapeBufferSize) {
@@ -152,9 +156,9 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
             ptrData.SysMemSlicePitch = 0;
             Device->CreateTexture2D(&Desc, &ptrData, &pointerImage);
         }
-		if (pointerImage == NULL) {
-			return 0;
-		}
+        if (pointerImage == NULL) {
+            return 0;
+        }
         //update the position of the mouse
         //there might need to be an offset for a multiple monitor setup
         pointer.Position.x = frameData.PointerPosition.Position.x;
@@ -228,7 +232,9 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
         }
         //loop through image
     }
-
+    else if (frameData.PointerPosition.Position.x < 0 || frameData.PointerPosition.Position.y < 0) {
+        printf("failed");
+    }
     return 0;
 }
 
