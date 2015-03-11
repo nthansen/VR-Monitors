@@ -87,8 +87,6 @@ public:
 
 	HMENU getSysTrayMenu();
 
-	ControlPanel createNewControlPanel();
-
 	void switchDesktop(int desktop);
 
 	void resetDesktopRadio();
@@ -104,12 +102,16 @@ private:
 	HWND desktopRadio1;
 	HWND desktopRadio2;
 	HWND desktopRadio3;
+	HWND addMonitorButton;
 	HMENU sysTrayMenu;
 	ovrHmd * oculus;
 	float * yaw;
 	Matrix4f * view;
 	Matrix4f * proj;
 	const float PI = 3.1415972f;
+
+	int totalMonitors;
+	int currentMonitors;
 
 	int desktop;
 
@@ -134,6 +136,8 @@ private:
 	void createButtons();
 	void createDropDowns();
 	void createSliders();
+
+	void checkMonitors();
 
 };
 
