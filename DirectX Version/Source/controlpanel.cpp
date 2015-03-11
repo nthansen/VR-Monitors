@@ -828,6 +828,7 @@ void ControlPanel::checkMonitors() {
 		if (DxgiOutput == NULL)
 		{
 			totalMonitors = i - 1;
+			break;
 		}
 		else {
 			totalMonitors = i;
