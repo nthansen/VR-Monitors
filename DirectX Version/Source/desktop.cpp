@@ -106,7 +106,8 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     }
 
     pointer.Visible = frameData.PointerPosition.Visible;
-    if (frameData.LastMouseUpdateTime.QuadPart != 0 && frameData.PointerPosition.Visible) { //there is a mouse on the screen capture the buffer
+    if (frameData.LastMouseUpdateTime.QuadPart != 0 && frameData.PointerPosition.Visible && 
+		frameData.PointerPosition.Position.x >= 0 && frameData.PointerPosition.Position.y >= 0) { //there is a mouse on the screen capture the buffer
         if (frameData.PointerShapeBufferSize != 0) {
             //new shape update the buffer
             if (pointer.BufferSize != frameData.PointerShapeBufferSize) {
@@ -199,6 +200,9 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
         //map data
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         //Map the resources. Blocks the GPU from accessing the file. 
+		if (pointerImage == NULL) {
+			return 0;
+		}
         hr = deviceContext->Map(pointerImage, 0, D3D11_MAP_READ_WRITE, 0, &mappedResource);
         if (!mappedResource.pData) {
             //unmap
