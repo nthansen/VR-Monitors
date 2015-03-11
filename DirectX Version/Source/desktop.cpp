@@ -136,32 +136,32 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
                 delete[] pointer.PtrShapeBuffer;
                 pointer.PtrShapeBuffer = nullptr;
                 pointer.BufferSize = 0;
-            } else {
-                //create texture2d
-                if (pointerImage){
-                    //release old image
-                    pointerImage->Release();
-                    pointerImage = nullptr;
-                }
-                D3D11_TEXTURE2D_DESC Desc;
-                Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-                Desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
-                Desc.MipLevels = 1;
-                Desc.ArraySize = 1;
-                Desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-                Desc.SampleDesc.Count = 1;
-                Desc.SampleDesc.Quality = 0;
-                Desc.Usage = D3D11_USAGE_DEFAULT;
-                Desc.CPUAccessFlags = 0;
-
-                Desc.Width = pointer.ShapeInfo.Width;
-                Desc.Height = pointer.ShapeInfo.Height;
-                D3D11_SUBRESOURCE_DATA ptrData;
-                ptrData.pSysMem = pointer.PtrShapeBuffer;
-                ptrData.SysMemPitch = pointer.ShapeInfo.Pitch;
-                ptrData.SysMemSlicePitch = 0;
-                Device->CreateTexture2D(&Desc, &ptrData, &pointerImage);
+                return 0;
             }
+            //create texture2d
+            if (pointerImage){
+                //release old image
+                pointerImage->Release();
+                pointerImage = nullptr;
+            }
+            D3D11_TEXTURE2D_DESC Desc;
+            Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+            Desc.MiscFlags = D3D11_RESOURCE_MISC_SHARED;
+            Desc.MipLevels = 1;
+            Desc.ArraySize = 1;
+            Desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+            Desc.SampleDesc.Count = 1;
+            Desc.SampleDesc.Quality = 0;
+            Desc.Usage = D3D11_USAGE_DEFAULT;
+            Desc.CPUAccessFlags = 0;
+
+            Desc.Width = pointer.ShapeInfo.Width;
+            Desc.Height = pointer.ShapeInfo.Height;
+            D3D11_SUBRESOURCE_DATA ptrData;
+            ptrData.pSysMem = pointer.PtrShapeBuffer;
+            ptrData.SysMemPitch = pointer.ShapeInfo.Pitch;
+            ptrData.SysMemSlicePitch = 0;
+            Device->CreateTexture2D(&Desc, &ptrData, &pointerImage);
         }
         if (pointerImage == NULL) {
             return 0;
@@ -238,9 +238,6 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
             deviceContext->Unmap(pointerImage, 0);
         }
         //loop through image
-    }
-    else if (frameData.PointerPosition.Position.x < 0 || frameData.PointerPosition.Position.y < 0) {
-        printf("failed");
     }
     return 0;
 }
