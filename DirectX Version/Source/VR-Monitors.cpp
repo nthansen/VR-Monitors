@@ -129,7 +129,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 	//need to pass in view and proj to control panel to render model while transitioning
 	Matrix4f view;
 	Matrix4f proj;
-    controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw, &view, &proj);
+	controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &EyeRenderPose[0].Orientation.y, &view, &proj);
 	int				 count = 1;
     // MAIN LOOP
     // =========
@@ -223,9 +223,12 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 				//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
 				//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
 				//we must offset this to rotate negative pi radians so the object will be in front of us
-				roomScene.Models[0]->Pos = Pos;
-				roomScene.Models[0]->Rot = Quatf(Vector3f(0 , 1 , 0), -PI + Yaw);
-
+				//roomScene.Models[0]->Pos = Pos;
+				//roomScene.Models[0]->Rot = Quatf(Vector3f(0 , 1 , 0), -PI + Yaw);
+				float a = YawAtRender[0];
+				float b = Yaw;
+				float c = EyeRenderPose[0].Orientation.y;
+				float test = 0;
 			}
 
 			if (DX11.Key['Z']){//&&clock%12==0) {

@@ -129,7 +129,7 @@ void Scene::setOffset(Vector3f _Voffset){
 int Scene::pickMonitor(Vector3f Pos, float Yaw){
 	//save the direction to cast in dir and ray origin in dpos
 	SimpleMath::Vector3 dPos = SimpleMath::Vector3(Pos.x, Pos.y, Pos.z);//position for simplemath
-	SimpleMath::Vector3 dir = SimpleMath::Vector3(sinf(Yaw - PI), 0, cosf(Yaw - PI));//offset since yaw starts at PI
+	SimpleMath::Vector3 dir = SimpleMath::Vector3(sinf(Yaw), 0, cosf(Yaw));//offset since yaw starts at PI//subtract pi if using oculus from yaw
 	//ray is really only a container holding the origin and direction to cast
 	SimpleMath::Ray cast = SimpleMath::Ray(dPos, dir);
 	float _dist = 0.0f;

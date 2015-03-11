@@ -683,9 +683,9 @@ void ControlPanel::resizeMonitor(float resizeValue){
 
 //initiate monitor pick from panel
 int ControlPanel::initPick(){
-	int result = currScene->pickMonitor(*cameraPos, *yaw);
+	int result = currScene->pickMonitor(*cameraPos, *yaw*PI);
 	if (result >= 0)//if returned a valid monitor set picked monitor
-		return pickedMonitor = currScene->pickMonitor(*cameraPos, *yaw);
+		return pickedMonitor = result;
 	else{
 		return -1;//did not return valid monitor
 	}
@@ -699,15 +699,14 @@ void ControlPanel::updateControlPanel() {
 	}
 }
 
-//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
-//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
-//we must offset this to rotate negative pi radians so the object will be in front of us
+//rotate the object about the y-axis based on the depth of the object at the angle described
+//by the orientation of the oculus
 void ControlPanel::moveMonitor(int monitorNum) {
 	Model *mod = currScene->Models[monitorNum];
 	cameraPos->x;
 	mod->Pos = mod->OriginalMat.Transform(Vector3f(cameraPos->x, 0, cameraPos->z)) +
-		Vector3f(-sinf(*yaw), 0, -cosf(*yaw));
-	currScene->Models[0]->Rot = Quatf(Vector3f(0, 1, 0), -PI + *yaw);
+		Vector3f(sinf(*yaw*PI), 0, cosf(*yaw*PI));//if using oculus multiply pi times yaw
+	currScene->Models[monitorNum]->Rot = Quatf(Vector3f(0, 1, 0), *yaw*PI);//using oculus multiply pi by yaw
 	mod->RotatedRot = mod->Rot;//save this rotated monitor quaternion
 
 }
