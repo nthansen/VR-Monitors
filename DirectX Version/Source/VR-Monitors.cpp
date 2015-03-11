@@ -204,9 +204,13 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 					DXGIResource = nullptr;
 					ID3D11Texture2D* tmp;
 					hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
-
-					// using the shared handle we copy the data to the image bound to the render view
-					DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
+                    if (FAILED(hr)) {
+                        printf("failed");
+                    }
+                    else {
+                        // using the shared handle we copy the data to the image bound to the render view
+                        DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
+                    }
 				}
 				roomScene.Monitors[i]->desktop->relaseFrame();
 			}
