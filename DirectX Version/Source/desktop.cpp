@@ -152,6 +152,9 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
             ptrData.SysMemSlicePitch = 0;
             Device->CreateTexture2D(&Desc, &ptrData, &pointerImage);
         }
+		if (pointerImage == NULL) {
+			return 0;
+		}
         //update the position of the mouse
         //there might need to be an offset for a multiple monitor setup
         pointer.Position.x = frameData.PointerPosition.Position.x;
@@ -200,9 +203,6 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
         //map data
         D3D11_MAPPED_SUBRESOURCE mappedResource;
         //Map the resources. Blocks the GPU from accessing the file. 
-		if (pointerImage == NULL) {
-			return 0;
-		}
         hr = deviceContext->Map(pointerImage, 0, D3D11_MAP_READ_WRITE, 0, &mappedResource);
         if (!mappedResource.pData) {
             //unmap
