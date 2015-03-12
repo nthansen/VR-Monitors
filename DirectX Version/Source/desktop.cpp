@@ -36,6 +36,7 @@ Desktop::Desktop(int id) : Desktop() {
 }
 Desktop::Desktop() : desktop(nullptr),
 desktopImage(nullptr),
+lastFrame(nullptr),
 pointerImage(nullptr),
 masterImage(nullptr),
 stage(nullptr),
@@ -83,7 +84,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
                 return -1;
             }
             else {
-                Sleep(100); //not active desktop slow down thread
+                 Sleep(100); //not active desktop slow down thread
                 CloseDesktop(currentDesktop);
             }
         }
@@ -103,6 +104,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     else {
         // QI for IDXGIResource
         hr = desktopResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void **>(&desktopImage));
+        lastFrame = desktopImage;
         data->Frame = desktopImage;
     }
 
@@ -207,7 +209,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
             0,
             0,
             0,
-            data->Frame,
+            lastFrame,
             0,
             &location);
         // SaveDDSTextureToFile(deviceContext, pointerImage, L"pointer1.dds");

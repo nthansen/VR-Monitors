@@ -52,6 +52,7 @@ public:
     ID3D11Texture2D* stage;
     ID3D11Texture2D* masterImage;
     ID3D11Texture2D* stageHandle;
+    ID3D11Texture2D* lastFrame;
     Pointer_Info pointer;
     ID3D11Texture2D* pointerImage;
     ID3D11ShaderResourceView* masterView;
