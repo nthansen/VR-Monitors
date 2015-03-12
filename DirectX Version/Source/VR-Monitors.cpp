@@ -195,7 +195,7 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
                 bool timedout;
                 FRAME_DATA frame;
                 roomScene.Monitors[i]->desktop->relaseFrame();
-                continue;
+
                 roomScene.Monitors[i]->desktop->getFrame(&frame, &timedout);
                 if (!timedout) {
                     HRESULT hr;
