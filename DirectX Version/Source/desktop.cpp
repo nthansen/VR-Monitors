@@ -84,7 +84,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
                 return -1;
             }
             else {
-                 Sleep(100); //not active desktop slow down thread
+                 Sleep(500); //not active desktop slow down thread
                 CloseDesktop(currentDesktop);
             }
         }
