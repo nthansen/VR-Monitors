@@ -83,6 +83,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
                 return -1;
             }
             else {
+                Sleep(100); //not active desktop slow down thread
                 CloseDesktop(currentDesktop);
             }
         }
@@ -106,7 +107,7 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
     }
 
     pointer.Visible = frameData.PointerPosition.Visible;
-
+    pointer.LastTimeStamp = frameData.LastMouseUpdateTime;
     //floor positions
     frameData.PointerPosition.Position.x = max(0, frameData.PointerPosition.Position.x);
     frameData.PointerPosition.Position.y = max(0, frameData.PointerPosition.Position.y);
@@ -238,6 +239,16 @@ int Desktop::getFrame(FRAME_DATA* data, bool* timedout) {
             deviceContext->Unmap(pointerImage, 0);
         }
         //loop through image
+    }
+    else if (pointer.LastTimeStamp.QuadPart != 0 && !pointer.Visible) {
+        //no mouse present dump image
+        delete[] pointer.PtrShapeBuffer;
+        pointer.PtrShapeBuffer = nullptr;
+        pointer.BufferSize = 0;
+        if (pointerImage) {
+            pointerImage->Release();
+            pointerImage = nullptr;
+        }
     }
     return 0;
 }

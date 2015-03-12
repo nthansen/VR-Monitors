@@ -11,6 +11,7 @@
 #include "OVR_CAPI.h"					// Include the OculusVR SDK
 #include "controlPanel.h"
 #include "desktop.h"
+#include <iostream>
 #include "../3rdParty/ScreenGrab/ScreenGrab.h"
 
 
@@ -31,27 +32,35 @@ int				 clock;
 //-------------------------------------------------------------------------------------
 int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 {
-	HDESK currentDesktop = OpenInputDesktop(0, false, DESKTOP_READOBJECTS);
-	wchar_t data[100]; //name should never be more than 100
-	LPDWORD lpnLengthNeeded = new DWORD;
-	bool result = GetUserObjectInformation(currentDesktop, UOI_NAME, data, (100 * sizeof(char)), lpnLengthNeeded);
-	int length = (int)(*lpnLengthNeeded);
+    //frames per second
+    DWORD dwFrames;
+    DWORD dwCurrentTime;
+    DWORD dwLastUpdateTime;
+    DWORD dwElapsedTime;
+    TCHAR szFPS[32];
 
-	wcscat(data, L" VR-Monitors");
-    HANDLE hFirstExecution = CreateMutex(NULL, TRUE, L"VR-Monitors Original");
-    DWORD createError = GetLastError();
-    if (createError != ERROR_ALREADY_EXISTS) {
+    dwFrames = 0;
+    dwCurrentTime = 0;
+    dwLastUpdateTime = 0;
+    dwElapsedTime = 0;
+    szFPS[0] = '\0';
 
+
+    HDESK currentDesktop = OpenInputDesktop(0, false, DESKTOP_READOBJECTS);
+    wchar_t data[100]; //name should never be more than 100
+    LPDWORD lpnLengthNeeded = new DWORD;
+    bool result = GetUserObjectInformation(currentDesktop, UOI_NAME, data, (100 * sizeof(char)), lpnLengthNeeded);
+    int length = (int)(*lpnLengthNeeded);
+
+    wcscat(data, L" VR-Monitors");
+
+    HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, ((LPWSTR)(data)));
+    DWORD dwError = GetLastError();
+    if (dwError == ERROR_ALREADY_EXISTS)
+    {
+        // Application already lunched
+        return 0;
     }
-
-	HANDLE hSingleInstanceMutex = CreateMutex(NULL, TRUE, ((LPWSTR)(data)));
-	DWORD dwError = GetLastError();
-	if (dwError == ERROR_ALREADY_EXISTS)
-	{
-		// Application already lunched
-		printf("running");
-		return 0;
-	}
     SHELLEXECUTEINFO shExInfo = { 0 };
     shExInfo.cbSize = sizeof(shExInfo);
     shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
@@ -125,65 +134,82 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
 
     // Create the room model
     Scene roomScene = Scene(); // Can simplify scene further with parameter if required.
-	//Vector3f mpos = roomScene.Models[0]->Pos; roomScene.Models[0]->Pos = roomScene.Models[0]->Mat.Transform(Vector3f(-2, 0, 0));
-	//need to pass in view and proj to control panel to render model while transitioning
-	Matrix4f view;
-	Matrix4f proj;
+    //Vector3f mpos = roomScene.Models[0]->Pos; roomScene.Models[0]->Pos = roomScene.Models[0]->Mat.Transform(Vector3f(-2, 0, 0));
+    //need to pass in view and proj to control panel to render model while transitioning
+    Matrix4f view;
+    Matrix4f proj;
     controlPanel.createControlPanel(hinst, &roomScene, &Pos, &HMD, &Yaw, &view, &proj);
-	int				 count = 1;
+    int				 count = 1;
     // MAIN LOOP
     // =========
 
-	while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
-	{
-		if (roomScene.doRender) {
-			DX11.HandleMessages();
+    while (!(DX11.Key['Q'] && DX11.Key[VK_CONTROL]) && !DX11.Key[VK_ESCAPE] && !controlPanel.getCloseApp())
+    {
+        if (roomScene.doRender) {
+            DX11.HandleMessages();
 
-			controlPanel.updateControlPanel();
+            controlPanel.updateControlPanel();
 
-			// remove the health/warning display
-			ovrHmd_DismissHSWDisplay(HMD);
+            // remove the health/warning display
+            ovrHmd_DismissHSWDisplay(HMD);
 
-			float       speed = 1.0f; // Can adjust the movement speed. 
-			int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
-			ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
-				EyeRenderDesc[1].HmdToEyeViewOffset };
-			// Start timing
-			ovrHmd_BeginFrame(HMD, 0);
+            float       speed = 1.0f; // Can adjust the movement speed. 
+            int         timesToRenderScene = 1;    // Can adjust the render burden on the app.
+            ovrVector3f useHmdToEyeViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
+                EyeRenderDesc[1].HmdToEyeViewOffset };
+            // Start timing
+            ovrHmd_BeginFrame(HMD, 0);
 
-			// Update the clock, used by some of the features
-			clock++;
+            // Update the clock, used by some of the features
+            clock++;
 
-			// Keyboard inputs to adjust player orientation
-			if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
-			if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
+            //calc frames per second
+            dwFrames++;
+            dwCurrentTime = GetTickCount(); // Even better to use timeGetTime()
+            dwElapsedTime = dwCurrentTime - dwLastUpdateTime;
+            if (dwElapsedTime >= 1000)
+            {
+                wsprintf(szFPS, L"FPS = %u", (UINT)(dwFrames * 1000.0 / dwElapsedTime));
+                dwFrames = 0;
+                dwLastUpdateTime = dwCurrentTime;
+            }
+            cout << "FRAMES: " << szFPS << endl;
 
-			// Keyboard inputs to adjust player position
-			if (DX11.Key['W'] || DX11.Key[VK_UP])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, -speed*0.05f));
-			if (DX11.Key['S'] || DX11.Key[VK_DOWN])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, +speed*0.05f));
-			if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
-			if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
-			//spawn a new monitor
-			if (DX11.Key['M'] && clock % 6 == 0){//restricts multiple monitors being made
-				//could probably fix this by adding a splash screen to confirm add monitor
-				roomScene.addMonitor(Yaw, Pos);
-			}
-			// just so it'd give some time before switching between each texture
-			// replaces the shader fill to the new shaderfill
-			for (int i = 0; i < roomScene.num_monitors; i++){
-				bool timedout;
-				FRAME_DATA frame;
-				roomScene.Monitors[i]->desktop->relaseFrame();
+            // Keyboard inputs to adjust player orientation
+            if (DX11.Key[VK_LEFT])  Yaw += 0.02f;
+            if (DX11.Key[VK_RIGHT]) Yaw -= 0.02f;
 
-				roomScene.Monitors[i]->desktop->getFrame(&frame, &timedout);
-				if (frame.Frame != nullptr && !timedout) {
+            // Keyboard inputs to adjust player position
+            if (DX11.Key['W'] || DX11.Key[VK_UP])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, -speed*0.05f));
+            if (DX11.Key['S'] || DX11.Key[VK_DOWN])	Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(0, 0, +speed*0.05f));
+            if (DX11.Key['D'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(+speed*0.05f, 0, 0));
+            if (DX11.Key['A'])						Pos += Matrix4f::RotationY(Yaw).Transform(Vector3f(-speed*0.05f, 0, 0));
+            //spawn a new monitor
+            if (DX11.Key['M'] && clock % 6 == 0){//restricts multiple monitors being made
+                //could probably fix this by adding a splash screen to confirm add monitor
+                roomScene.addMonitor(Yaw, Pos);
+            }
+            // just so it'd give some time before switching between each texture
+            // replaces the shader fill to the new shaderfill
+            for (int i = 0; i < roomScene.num_monitors; i++){
+                bool timedout;
+                FRAME_DATA frame;
+                roomScene.Monitors[i]->desktop->relaseFrame();
 
-					// the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
-					D3D11_TEXTURE2D_DESC frameDesc;
-					frame.Frame->GetDesc(&frameDesc);
-					HRESULT hr;
-					roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
-                    if (frame.FrameInfo.LastMouseUpdateTime.QuadPart != 0 && frame.FrameInfo.PointerPosition.Visible) {
+                roomScene.Monitors[i]->desktop->getFrame(&frame, &timedout);
+                if (frame.Frame != nullptr && !timedout) {
+
+                    // the frame that comes from the desktop duplication api is not sharable so we must copy it to a controled resource
+                    D3D11_TEXTURE2D_DESC frameDesc;
+                    frame.Frame->GetDesc(&frameDesc);
+                    HRESULT hr;
+                    roomScene.Monitors[i]->desktop->deviceContext->CopyResource(roomScene.Monitors[i]->desktop->stage, frame.Frame);
+                    //check mouse to render
+                    if (roomScene.Monitors[i]->desktop->pointer.Visible && roomScene.lastMouseOwner != roomScene.Monitors[i]->desktop->output){
+                        roomScene.lastMouseOwner = roomScene.Monitors[i]->desktop->output;
+                    }
+                    if (roomScene.Monitors[i]->desktop->pointerImage && 
+                        roomScene.lastMouseOwner == roomScene.Monitors[i]->desktop->output) {
 
                         roomScene.Monitors[i]->desktop->deviceContext->CopySubresourceRegion(
                             roomScene.Monitors[i]->desktop->stage,
@@ -195,15 +221,15 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
                             0,
                             NULL);
                     }
-					// we capture a shared handle from the staging resource 
-					HANDLE Hnd(NULL);
-					IDXGIResource* DXGIResource = nullptr;
-					hr = roomScene.Monitors[i]->desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
-					DXGIResource->GetSharedHandle(&Hnd);
-					DXGIResource->Release();
-					DXGIResource = nullptr;
-					ID3D11Texture2D* tmp;
-					hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
+                    // we capture a shared handle from the staging resource 
+                    HANDLE Hnd(NULL);
+                    IDXGIResource* DXGIResource = nullptr;
+                    hr = roomScene.Monitors[i]->desktop->stage->QueryInterface(__uuidof(IDXGIResource), reinterpret_cast<void**>(&DXGIResource));
+                    DXGIResource->GetSharedHandle(&Hnd);
+                    DXGIResource->Release();
+                    DXGIResource = nullptr;
+                    ID3D11Texture2D* tmp;
+                    hr = DX11.Device->OpenSharedResource(Hnd, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&tmp));
                     if (FAILED(hr)) {
                         printf("failed");
                     }
@@ -211,110 +237,110 @@ int WINAPI WinMain(HINSTANCE hinst, HINSTANCE, LPSTR, int)
                         // using the shared handle we copy the data to the image bound to the render view
                         DX11.Context->CopyResource(roomScene.Monitors[i]->desktop->masterImage, tmp);
                     }
-				}
-				roomScene.Monitors[i]->desktop->relaseFrame();
-			}
+                }
+                roomScene.Monitors[i]->desktop->relaseFrame();
+            }
 
-			// accesses the actual texture in the shaderfill and switches them out
-			//roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
+            // accesses the actual texture in the shaderfill and switches them out
+            //roomScene.Models[0]->Fill->OneTexture = roomScene.generated_texture[clock % 5]->OneTexture;
 
-			// figuring out how model rotation works
-			if (DX11.Key['T']) {
-				//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
-				//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
-				//we must offset this to rotate negative pi radians so the object will be in front of us
-				roomScene.Models[0]->Pos = Pos;
-				roomScene.Models[0]->Rot = Quatf(Vector3f(0 , 1 , 0), -PI + Yaw);
+            // figuring out how model rotation works
+            if (DX11.Key['T']) {
+                //rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
+                //since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
+                //we must offset this to rotate negative pi radians so the object will be in front of us
+                roomScene.Models[0]->Pos = Pos;
+                roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), -PI + Yaw);
 
-			}
+            }
 
-			if (DX11.Key['Z']){//&&clock%12==0) {
-				//rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
-				//since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
-				//we must offset this to rotate negative pi radians so the object will be in front of us
-				//roomScene.Models[0]->Pos = Pos;
-				Model *mod = roomScene.Models[0];
-				//mod->Pos.x = 1;
-				//mod->Mat = Matrix4f::Matrix4() * mod->Mat.Translation(Vector3f(4, 0, 0));
-				//roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, 1, 0), PI / 2 * count++), .9);
-				mod->Pos = mod->OriginalMat.Transform(Vector3f(Pos.x, Pos.y, Pos.z))+
-					 Vector3f(-sinf(Yaw), 0, -cosf(Yaw));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
-				mod->Rot = Quatf(Vector3f(0, 1, 0), -PI + Yaw);//positive pi rotates left (ccw)
-				//roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 4 * count++);
-				//Matrix4f  modmat = mod->GetMatrix();
-				//roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 2);
-				//mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
-				//mod->Pos = Vector3f(-2, 0, 0);
+            if (DX11.Key['Z']){//&&clock%12==0) {
+                //rotate the object about the y-axis (or very close) based on the depth of the object at the angle described
+                //since the object spawns in front of us on the z axis and we are now facing the direction of positive x axis
+                //we must offset this to rotate negative pi radians so the object will be in front of us
+                //roomScene.Models[0]->Pos = Pos;
+                Model *mod = roomScene.Models[0];
+                //mod->Pos.x = 1;
+                //mod->Mat = Matrix4f::Matrix4() * mod->Mat.Translation(Vector3f(4, 0, 0));
+                //roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, 1, 0), PI / 2 * count++), .9);
+                mod->Pos = mod->OriginalMat.Transform(Vector3f(Pos.x, Pos.y, Pos.z)) +
+                    Vector3f(-sinf(Yaw), 0, -cosf(Yaw));//shift left 1 unit so pos.x+1 also bring forward so pos.z-1
+                mod->Rot = Quatf(Vector3f(0, 1, 0), -PI + Yaw);//positive pi rotates left (ccw)
+                //roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 4 * count++);
+                //Matrix4f  modmat = mod->GetMatrix();
+                //roomScene.Models[0]->Rot = Quatf(Vector3f(0, 1, 0), PI / 2);
+                //mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+                //mod->Pos = Vector3f(-2, 0, 0);
 
-			}
-			if (DX11.Key['X']) {
-				while (roomScene.Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * 1)) > 0.01){
-					roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI / 2 * 1), .9);
-					roomScene.Render(view, proj);
-				}
-				Model *mod = roomScene.Models[0];
-				Matrix4f  modmat = mod->GetMatrix();
-				mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
-			}
-			// shows how to select a model and mess with it
-			/*
-			// Animate the cube
-			if (speed)
-			roomScene.Models[0]->Pos = Vector3f(9 * sin(0.01f*clock), 3, 9 * cos(0.01f*clock));
-			*/
+            }
+            if (DX11.Key['X']) {
+                while (roomScene.Models[0]->Rot.Angle(Quatf(Vector3f(0, .00001, 0), 3.14159 / 2 * 1)) > 0.01){
+                    roomScene.Models[0]->Rot = roomScene.Models[0]->Rot.Nlerp(Quatf(Vector3f(0, .000001, 0), PI / 2 * 1), .9);
+                    roomScene.Render(view, proj);
+                }
+                Model *mod = roomScene.Models[0];
+                Matrix4f  modmat = mod->GetMatrix();
+                mod->Pos = modmat.Transform(Vector3f(-2, 0, 0));
+            }
+            // shows how to select a model and mess with it
+            /*
+            // Animate the cube
+            if (speed)
+            roomScene.Models[0]->Pos = Vector3f(9 * sin(0.01f*clock), 3, 9 * cos(0.01f*clock));
+            */
 
-			// Get both eye poses simultaneously, with IPD offset already included. 
-			ovrPosef temp_EyeRenderPose[2];
-			ovrHmd_GetEyePoses(HMD, 0, useHmdToEyeViewOffset, temp_EyeRenderPose, NULL);
+            // Get both eye poses simultaneously, with IPD offset already included. 
+            ovrPosef temp_EyeRenderPose[2];
+            ovrHmd_GetEyePoses(HMD, 0, useHmdToEyeViewOffset, temp_EyeRenderPose, NULL);
 
-			// Render the two undistorted eye views into their render buffers.  
-			for (int eye = 0; eye < 2; eye++)
-			{
-				ImageBuffer * useBuffer = pEyeRenderTexture[eye];
-				ovrPosef    * useEyePose = &EyeRenderPose[eye];
-				float       * useYaw = &YawAtRender[eye];
-				bool          clearEyeImage = true;
-				bool          updateEyeImage = true;
+            // Render the two undistorted eye views into their render buffers.  
+            for (int eye = 0; eye < 2; eye++)
+            {
+                ImageBuffer * useBuffer = pEyeRenderTexture[eye];
+                ovrPosef    * useEyePose = &EyeRenderPose[eye];
+                float       * useYaw = &YawAtRender[eye];
+                bool          clearEyeImage = true;
+                bool          updateEyeImage = true;
 
-				if (clearEyeImage)
-					DX11.ClearAndSetRenderTarget(useBuffer->TexRtv,
-					pEyeDepthBuffer[eye], Recti(EyeRenderViewport[eye]));
-				if (updateEyeImage)
-				{
-					// Write in values actually used (becomes significant in Example features)
-					*useEyePose = temp_EyeRenderPose[eye];
-					*useYaw = Yaw;
+                if (clearEyeImage)
+                    DX11.ClearAndSetRenderTarget(useBuffer->TexRtv,
+                    pEyeDepthBuffer[eye], Recti(EyeRenderViewport[eye]));
+                if (updateEyeImage)
+                {
+                    // Write in values actually used (becomes significant in Example features)
+                    *useEyePose = temp_EyeRenderPose[eye];
+                    *useYaw = Yaw;
 
-					// Get view and projection matrices (note near Z to reduce eye strain)
-					Matrix4f rollPitchYaw = Matrix4f::RotationY(Yaw);
-					Matrix4f finalRollPitchYaw = rollPitchYaw *Matrix4f(useEyePose->Orientation);
-					Vector3f finalUp = finalRollPitchYaw.Transform(Vector3f(0, 1, 0));
-					Vector3f finalForward = finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
-					Vector3f shiftedEyePos = Pos + rollPitchYaw.Transform(useEyePose->Position);
+                    // Get view and projection matrices (note near Z to reduce eye strain)
+                    Matrix4f rollPitchYaw = Matrix4f::RotationY(Yaw);
+                    Matrix4f finalRollPitchYaw = rollPitchYaw *Matrix4f(useEyePose->Orientation);
+                    Vector3f finalUp = finalRollPitchYaw.Transform(Vector3f(0, 1, 0));
+                    Vector3f finalForward = finalRollPitchYaw.Transform(Vector3f(0, 0, -1));
+                    Vector3f shiftedEyePos = Pos + rollPitchYaw.Transform(useEyePose->Position);
 
-					Matrix4f view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
-					Matrix4f proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
+                    Matrix4f view = Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
+                    Matrix4f proj = ovrMatrix4f_Projection(EyeRenderDesc[eye].Fov, 0.2f, 1000.0f, true);
 
-					// Render the scene
-					for (int t = 0; t < timesToRenderScene; t++)
-						roomScene.Render(view, proj.Transposed());
-				}
-			}
+                    // Render the scene
+                    for (int t = 0; t < timesToRenderScene; t++)
+                        roomScene.Render(view, proj.Transposed());
+                }
+            }
 
-			// Do distortion rendering, Present and flush/sync
-			ovrD3D11Texture eyeTexture[2]; // Gather data for eye textures 
-			for (int eye = 0; eye < 2; eye++)
-			{
-				eyeTexture[eye].D3D11.Header.API = ovrRenderAPI_D3D11;
-				eyeTexture[eye].D3D11.Header.TextureSize = pEyeRenderTexture[eye]->Size;
-				eyeTexture[eye].D3D11.Header.RenderViewport = EyeRenderViewport[eye];
-				eyeTexture[eye].D3D11.pTexture = pEyeRenderTexture[eye]->Tex;
-				eyeTexture[eye].D3D11.pSRView = pEyeRenderTexture[eye]->TexSv;
-			}
-			ovrHmd_EndFrame(HMD, EyeRenderPose, &eyeTexture[0].Texture);
-		}
+            // Do distortion rendering, Present and flush/sync
+            ovrD3D11Texture eyeTexture[2]; // Gather data for eye textures 
+            for (int eye = 0; eye < 2; eye++)
+            {
+                eyeTexture[eye].D3D11.Header.API = ovrRenderAPI_D3D11;
+                eyeTexture[eye].D3D11.Header.TextureSize = pEyeRenderTexture[eye]->Size;
+                eyeTexture[eye].D3D11.Header.RenderViewport = EyeRenderViewport[eye];
+                eyeTexture[eye].D3D11.pTexture = pEyeRenderTexture[eye]->Tex;
+                eyeTexture[eye].D3D11.pSRView = pEyeRenderTexture[eye]->TexSv;
+            }
+            ovrHmd_EndFrame(HMD, EyeRenderPose, &eyeTexture[0].Texture);
+        }
 
-	}
+    }
     // Release and close down
     ovrHmd_Destroy(HMD);
     ovr_Shutdown();

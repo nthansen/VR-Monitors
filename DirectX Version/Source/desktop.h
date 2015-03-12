@@ -59,6 +59,7 @@ public:
     ID3D11DeviceContext* deviceContext;
     ShaderFill* masterFill;
     ImageBuffer * masterBuffer;
+    int output;
 
 	UINT outputNumber;
 
@@ -73,7 +74,6 @@ public:
     _Success_(*Timeout == false && return == 0) int getFrame(_Out_ FRAME_DATA* Data, _Out_ bool* Timeout);
     int relaseFrame();
 private:
-    int output;
     LPWSTR desktopName;
     bool initialized;
     IDXGIOutputDuplication* desktop; //desktop object to get frame data from
