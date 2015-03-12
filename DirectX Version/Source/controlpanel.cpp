@@ -702,11 +702,11 @@ void ControlPanel::updateControlPanel() {
 //rotate the object about the y-axis based on the depth of the object at the angle described
 //by the orientation of the oculus
 void ControlPanel::moveMonitor(int monitorNum) {
-	Model *mod = currScene->Models[monitorNum];
+	Model *mod = currScene->Monitors[monitorNum];
 	cameraPos->x;
-	mod->Pos = mod->OriginalMat.Transform(Vector3f(cameraPos->x, 0, cameraPos->z)) +
-		Vector3f(sinf(*yaw*PI), 0, cosf(*yaw*PI));//if using oculus multiply pi times yaw
-	currScene->Models[monitorNum]->Rot = Quatf(Vector3f(0, 1, 0), *yaw*PI);//using oculus multiply pi by yaw
+	mod->Pos = mod->OriginalMat.Transform(Vector3f(cameraPos->x, 0, cameraPos->z)) +//position model at the camera location
+		Vector3f(sinf(*yaw*PI)*1.2, 0, cosf(*yaw*PI));//offset the model by the orientation of the camera
+	currScene->Monitors[monitorNum]->Rot = Quatf(Vector3f(0, 1, 0), *yaw*PI);//rotate the model to face the camera
 	mod->RotatedRot = mod->Rot;//save this rotated monitor quaternion
 
 }
